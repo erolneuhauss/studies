@@ -1,0 +1,17 @@
+set t_Co=256
+set history=1000
+set ruler
+set guifont=Lucida_Console:h12:cANSI
+set hlsearch
+set incsearch
+set showmatch
+set showcmd
+set laststatus=2
+set smartcase
+set tabstop=4
+set shiftwidth=4
+
+execute pathogen#infect()
+syntax on
+filetype plugin indent on
+
