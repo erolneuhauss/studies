@@ -1,0 +1,69 @@
+\documentclass{scrlttr2}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{ucs}
+\usepackage{currvita}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[german=guillemets]{csquotes}
+\usepackage[ngerman]{babel}
+\usepackage{textcomp}
+\usepackage[minionint,mathlf]{MinionPro}
+\usepackage{MnSymbol}
+%\usepackage{Myriad}
+%\renewcommand{\familydefault}{\sfdefault}
+%\renewcommand{\sfdefault}{Myriad-LF}
+\usepackage{microtype}
+\usepackage{xcolor}
+\definecolor{myblue}{rgb}{0,.1,.6}
+\usepackage{paralist}
+
+\usepackage{hyperref}
+\hypersetup{%
+ pdftitle={Erol Neuhauß \textendash{} Testing LaTeX Installation},
+ pdfsubject={LaTeX},
+ pdfauthor={Erol Neuhauß},
+ pdfdisplaydoctitle,
+ pdfpagemode=UseNone,
+ bookmarksopen=false,
+ pdfstartview=FitH,
+ colorlinks=true,
+ urlcolor=myblue,
+}
+\cvplace{Köln}
+
+\begin{document}
+\begin{letter}{
+	Hello World
+}
+\opening{Dear Madams, dear Sirs,}
+How about german \enquote{Umlaute: \enquote{ÄÖßüö} \textendash ey, brohter?}
+and again, hello world!
+
+Greetings from Germany. My Address is with \href{http://www.google.de}{Google}
+
+\closing{Yours sinceresly}
+\begin{cv}{Curriculum Vitae}
+ \begin{minipage}[t]{0.7\textwidth}
+  \begin{cvlist}{About Me}%{~}
+   \item Austin Powers
+  \end{cvlist}
+ \end{minipage}
+ \begin{minipage}{0.3\textwidth}
+  \begin{flushright}
+   \includegraphics[width=0.75\textwidth]{octocat.png}
+  \end{flushright}
+ \end{minipage}
+
+ \begin{cvlist}{Work}%{~}
+  \item[since 2017] \LaTeX-Specialist
+  \begin{compactitem}
+   \item Here
+   \item there
+  \end{compactitem}
+ \end{cvlist}
+\end{cv}
+
+\end{letter}
+\end{document}
