@@ -7,7 +7,6 @@ ENV PATH /usr/local/texlive/2016/bin/x86_64-linux:$PATH
 # Install required packages first
 RUN yum update -y && 	\
     yum install -y --setopt=tsflags=nodocs \
-        curl \
         git \
         perl-Digest-MD5 \
         perl-Tk \
@@ -54,4 +53,9 @@ RUN mkdir -p /usr/local/src &&  \
     pdflatex $(find /usr/local -name sample2e.tex) && \
     pdflatex /usr/local/src/job_appl_sample.tex && \
     pdflatex /usr/local/src/job_appl_sample.tex && \
-    rm -f /usr/local/src/*
+    rm -f /usr/local/src/* && \
+    yum remove -y \
+        git \
+        perl-Digest-MD5 \
+        perl-Tk && \
+    yum -y clean all
