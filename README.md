@@ -21,11 +21,19 @@ and make things work
 ## docker
 ### [Dockerfile](./docker/latex_minion)
 CentOS7 Tex Live 2016 basic scheme Installation with koma-script and german language support
-Docker Pull Command:
+Docker commands:
 ```
 docker pull eneuhauss/latex_minion
+docker run --name devlatex -v $(pwd)/docker/latex_minion:/work:Z -it eneuhauss/latex_minion:v1 /bin/bash
 ```
+(requires directory ```docker/latex_minion``` from this repository)
 
+Inside the container:
+```
+cd /work
+pdflatex job_appl_sample.tex
+```
+ 
 ## git
 
 ## go
