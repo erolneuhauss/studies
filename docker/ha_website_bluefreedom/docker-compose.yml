@@ -1,0 +1,20 @@
+version: '2'
+services:
+  web1:
+    image: "eneuhauss/mycentos:6v1baseweb"
+    ports:
+      - "8081:80"
+    volumes:
+      - /home/user/docker/bluefreedom/var/www/html:/var/www/html
+  web2:
+    image: "eneuhauss/mycentos:6v1baseweb"
+    ports:
+      - "8082:80"
+    volumes:
+      - /home/user/docker/bluefreedom/var/www/html:/var/www/html
+  web3:
+    image: "eneuhauss/mycentos:6v1baseweb"
+    ports:
+      - "8083:80"
+    volumes:
+      - /home/user/docker/bluefreedom/var/www/html:/var/www/html
