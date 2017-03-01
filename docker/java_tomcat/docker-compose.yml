@@ -10,14 +10,14 @@ services:
             context: .
             dockerfile: Dockerfile.java7
         container_name: java7
-        image: "docker.io/centos:6"
+        image: "eneuhauss/mycentos:java7"
 
     java8:
         build:
             context: .
             dockerfile: Dockerfile.java8
         container_name: java8
-        image: "docker.io/centos:6"
+        image: "eneuhauss/mycentos:java8"
 
     java7tomcat7:
         build:
