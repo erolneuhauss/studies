@@ -18,3 +18,9 @@ for java in java7 java8; do
     done
 done
 ```
+
+### Or use docker-compose
+```
+docker-compose build
+docker-compose up
+```
