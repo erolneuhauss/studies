@@ -1,0 +1,64 @@
+version: '2'
+
+networks:
+    default:
+        driver: bridge
+
+services:
+    java7:
+        build:
+            context: .
+            dockerfile: Dockerfile.java7
+        container_name: java7
+        image: "docker.io/centos:6"
+
+    java8:
+        build:
+            context: .
+            dockerfile: Dockerfile.java8
+        container_name: java8
+        image: "docker.io/centos:6"
+
+    java7tomcat7:
+        build:
+            context: .
+            dockerfile: Dockerfile.java7tomcat7
+        depends_on:
+            - "java7"
+        container_name: java7tomcat7
+        image: "eneuhauss/mycentos:java7tomcat7"
+        ports:
+             - "8077:8080"
+
+    java7tomcat8:
+        build:
+            context: .
+            dockerfile: Dockerfile.java7tomcat8
+        depends_on:
+            - "java7"
+        container_name: java7tomcat8
+        image: "eneuhauss/mycentos:java7tomcat8"
+        ports:
+             - "8078:8080"
+
+    java8tomcat7:
+        build:
+            context: .
+            dockerfile: Dockerfile.java8tomcat7
+        depends_on:
+            - "java8"
+        container_name: java8tomcat7
+        image: "eneuhauss/mycentos:java8tomcat7"
+        ports:
+             - "8087:8080"
+
+    java8tomcat8:
+        build:
+            context: .
+            dockerfile: Dockerfile.java8tomcat8
+        depends_on:
+            - "java8"
+        container_name: java8tomcat8
+        image: "eneuhauss/mycentos:java8tomcat8"
+        ports:
+             - "8088:8080"
