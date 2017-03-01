@@ -1,0 +1,9 @@
+FROM eneuhauss/mycentos:java7
+MAINTAINER eneuhauss@gmx.de
+
+RUN mkdir -p /opt/tomcat &&\
+    wget -q -P /usr/local/src http://www-eu.apache.org/dist/tomcat/tomcat-7/v7.0.75/bin/apache-tomcat-7.0.75.tar.gz && \
+    tar xzf /usr/local/src/apache-tomcat-7.0.75.tar.gz --strip-components 1 -C /opt/tomcat &&  \
+    rm -f /usr/local/src/apache-tomcat-7.0.75.tar.gz
+EXPOSE 8080
+

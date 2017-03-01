@@ -1,0 +1,8 @@
+FROM eneuhauss/mycentos:java7
+MAINTAINER eneuhauss@gmx.de
+
+RUN mkdir -p /opt/tomcat &&\
+    wget -q -P /usr/local/src http://www-eu.apache.org/dist/tomcat/tomcat-8/v8.5.11/bin/apache-tomcat-8.5.11.tar.gz && \
+    tar xzf /usr/local/src/apache-tomcat-8.5.11.tar.gz --strip-components 1 -C /opt/tomcat &&  \
+    rm -f /usr/local/src/apache-tomcat-8.5.11
+EXPOSE 8080

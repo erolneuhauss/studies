@@ -1,0 +1,27 @@
+# Dockerfile based on the latest CentOS 6 image
+FROM centos:6
+MAINTAINER eneuhauss@gmx.de
+
+ENV PATH="/opt/java/bin:/opt/tomcat/bin:$PATH" \
+    CATALINA_BASE="/opt/tomcat" \
+    CATALINA_HOME="/opt/tomcat" \
+    CATALINA_TMPDIR="/opt/tomcat/temp" \
+    JAVA_HOME="/opt/java" \
+    JAVA_JRE="/opt/java"
+
+# Install required packages first
+RUN yum update -y && 	\
+    yum install -y --setopt=tsflags=nodocs \
+        git \
+        sudo \
+        which \
+        wget && \
+    yum -y clean all
+COPY usr/local/src/jdk-8u121-linux-x64.tar.gz /usr/local/src/
+# Install and configure JDK8
+RUN mkdir -p /opt/java &&  \
+    tar xzf /usr/local/src/jdk-8u121-linux-x64.tar.gz --strip-components 1 -C /opt/java &&   \
+    for i in $(ls /opt/java/bin/); do \
+        alternatives --install /usr/bin/${i} ${i} /opt/java/bin/${i} 2; \
+    done && \ 
+    rm -f /usr/local/src/jdk-8u121-linux-x64.tar.gz
