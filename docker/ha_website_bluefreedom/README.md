@@ -15,6 +15,7 @@ docker run -itd --name web2 -v /home/user/docker/bluefreedom/var/www/html:/var/w
 docker run -itd --name web3 -v /home/user/docker/bluefreedom/var/www/html:/var/www/html:z -p 8083:80 eneuhauss/mycentos:6v1baseweb /bin/bash
 ```
 TODO: do it with docker-compose instead of manualy
+
 Hint:
 ```
 version: '2'
@@ -64,10 +65,18 @@ server {
 ```
 
 # Problems
-## SELINUX
-SELINUX denied nginx access on localhost port 8081-8031
+## SELinux
+SElinux denied nginx access on localhost port 8081-8031
+
 Solution:
 ```
 sudo grep nginx  /var/log/audit/audit.log | grep denied | sudo audit2allow -M proxypassnginx
 sudo semodule -i proxypassnginx.pp
 ```
+SElinux denied access on mounted volume
+```
+ls: cannot open directory /var/www/html: Permission denied
+```
+Solution
+* ```-v /home/user/docker/bluefreedom/var/www/html:/var/www/html:z``` or
+* run ```chcon -Rt svirt_sandbox_file_t /home/user/docker/bluefreedom/var/www/html``` first
