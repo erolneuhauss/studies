@@ -18,6 +18,7 @@ RUN mkdir -p /usr/local/src &&  \
         http://ftp.gwdg.de/pub/ctan/systems/texlive/tlnet/install-tl-unx.tar.gz \
         https://raw.githubusercontent.com/erolneuhauss/studies/master/docker/latex_minion/job_appl_sample.tex \
         https://raw.githubusercontent.com/erolneuhauss/studies/master/docker/latex_minion/minionpro.tgz \
+        https://raw.githubusercontent.com/erolneuhauss/studies/master/docker/latex_minion/myriadpro.tgz \
         https://raw.githubusercontent.com/erolneuhauss/studies/master/docker/latex_minion/octocat.png \
         https://raw.githubusercontent.com/erolneuhauss/studies/master/docker/latex_minion/texlive.profile && \
     tar xzf /usr/local/src/install-tl-unx.tar.gz -C /usr/local/bin &&   \
@@ -42,10 +43,13 @@ RUN mkdir -p /usr/local/src &&  \
         paralist \
         pdfpages \
         ucs \
-        xcolor && \
+        xcolor \
+	xkeyval && \
     tar xzf /usr/local/src/minionpro.tgz -C /usr/local/texlive/texmf-local && \
+    tar xzf /usr/local/src/myriadpro.tgz -C /usr/local/texlive/texmf-local && \
     mktexlsr /usr/local/texlive/texmf-local && \
     updmap-sys --enable Map=MinionPro.map && \
+    updmap-sys --enable Map=MyriadPro.map && \
     tex -version && \
     latex -version && \
     cd /usr/local/src && \
