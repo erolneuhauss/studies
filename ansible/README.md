@@ -59,3 +59,8 @@ db                         : ok=2    changed=0    unreachable=0    failed=0
 web                        : ok=2    changed=0    unreachable=0    failed=0
 ```
 
+### Ansible Ad-Hoc
+```
+ansible -i .vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory all -a 'hostname -I'
+ansible -i .vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory all -m yum -a 'name=git state=present' --become -f10
+```
