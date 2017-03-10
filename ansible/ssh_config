@@ -1,0 +1,7 @@
+HOST 127.0.0.1
+	StrictHostKeyChecking no
+	UserKnownHostsFile=/dev/null
+
+HOST 172.28.128.*
+	StrictHostKeyChecking no
+	UserKnownHostsFile=/dev/null
