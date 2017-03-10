@@ -7,4 +7,15 @@ wget https://releases.hashicorp.com/vagrant/1.9.2/vagrant_1.9.2_x86_64.rpm
 sudo rpm -ihv vagrant_1.9.2_x86_64.rpm
 ```
 
+## First run
+```
+vagrant box add centos/7
+vagrant init centos/7
+vagrant up
+vagrant ssh
+(exit)
+vagrant status
+vagrant global-status
+```
+
 ## Plugins
