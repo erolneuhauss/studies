@@ -1,7 +1,12 @@
----
-- hosts: all
+--- # some basic stuff
+- hosts: '{{ myhosts }}'
   become: true
-  gather_facts: true
+  gather_facts: '{{ gather }}'
+
+  vars:
+    myhosts: www
+    gather: yes
+
   tasks:
     - name: ensure ntpd is at the latest version on RedHat family
       yum: pkg=ntp state=latest
