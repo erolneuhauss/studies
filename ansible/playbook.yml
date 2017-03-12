@@ -1,13 +1,38 @@
 ---
 - hosts: all
   become: true
+  gather_facts: true
   tasks:
-    - name: ensure ntpd is at the latest version
+    - name: ensure ntpd is at the latest version on RedHat family
       yum: pkg=ntp state=latest
+      when: ansible_os_family == "RedHat"
       notify:
       - restart ntpd
+    - name: ensure ntpd is at the latest version on Debian family
+      apt: pkg=ntp state=latest
+      when: ansible_os_family == "Debian"
+      notify:
+      - restart ntp
+
+    - name: ensure httpd is at the latest version on RedHat family
+      yum: pkg=httpd state=latest
+      when: ansible_os_family == "RedHat"
+      notify:
+      - restart httpd
+
+    - name: ensure apache2 is at the latest version on Debian family
+      apt: pkg=apache2 state=latest
+      when: ansible_os_family == "Debian"
+      notify:
+      - restart apache2
+
   handlers:
     - name: restart ntpd
       service: name=ntpd state=restarted
+    - name: restart ntp
+      service: name=ntp state=restarted
 
-
+    - name: restart httpd
+      service: name=httpd state=restarted
+    - name: restart apache2
+      service: name=apache2 state=restarted
