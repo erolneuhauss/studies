@@ -111,6 +111,11 @@ cp vagrant_ansible_inventory /etc/ansible/hosts
 
 ssh -F ~/.ssh/ssh_config master "ansible all -a 'ansible --version'"
 
+ssh -F ~/.ssh/ssh_config master "ansible-playbook -v playbook.yml --become"
+ssh -F ~/.ssh/ssh_config slave2 "ansible slaves -m yum -a 'pkg=httpd,ntp state=absent' --become"
+ssh -F ~/.ssh/ssh_config master "ansible-playbook -e myhosts=master -v playbook.yml --become"
+ssh -F ~/.ssh/ssh_config slave2 "ansible masters -m yum -a 'pkg=httpd,ntp state=absent' --become"
+
 ```
 
 
