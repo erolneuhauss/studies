@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 
 $script = <<EOF
-yum install -y wget git
+yum install -y wget git vim
 rpm --import https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7
 rpm -ihv https://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-latest-7.noarch.rpm
 yum install -y ansible
