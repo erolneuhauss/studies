@@ -9,7 +9,9 @@ yum install -y ansible
 git clone https://github.com/erolneuhauss/studies.git
 cp studies/ansible/ssh_config /home/vagrant/.ssh/
 cp studies/ansible/insecure_private_key /home/vagrant/.ssh/id_rsa
+cp studies/ansible/provision/vagrant_ansible_inventory /home/vagrant/
 chmod 0600 /home/vagrant/.ssh/id_rsa
+chown vagrant:vagrant -R /home/vagrant
 EOF
 
 boxes = [
