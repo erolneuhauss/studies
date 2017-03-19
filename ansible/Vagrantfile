@@ -18,6 +18,10 @@ EOF
 
 boxes = [
     {
+        :name => "master",
+        :box  => "centos/7"
+    },
+    {
         :name => "slave1",
         :box  => "centos/7"
     },
@@ -32,16 +36,17 @@ Vagrant.configure("2") do |config|
   config.vm.network "private_network", type: "dhcp"
   config.vm.synced_folder '.', '/vagrant', :disabled => true
 
-  config.vm.define "master" do |config|
-    config.vm.box  = "centos/7"
-    config.vm.hostname = "master"
-    config.vm.provision "shell", inline: $script
-  end # config.vm.master
+#  config.vm.define "master" do |config|
+#    config.vm.box  = "centos/7"
+#    config.vm.hostname = "master"
+#    config.vm.provision "shell", inline: $script
+#  end # config.vm.master
 
   boxes.each do |box|
     config.vm.define box[:name] do |config|
       config.vm.box  = box[:box]
       config.vm.hostname = box[:name]
-    end # config.vm.slaves
+      config.vm.provision "shell", inline: $script
+    end # config.vm
   end # boxes.each.loop
 end # Vagrant
