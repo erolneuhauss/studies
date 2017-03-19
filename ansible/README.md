@@ -19,7 +19,7 @@ vagrant status
 vagrant global-status
 ```
 
-### Configuration
+### Configuration on vagrant host
 #### Lookup and modify ssh config and inventory for your needs
 ```
 vagrant ssh-config
@@ -69,7 +69,7 @@ slave1 ansible_ssh_host=172.28.128.4 ansible_ssh_port=22 ansible_ssh_user='vagra
 slave2 ansible_ssh_host=172.28.128.5 ansible_ssh_port=22 ansible_ssh_user='vagrant' ansible_ssh_private_key_file='~/.ssh/id_rsa' ansible_host_key_checking=false ansible_ssh_common_args='-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'
 ```
 
-### Check on nodes
+### Check on nodes from vagrant host
 ```
 for node in master slave1 slave2; do ssh -F ~/.ssh/ssh_config $node "hostname; ansible --version"; done
 
@@ -85,9 +85,25 @@ slave2
 ansible 2.2.1.0
   config file = /etc/ansible/ansible.cfg
   configured module search path = Default w/o overrides
-
 ```
 
+### Check on nodes from ansible client indirectly form the vagrant host  
+
+```
+ssh -F ~/.ssh/ssh_config master "ansible -i vagrant_ansible_inventory all -a 'ansible --version'"
+slave1 | SUCCESS | rc=0 >>
+ansible 2.2.1.0
+  config file = /etc/ansible/ansible.cfg
+  configured module search path = Default w/o overrides
+master | SUCCESS | rc=0 >>
+ansible 2.2.1.0
+  config file = /etc/ansible/ansible.cfg
+  configured module search path = Default w/o overrides
+slave2 | SUCCESS | rc=0 >>
+ansible 2.2.1.0
+  config file = /etc/ansible/ansible.cfg
+  configured module search path = Default w/o overrides
+```
 
 ## Ansible Playbook
 ```
