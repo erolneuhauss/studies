@@ -4,7 +4,7 @@
   gather_facts: '{{ gather }}'
 
   vars:
-    myhosts: www
+    myhosts: slave1,slave2
     gather: yes
 
   tasks:
