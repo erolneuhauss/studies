@@ -19,6 +19,76 @@ vagrant status
 vagrant global-status
 ```
 
+### Configuration
+#### Lookup and modify ssh config and inventory for your needs
+```
+vagrant ssh-config
+```
+#### ssh configuration
+```
+HOST master
+  HostName 127.0.0.1
+  User vagrant
+  Port 2222
+  UserKnownHostsFile /dev/null
+  StrictHostKeyChecking no
+  PasswordAuthentication no
+  IdentityFile C:/Users/eroln.DESKTOP-QMFK1LG/.vagrant.d/insecure_private_key
+  IdentitiesOnly yes
+  LogLevel FATAL
+
+HOST slave1
+  HostName 127.0.0.1
+  User vagrant
+  Port 2200
+  UserKnownHostsFile /dev/null
+  StrictHostKeyChecking no
+  PasswordAuthentication no
+  IdentityFile C:/Users/eroln.DESKTOP-QMFK1LG/.vagrant.d/insecure_private_key
+  IdentitiesOnly yes
+  LogLevel FATAL
+
+HOST slave2
+  HostName 127.0.0.1
+  User vagrant
+  Port 2201
+  UserKnownHostsFile /dev/null
+  StrictHostKeyChecking no
+  PasswordAuthentication no
+  IdentityFile C:/Users/eroln.DESKTOP-QMFK1LG/.vagrant.d/insecure_private_key
+  IdentitiesOnly yes
+  LogLevel FATAL
+```
+#### Ansible configuration in inventory file
+```cp insecure_private_key ~/.ssh/id_rsa```
+
+##### vagrant_ansible_inventory
+```
+master ansible_ssh_host=172.28.128.3 ansible_ssh_port=22 ansible_ssh_user='vagrant' ansible_ssh_private_key_file='~/.ssh/id_rsa' ansible_host_key_checking=false ansible_ssh_common_args='-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'
+slave1 ansible_ssh_host=172.28.128.4 ansible_ssh_port=22 ansible_ssh_user='vagrant' ansible_ssh_private_key_file='~/.ssh/id_rsa' ansible_host_key_checking=false ansible_ssh_common_args='-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'
+slave2 ansible_ssh_host=172.28.128.5 ansible_ssh_port=22 ansible_ssh_user='vagrant' ansible_ssh_private_key_file='~/.ssh/id_rsa' ansible_host_key_checking=false ansible_ssh_common_args='-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'
+```
+
+### Check on nodes
+```
+for node in master slave1 slave2; do ssh -F ~/.ssh/ssh_config $node "hostname; ansible --version"; done
+
+master
+ansible 2.2.1.0
+  config file = /etc/ansible/ansible.cfg
+  configured module search path = Default w/o overrides
+slave1
+ansible 2.2.1.0
+  config file = /etc/ansible/ansible.cfg
+  configured module search path = Default w/o overrides
+slave2
+ansible 2.2.1.0
+  config file = /etc/ansible/ansible.cfg
+  configured module search path = Default w/o overrides
+
+```
+
+
 ## Ansible Playbook
 ```
 ---
