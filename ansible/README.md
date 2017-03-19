@@ -105,6 +105,15 @@ ansible 2.2.1.0
   configured module search path = Default w/o overrides
 ```
 
+### make life easier
+```
+cp vagrant_ansible_inventory /etc/ansible/hosts
+
+ssh -F ~/.ssh/ssh_config master "ansible all -a 'ansible --version'"
+
+```
+
+
 ## Ansible Playbook
 ```
 ---
