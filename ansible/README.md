@@ -23,8 +23,9 @@ vagrant global-status
 #### Lookup and modify ssh config and inventory for your needs
 ```
 vagrant ssh-config
+cp insecure_private_key ~/.ssh/id_rsa
 ```
-#### ssh configuration
+#### copy vagrant ssh-config to ssh client configuration (~/.ssh/config)
 ```
 HOST master
   HostName 127.0.0.1
@@ -60,7 +61,6 @@ HOST slave2
   LogLevel FATAL
 ```
 #### Ansible configuration in inventory file
-```cp insecure_private_key ~/.ssh/id_rsa```
 
 ##### vagrant_ansible_inventory
 ```
@@ -71,7 +71,7 @@ slave2 ansible_ssh_host=172.28.128.5 ansible_ssh_port=22 ansible_ssh_user='vagra
 
 ### Check on nodes from vagrant host
 ```
-for node in master slave1 slave2; do ssh -F ~/.ssh/ssh_config $node "hostname; ansible --version"; done
+for node in master slave1 slave2; do ssh $node "hostname; ansible --version"; done
 
 master
 ansible 2.2.1.0
@@ -90,7 +90,7 @@ ansible 2.2.1.0
 ### Check on nodes from ansible client indirectly form the vagrant host  
 
 ```
-ssh -F ~/.ssh/ssh_config master "ansible -i vagrant_ansible_inventory all -a 'ansible --version'"
+ssh master "ansible -i vagrant_ansible_inventory all -a 'ansible --version'"
 slave1 | SUCCESS | rc=0 >>
 ansible 2.2.1.0
   config file = /etc/ansible/ansible.cfg
@@ -107,14 +107,15 @@ ansible 2.2.1.0
 
 ### make life easier
 ```
-cp vagrant_ansible_inventory /etc/ansible/hosts
+sudo cp vagrant_ansible_inventory /etc/ansible/hosts
 
-ssh -F ~/.ssh/ssh_config master "ansible all -a 'ansible --version'"
+ssh master "ansible all -a 'ansible --version'"
+ssh master "ansible all --list-hosts"
 
-ssh -F ~/.ssh/ssh_config master "ansible-playbook -v playbook.yml --become"
-ssh -F ~/.ssh/ssh_config slave2 "ansible slaves -m yum -a 'pkg=httpd,ntp state=absent' --become"
-ssh -F ~/.ssh/ssh_config master "ansible-playbook -e myhosts=master -v playbook.yml --become"
-ssh -F ~/.ssh/ssh_config slave2 "ansible masters -m yum -a 'pkg=httpd,ntp state=absent' --become"
+ssh master "ansible-playbook -v playbook.yml --become"
+ssh slave2 "ansible slaves -m yum -a 'pkg=httpd,ntp state=absent' --become"
+ssh master "ansible-playbook -e myhosts=master -v playbook.yml --become"
+ssh slave2 "ansible masters -m yum -a 'pkg=httpd,ntp state=absent' --become"
 
 ```
 

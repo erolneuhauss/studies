@@ -8,7 +8,7 @@ rpm --import https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7
 rpm -ihv https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 yum install -y ansible
 git clone https://github.com/erolneuhauss/studies.git
-cp studies/ansible/ssh_config /home/vagrant/.ssh/
+cp studies/ansible/ssh_config /home/vagrant/.ssh/config
 cp studies/ansible/insecure_private_key /home/vagrant/.ssh/id_rsa
 cp studies/ansible/provision/vagrant_ansible_inventory /home/vagrant/hosts
 cp studies/ansible/provision/vagrant_ansible_inventory /etc/ansible/hosts
