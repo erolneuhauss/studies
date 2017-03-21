@@ -3,33 +3,40 @@
 
 # Shell script in order to setup an ansible "master"
 $script = <<EOF
-function REMOVE_GITREPO(){
-  if [[ -d /home/vagrant/studies ]]; then
-    rm -rf /home/vagrant/studies
+function CLONE_REPO(){
+  if [ -d /home/vagrant/studies ]; then
+    cd ~/studies
+    git pull origin master
+    cd ~/
+  else
+    git clone \
+       https://github.com/erolneuhauss/studies.git
   fi
 }
 
 function INSTALL_ANSIBLE(){
-  if [[ -r /etc/os-release ]]; then
-    . /etc/os-release
-    if [[ "$ID" = "ubuntu" ]]; then
-      echo ubuntu
-      apt-get install software-properties-common
-      apt-add-repository ppa:ansible/ansible
-      apt-get update
-      apt-get install -y git wget ansible
-    elif [[ "$ID" = "centos" ]]; then
-      echo centos
-      yum install -y wget git vim
-      rpm --import https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7
-      rpm -ihv https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-      yum install -y ansible
+  ansible --version
+  if [ $? -ne 0 ]; then
+    if [ -r /etc/os-release ]; then
+      . /etc/os-release
+      if [ "$ID" = "ubuntu" ]; then
+        echo ubuntu
+        apt-get install software-properties-common
+        apt-add-repository ppa:ansible/ansible
+        apt-get update
+        apt-get install -y git wget ansible
+      elif [ "$ID" = "centos" ]; then
+        echo centos
+        yum install -y wget git vim
+        rpm --import https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7
+        rpm -ihv https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+        yum install -y ansible
+      fi
     fi
   fi
 }
 
 function CONFIG_ANSIBLE(){
-  git clone https://github.com/erolneuhauss/studies.git
   cp studies/ansible/ssh_config /home/vagrant/.ssh/config
   cp studies/ansible/insecure_private_key /home/vagrant/.ssh/id_rsa
   cp studies/ansible/provision/vagrant_ansible_inventory /home/vagrant/hosts
@@ -39,7 +46,7 @@ function CONFIG_ANSIBLE(){
   chown vagrant:vagrant -R /home/vagrant
 }
 
-REMOVE_GITREPO
+CLONE_GITREPO
 INSTALL_ANSIBLE
 CONFIG_ANSIBLE
 EOF
