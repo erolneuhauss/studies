@@ -140,6 +140,8 @@ ansible-doc setup
 ansible master -m setup
 ssh master "ansible master -m setup -a filter=ansible_default_ipv4"
 ssh master "ansible master -m setup -a filter=*ipv4"
+ssh master "ansible master -m setup -a filter="ansible_virt*"
+ssh master "ansible master -m setup -a filter="ansible_dist*"
 
 ```
 
