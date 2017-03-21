@@ -3,11 +3,10 @@
 
 # Shell script in order to setup an ansible "master"
 $script = <<EOF
-function CLONE_REPO(){
+function CLONE_GITREPO(){
   if [ -d /home/vagrant/studies ]; then
-    cd ~/studies
+    cd /home/vagrant/studies
     git pull origin master
-    cd ~/
   else
     git clone \
        https://github.com/erolneuhauss/studies.git
@@ -37,11 +36,11 @@ function INSTALL_ANSIBLE(){
 }
 
 function CONFIG_ANSIBLE(){
-  cp studies/ansible/ssh_config /home/vagrant/.ssh/config
-  cp studies/ansible/insecure_private_key /home/vagrant/.ssh/id_rsa
-  cp studies/ansible/provision/vagrant_ansible_inventory /home/vagrant/hosts
-  cp studies/ansible/provision/vagrant_ansible_inventory /etc/ansible/hosts
-  cp studies/ansible/provision/playbook.yml /home/vagrant/
+  cp /home/vagrant/studies/ansible/ssh_config /home/vagrant/.ssh/config
+  cp /home/vagrant/studies/ansible/insecure_private_key /home/vagrant/.ssh/id_rsa
+  cp /home/vagrant/studies/ansible/provision/vagrant_ansible_inventory /home/vagrant/hosts
+  cp /home/vagrant/studies/ansible/provision/vagrant_ansible_inventory /etc/ansible/hosts
+  cp /home/vagrant/studies/ansible/provision/playbook.yml /home/vagrant/
   chmod 0600 /home/vagrant/.ssh/id_rsa
   chown vagrant:vagrant -R /home/vagrant
 }
