@@ -3,6 +3,12 @@
 
 # Shell script in order to setup an ansible "master"
 $script = <<EOF
+function REMOVE_GITREPO(){
+  if [[ -d /home/vagrant/studies ]]; then
+    rm -rf /home/vagrant/studies
+  fi
+}
+
 function INSTALL_ANSIBLE(){
   if [[ -r /etc/os-release ]]; then
     . /etc/os-release
@@ -33,6 +39,7 @@ function CONFIG_ANSIBLE(){
   chown vagrant:vagrant -R /home/vagrant
 }
 
+REMOVE_GITREPO
 INSTALL_ANSIBLE
 CONFIG_ANSIBLE
 EOF
