@@ -111,6 +111,7 @@ sudo cp vagrant_ansible_inventory /etc/ansible/hosts
 
 ssh master "ansible all -a 'ansible --version'"
 ssh master "ansible all --list-hosts"
+ssh master "ansible master -m debug -a 'var=groups'"
 
 ssh master "ansible-playbook -v playbook.yml --become"
 ssh slave2 "ansible slaves -m yum -a 'pkg=httpd,ntp state=absent' --become"
