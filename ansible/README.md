@@ -97,6 +97,21 @@ ansible 2.2.1.0
 ### Check on nodes from ansible client indirectly form the vagrant host  
 
 ```
+ssh master "ansible all -m ping"
+master | SUCCESS => {
+    "changed": false,
+    "ping": "pong"
+}
+slave1 | SUCCESS => {
+    "changed": false,
+    "ping": "pong"
+}
+slave2 | SUCCESS => {
+    "changed": false,
+    "ping": "pong"
+}
+
+
 ssh master "ansible -i vagrant_ansible_inventory all -a 'ansible --version'"
 slave1 | SUCCESS | rc=0 >>
 ansible 2.2.1.0
