@@ -8,6 +8,12 @@ wget https://releases.hashicorp.com/vagrant/1.9.2/vagrant_1.9.2_x86_64.rpm
 sudo rpm -ihv vagrant_1.9.2_x86_64.rpm
 ```
 
+### Help on vagrant
+```
+vagrant
+vagrant ssh -h
+```
+
 ### First run
 ```
 vagrant box add centos/7
@@ -25,6 +31,7 @@ vagrant global-status
 vagrant ssh-config
 cp insecure_private_key ~/.ssh/id_rsa
 ```
+
 #### copy vagrant ssh-config to ssh client configuration (~/.ssh/config)
 ```
 HOST master
@@ -103,6 +110,22 @@ slave2 | SUCCESS | rc=0 >>
 ansible 2.2.1.0
   config file = /etc/ansible/ansible.cfg
   configured module search path = Default w/o overrides
+```
+## Ansible help
+```
+ansible --help
+
+ansible-doc -l
+
+ansible-doc setup
+```
+
+## Ansible facts
+```
+ansible master -m setup
+ssh master "ansible master -m setup -a filter=ansible_default_ipv4"
+ssh master "ansible master -m setup -a filter=*ipv4"
+
 ```
 
 ## Ansible orchestration
