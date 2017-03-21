@@ -105,7 +105,7 @@ ansible 2.2.1.0
   configured module search path = Default w/o overrides
 ```
 
-### make life easier
+## Ansible orchestration
 ```
 sudo cp vagrant_ansible_inventory /etc/ansible/hosts
 
@@ -113,9 +113,7 @@ ssh master "ansible all -a 'ansible --version'"
 ssh master "ansible all --list-hosts"
 ssh master "ansible master -m debug -a 'var=groups'"
 
-ssh master "ansible-playbook -v playbook.yml --become"
 ssh slave2 "ansible slaves -m yum -a 'pkg=httpd,ntp state=absent' --become"
-ssh master "ansible-playbook -e myhosts=master -v playbook.yml --become"
 ssh slave2 "ansible masters -m yum -a 'pkg=httpd,ntp state=absent' --become"
 
 ```
@@ -124,7 +122,7 @@ ssh slave2 "ansible masters -m yum -a 'pkg=httpd,ntp state=absent' --become"
 ## Ansible Playbook
 ```
 ---
-- hosts: all
+- hosts: '{{myhosts}}'
   become: true
   tasks:
     - name: ensure ntpd is at the latest version
@@ -138,7 +136,8 @@ ssh slave2 "ansible masters -m yum -a 'pkg=httpd,ntp state=absent' --become"
 
 ### Run manually
 ```
-ansible-playbook -i vagrant_ansible_inventory -v playbook.yml
+ssh master "ansible-playbook -e myhosts=master -v playbook.yml --become"
+ssh master "ansible-playbook -v playbook.yml --become"
 ```
 #### Possible outcome
 ```
@@ -159,10 +158,4 @@ ok: [db] => {"changed": false, "msg": "", "rc": 0, "results": ["All packages pro
 PLAY RECAP *********************************************************************                          
 db                         : ok=2    changed=0    unreachable=0    failed=0                               
 web                        : ok=2    changed=0    unreachable=0    failed=0
-```
-
-### Ansible Ad-Hoc
-```
-ansible -i .vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory all -a 'hostname -I'
-ansible -i .vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory all -m yum -a 'name=git state=present' --become -f10
 ```
