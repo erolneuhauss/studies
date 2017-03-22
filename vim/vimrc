@@ -14,8 +14,7 @@ execute pathogen#helptags()
 filetype plugin indent on
 syntax on
 let g:airline_theme='powerlineish'
-set guifont=Droid\ Sans\ Mono\ for\ Powerline\ Nerd\ Font\ Complete\ Windows\ Compatible:h14
-"let g:airline_powerline_fonts=1
+let g:airline_powerline_fonts=1
 set laststatus=2
 set background=dark
 set t_Co=256
