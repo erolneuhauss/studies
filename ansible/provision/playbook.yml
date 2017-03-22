@@ -4,7 +4,9 @@
   gather_facts: '{{ gather }}'
 
   vars:
-    myhosts: slaves
+    playbook_version: 0.1
+  vars_files:
+    vars/main.yml
     gather: yes
 
   tasks:
