@@ -9,7 +9,8 @@ function CLONE_GITREPO(){
     git pull origin master
   else
     git clone \
-       https://github.com/erolneuhauss/studies.git
+       https://github.com/erolneuhauss/studies.git \
+       /home/vagrant/studies
   fi
 }
 
