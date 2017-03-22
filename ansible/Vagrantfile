@@ -38,6 +38,7 @@ function INSTALL_ANSIBLE(){
 
 function CONFIG_ANSIBLE(){
   cp /home/vagrant/studies/ansible/ssh_config /home/vagrant/.ssh/config
+  cp /home/vagrant/studies/ansible/gitconfig /home/vagrant/.gitconfig
   cp /home/vagrant/studies/ansible/insecure_private_key /home/vagrant/.ssh/id_rsa
   cp /home/vagrant/studies/ansible/provision/vagrant_ansible_inventory /home/vagrant/hosts
   cp /home/vagrant/studies/ansible/provision/vagrant_ansible_inventory /etc/ansible/hosts
