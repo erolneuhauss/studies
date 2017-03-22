@@ -40,7 +40,7 @@ function CONFIG_ANSIBLE(){
   cp /home/vagrant/studies/ansible/ssh_config /home/vagrant/.ssh/config
   cp /home/vagrant/studies/ansible/gitconfig /home/vagrant/.gitconfig
   cp /home/vagrant/studies/ansible/insecure_private_key /home/vagrant/.ssh/id_rsa
-  cp /home/vagrant/studies/ansible/provision/vagrant_ansible_inventory /etc/ansible/hosts
+  cp /home/vagrant/studies/ansible/provision/hosts /etc/ansible/hosts
   for file in $(ls /home/vagrant/studies/ansible/provision/); do
     ln -s -r /home/vagrant/studies/ansible/provision/${file} /home/vagrant/${file}
   done
