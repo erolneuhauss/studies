@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-# Shell script in order to setup an ansible "master"
+# Shell script in order to setup ansible nodes
 $script = <<EOF
 function CLONE_GITREPO(){
   if [ -d /home/vagrant/studies ]; then
@@ -25,6 +25,23 @@ function INSTALL_ANSIBLE(){
         apt-add-repository ppa:ansible/ansible
         apt-get update
         apt-get install -y git wget ansible
+        tasksel install xubuntu-desktop
+        mkdir -p /home/vagrant/.vim/{autoload,bundle}
+        curl -LSso /home/vagrant/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
+        cd /home/vagrant/.vim/bundle
+        git clone https://github.com/tpope/vim-fugitive
+        git clone https://github.com/scrooloose/nerdtree
+        git clone https://github.com/scrooloose/syntastic
+        git clone https://github.com/ctrlpvim/ctrlp.vim
+        git clone https://github.com/altercation/vim-colors-solarized
+        git clone https://github.com/bling/vim-airline
+        git clone https://github.com/vim-airline/vim-airline-themes
+        git clone https://github.com/mhinz/vim-startify
+        git clone --depth 1 https://github.com/ryanoasis/nerd-fonts
+        git clone https://github.com/ryanoasis/vim-webdevicons
+        cd nerd-fonts
+        ./install.sh DejaVuSansMono
+        curl -LSso /home/vagrant/.vimrc https://raw.githubusercontent.com/erolneuhauss/studies/master/vim/vimrc
       elif [ "$ID" = "centos" ]; then
         echo centos
         yum install -y wget git vim
@@ -56,7 +73,7 @@ EOF
 boxes = [
     {
         :name => "master",
-        :box  => "centos/7"
+        :box  => "ubuntu/trusty64"
     },
     {
         :name => "slave1",
@@ -68,7 +85,7 @@ boxes = [
     },
     {
         :name => "slave3",
-	:box  => "ubuntu/trusty64"
+        :box  => "centos/7"
     },
 ]
 
