@@ -68,6 +68,7 @@ function INSTALL_VIMBUNDLE(){
 function CONFIG_ANSIBLE(){
   cp /home/vagrant/studies/ansible/ssh_config /home/vagrant/.ssh/config
   cp /home/vagrant/studies/ansible/gitconfig /home/vagrant/.gitconfig
+  cp /home/vagrant/studies/ansible/terminalrc /home/vagrant/.config/xfce4/terminal/terminalrc
   cp /home/vagrant/studies/ansible/insecure_private_key /home/vagrant/.ssh/id_rsa
   chmod 0600 /home/vagrant/.ssh/id_rsa
   cp /home/vagrant/studies/ansible/provision/hosts /etc/ansible/hosts
