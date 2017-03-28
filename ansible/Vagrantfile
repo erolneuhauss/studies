@@ -14,6 +14,13 @@ function CLONE_GITREPO(){
   fi
 }
 
+function INSTALL_DESKTOP(){
+  pgrep -l gnome
+  if [ $? -ne 0 ]; then
+    tasksel install xubuntu-desktop
+  fi
+}
+
 function INSTALL_ANSIBLE(){
   ansible --version
   if [ $? -ne 0 ]; then
@@ -25,7 +32,6 @@ function INSTALL_ANSIBLE(){
         apt-add-repository ppa:ansible/ansible
         apt-get update
         apt-get install -y git wget ansible
-        tasksel install xubuntu-desktop
         mkdir -p /home/vagrant/.vim/{autoload,bundle}
         curl -LSso /home/vagrant/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
         cd /home/vagrant/.vim/bundle
@@ -66,6 +72,7 @@ function CONFIG_ANSIBLE(){
 }
 
 CLONE_GITREPO
+INSTALL_DESKTOP
 INSTALL_ANSIBLE
 CONFIG_ANSIBLE
 EOF
