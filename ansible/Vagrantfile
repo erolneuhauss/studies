@@ -15,7 +15,7 @@ function CLONE_GITREPO(){
 }
 
 function INSTALL_DESKTOP(){
-  pgrep -l gnome
+  pgrep -l xfce
   if [ $? -ne 0 ]; then
     tasksel install xubuntu-desktop
   fi
@@ -32,22 +32,6 @@ function INSTALL_ANSIBLE(){
         apt-add-repository ppa:ansible/ansible
         apt-get update
         apt-get install -y git wget ansible
-        mkdir -p /home/vagrant/.vim/{autoload,bundle}
-        curl -LSso /home/vagrant/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
-        cd /home/vagrant/.vim/bundle
-        git clone https://github.com/tpope/vim-fugitive
-        git clone https://github.com/scrooloose/nerdtree
-        git clone https://github.com/scrooloose/syntastic
-        git clone https://github.com/ctrlpvim/ctrlp.vim
-        git clone https://github.com/altercation/vim-colors-solarized
-        git clone https://github.com/bling/vim-airline
-        git clone https://github.com/vim-airline/vim-airline-themes
-        git clone https://github.com/mhinz/vim-startify
-        git clone --depth 1 https://github.com/ryanoasis/nerd-fonts
-        git clone https://github.com/ryanoasis/vim-webdevicons
-        cd nerd-fonts
-        ./install.sh DejaVuSansMono
-        curl -LSso /home/vagrant/.vimrc https://raw.githubusercontent.com/erolneuhauss/studies/master/vim/vimrc
       elif [ "$ID" = "centos" ]; then
         echo centos
         yum install -y wget git vim
@@ -59,20 +43,45 @@ function INSTALL_ANSIBLE(){
   fi
 }
 
+function INSTALL_VIMBUNDLE(){
+  if [ ! -f  /home/vagrant/.vim/autoload/pathogen.vim ]; then
+    mkdir -p /home/vagrant/.vim/{autoload,bundle}
+    curl -LSso /home/vagrant/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
+    cd /home/vagrant/.vim/bundle
+    git clone https://github.com/tpope/vim-fugitive
+    git clone https://github.com/scrooloose/nerdtree
+    git clone https://github.com/scrooloose/syntastic
+    git clone https://github.com/ctrlpvim/ctrlp.vim
+    git clone https://github.com/altercation/vim-colors-solarized
+    git clone https://github.com/bling/vim-airline
+    git clone https://github.com/vim-airline/vim-airline-themes
+    git clone https://github.com/mhinz/vim-startify
+    git clone --depth 1 https://github.com/ryanoasis/nerd-fonts
+    git clone https://github.com/ryanoasis/vim-webdevicons
+    cd nerd-fonts
+    su vagrant ./install.sh DejaVuSansMono
+    curl -LSso /home/vagrant/.vimrc https://raw.githubusercontent.com/erolneuhauss/studies/master/vim/vimrc
+    chown vagrant:vagrant -R /home/vagrant
+  fi
+}
+
 function CONFIG_ANSIBLE(){
   cp /home/vagrant/studies/ansible/ssh_config /home/vagrant/.ssh/config
   cp /home/vagrant/studies/ansible/gitconfig /home/vagrant/.gitconfig
   cp /home/vagrant/studies/ansible/insecure_private_key /home/vagrant/.ssh/id_rsa
-  cp /home/vagrant/studies/ansible/provision/hosts /etc/ansible/hosts
-  for file in $(ls /home/vagrant/studies/ansible/provision/); do
-    ln -s -r /home/vagrant/studies/ansible/provision/${file} /home/vagrant/${file}
-  done
   chmod 0600 /home/vagrant/.ssh/id_rsa
+  cp /home/vagrant/studies/ansible/provision/hosts /etc/ansible/hosts
+  if [ ! "/home/vagrant/studies/ansible/provision/playbook.yml" ]; then
+    for file in $(ls /home/vagrant/studies/ansible/provision/); do
+      ln -s -r /home/vagrant/studies/ansible/provision/${file} /home/vagrant/${file}
+    done
+  fi
   chown vagrant:vagrant -R /home/vagrant
 }
 
 CLONE_GITREPO
 INSTALL_DESKTOP
+INSTALL_VIMBUNDLE
 INSTALL_ANSIBLE
 CONFIG_ANSIBLE
 EOF
