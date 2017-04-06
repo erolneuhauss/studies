@@ -7,6 +7,10 @@ Open Source SIEM
 ```
 
 ```
+Intelligent, Affordable Security is Our Mission.
+```
+
+```
 OSSIM, AlienVault’s Open Source Security Information
 and Event Management (SIEM) product,
 provides you with a feature-rich open source SIEM
@@ -29,6 +33,8 @@ essential security capabilities you need like:
     - Behavioral monitoring
     - SIEM
 ```
+
+
 2017-04-06: [https://www.alienvault.com/products/ossim](alienvault.com/products/ossim)
 
 ## Key aspects and focus of the evaluation
@@ -36,7 +42,27 @@ essential security capabilities you need like:
     - how fast can it be set up, configure and have it running in production?
     - what is the quality of the software itself and the web user interface?
 
+## Resources for the evaluation
+    - YouTube: OSSIM Tutorial: Best Practices for OSSIM Configuration
+    (17.12.2015)
 
+## Answers
+
+## Version
+5.3.6
 
 ## Architecture
-### OSSIM uses OSSEC Agent
+### OSSIM uses OSSEC agent software on client
+    -   add an asset on the server via wui
+    -   add an agent onto the asset
+    -   extract key from agent and use it with ```manage_agent```
+#### Client Installation
+
+```
+wget https://www.atomicorp.com/installers/atomic
+wget https://ossec.github.io/files/OSSEC-ARCHIVE-KEY.asc
+sudo gpg --import OSSEC-ARCHIVE-KEY.asc
+sudo bash atomic
+sudo yum -y install ossec-hids-agent.x86_64
+/var/ossec/bin/manage_agent -i <id>
+```
