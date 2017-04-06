@@ -63,6 +63,12 @@ wget https://www.atomicorp.com/installers/atomic
 wget https://ossec.github.io/files/OSSEC-ARCHIVE-KEY.asc
 sudo gpg --import OSSEC-ARCHIVE-KEY.asc
 sudo bash atomic
+
 sudo yum -y install ossec-hids-agent.x86_64
-/var/ossec/bin/manage_agent -i <id>
+
+sudo /var/ossec/bin/manage_agent -i <id>
+
+sudo sed -i 's/192.168.10.100/192.168.56.104' /var/ossec/etc/ossec-agent.conf
+sudo systemctl enable ossec-hids
+sudo systemctl start ossec-hids
 ```
