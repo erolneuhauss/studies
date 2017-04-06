@@ -1,5 +1,5 @@
-# AlienVaultOSSIM
-## Key phrases from the company
+# Evaluation of AlienVault OSSIM
+## Key phrases from the company's website
 ```
 AlienVault OSSIM:
 The World’s Most Widely Used
@@ -29,7 +29,14 @@ essential security capabilities you need like:
     - Behavioral monitoring
     - SIEM
 ```
-2017-04-06: [https://www.alienvault.com/products/ossim](https://www.alienvault.com/products/ossim)
+2017-04-06: [https://www.alienvault.com/products/ossim](alienvault.com/products/ossim)
+
+## Key aspects and focus of the evaluation
+    - does it come with read-to-use defaults and filters?
+    - how fast can it be set up, configure and have it running in production?
+    - what is the quality of the software itself and the web user interface?
+
+
 
 ## Architecture
 ### OSSIM uses OSSEC Agent
