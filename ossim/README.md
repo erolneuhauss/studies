@@ -42,6 +42,15 @@ essential security capabilities you need like:
 - how fast can it be set up, configure and have it running in production?
 - what is the quality of the software itself and the web user interface?
 
+## Prelimary results of the evaluation
+- alienvault OSSIM is read-to-use with defaults and filters already in place
+- server setup is very fast due to installation via iso image (Linux Debian)
+- installation of clients via wui very unhandy -- automatisation definitly needed
+- high hardware system requirements and high resource consumtion. Minimum
+    - 8 core CPU
+    - 16 GB RAM
+    - 1 TB fast HDD
+
 ## Resources for the evaluation
 - YouTube: [https://www.youtube.com/user/alienvaulttv](Alienvaulttv)
 - YouTube: [https://www.youtube.com/watch?v=qjaO1cNj2fo&index=4&list=PLvc7OorCTShovyYGc_9Q6abTLt-ucE_wT](OSSIM Tutorial: Best Practices for OSSIM Configuration)
@@ -50,7 +59,6 @@ essential security capabilities you need like:
 - [http://blog.muhammadattique.com/installing-configuring-alienvault-ossim-opensource-siem](blog.muhammadattique.com/installing-configuring-alienvault-ossim-opensource-siem)
 - [http://blog.muhammadattique.com/configuring-ossec-clients-with-ossim/](blog.muhammadattique.com/configuring-ossec-clients-with-ossim)
 
-## Answers
 
 ## Version
 5.3.6 installed. 5.3.7 is ready for customers.
