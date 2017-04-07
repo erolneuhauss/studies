@@ -51,6 +51,8 @@ essential security capabilities you need like:
     - 8 core CPU
     - 16 GB RAM
     - 1 TB fast HDD
+- wui slow on 4 Core RAM, 6 GB RAM. 
+    - go to Configuration -> Deployment and wait for status.
 
 ## Resources for the evaluation
 - YouTube: [https://www.youtube.com/user/alienvaulttv](Alienvaulttv)
