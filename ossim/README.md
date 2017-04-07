@@ -43,13 +43,17 @@ essential security capabilities you need like:
     - what is the quality of the software itself and the web user interface?
 
 ## Resources for the evaluation
-    - YouTube: OSSIM Tutorial: Best Practices for OSSIM Configuration
+    - YouTube: [https://www.youtube.com/user/alienvaulttv](Alienvaulttv)
+    - YouTube: [https://www.youtube.com/watch?v=qjaO1cNj2fo&index=4&list=PLvc7OorCTShovyYGc_9Q6abTLt-ucE_wT](OSSIM Tutorial: Best Practices for OSSIM Configuration)
     (17.12.2015)
+    - [https://www.alienvault.com/documentation/usm-appliance.htm](www.alienvault.com/documentation/usm-appliance.htm)
+    - [http://blog.muhammadattique.com/installing-configuring-alienvault-ossim-opensource-siem](blog.muhammadattique.com/installing-configuring-alienvault-ossim-opensource-siem)
+    - [http://blog.muhammadattique.com/configuring-ossec-clients-with-ossim/](blog.muhammadattique.com/configuring-ossec-clients-with-ossim)
 
 ## Answers
 
 ## Version
-5.3.6
+5.3.6 installed. 5.3.7 is ready for customers.
 
 ## Architecture
 ### OSSIM uses OSSEC agent software on client
