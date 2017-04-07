@@ -53,8 +53,14 @@ essential security capabilities you need like:
     - 1 TB fast HDD
 - wui slow on 4 Core RAM, 6 GB RAM. 
     - go to Configuration -> Deployment and wait for status.
+- plentyfull documentation, howtos, forum support and webcasts
+- project und forum very alive
+- no source code repository available online
+- Alienvault consists on other open source software components
+- Alienvault: all-in-one
 
 ## Resources for the evaluation
+- [AlienVault Resource Center](https://www.alienvault.com/resource-center)
 - [linoxide.com/security/install-configure-alienvault-siem-ossim/](http://linoxide.com/security/install-configure-alienvault-siem-ossim/)
 - YouTube: [Alienvaulttv](https://www.youtube.com/user/alienvaulttv)
 - YouTube: [OSSIM Tutorial: Best Practices for OSSIM Configuration](https://www.youtube.com/watch?v=qjaO1cNj2fo&index=4&list=PLvc7OorCTShovyYGc_9Q6abTLt-ucE_wT)
