@@ -43,7 +43,8 @@ essential security capabilities you need like:
 - what is the quality of the software itself and the web user interface?
 
 ## Prelimary results of the evaluation
-- alienvault OSSIM is read-to-use with defaults and filters already in place
+- alienvault OSSIM is read-to-use with defaults, plugins and filters already in place
+    - go to Environment -> Assets -> choose Host -> scroll down
 - server setup is very fast due to installation via iso image (Linux Debian)
 - installation of clients via wui very unhandy -- automatisation definitly needed
 - high hardware system requirements and high resource consumtion. Minimum
