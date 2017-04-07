@@ -55,12 +55,13 @@ essential security capabilities you need like:
     - go to Configuration -> Deployment and wait for status.
 
 ## Resources for the evaluation
-- YouTube: [https://www.youtube.com/user/alienvaulttv](Alienvaulttv)
-- YouTube: [https://www.youtube.com/watch?v=qjaO1cNj2fo&index=4&list=PLvc7OorCTShovyYGc_9Q6abTLt-ucE_wT](OSSIM Tutorial: Best Practices for OSSIM Configuration)
+- [linoxide.com/security/install-configure-alienvault-siem-ossim/](http://linoxide.com/security/install-configure-alienvault-siem-ossim/)
+- YouTube: [Alienvaulttv](https://www.youtube.com/user/alienvaulttv)
+- YouTube: [OSSIM Tutorial: Best Practices for OSSIM Configuration](https://www.youtube.com/watch?v=qjaO1cNj2fo&index=4&list=PLvc7OorCTShovyYGc_9Q6abTLt-ucE_wT)
 (17.12.2015)
-- [https://www.alienvault.com/documentation/usm-appliance.htm](www.alienvault.com/documentation/usm-appliance.htm)
-- [http://blog.muhammadattique.com/installing-configuring-alienvault-ossim-opensource-siem](blog.muhammadattique.com/installing-configuring-alienvault-ossim-opensource-siem)
-- [http://blog.muhammadattique.com/configuring-ossec-clients-with-ossim/](blog.muhammadattique.com/configuring-ossec-clients-with-ossim)
+- [www.alienvault.com/documentation/usm-appliance.htm](https://www.alienvault.com/documentation/usm-appliance.htm)
+- [blog.muhammadattique.com/installing-configuring-alienvault-ossim-opensource-siem](http://blog.muhammadattique.com/installing-configuring-alienvault-ossim-opensource-siem)
+- [blog.muhammadattique.com/configuring-ossec-clients-with-ossim](http://blog.muhammadattique.com/configuring-ossec-clients-with-ossim/)
 
 
 ## Version
