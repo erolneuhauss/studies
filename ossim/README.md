@@ -38,17 +38,17 @@ essential security capabilities you need like:
 2017-04-06: [https://www.alienvault.com/products/ossim](alienvault.com/products/ossim)
 
 ## Key aspects and focus of the evaluation
-    - does it come with read-to-use defaults and filters?
-    - how fast can it be set up, configure and have it running in production?
-    - what is the quality of the software itself and the web user interface?
+- does it come with read-to-use defaults and filters?
+- how fast can it be set up, configure and have it running in production?
+- what is the quality of the software itself and the web user interface?
 
 ## Resources for the evaluation
-    - YouTube: [https://www.youtube.com/user/alienvaulttv](Alienvaulttv)
-    - YouTube: [https://www.youtube.com/watch?v=qjaO1cNj2fo&index=4&list=PLvc7OorCTShovyYGc_9Q6abTLt-ucE_wT](OSSIM Tutorial: Best Practices for OSSIM Configuration)
-    (17.12.2015)
-    - [https://www.alienvault.com/documentation/usm-appliance.htm](www.alienvault.com/documentation/usm-appliance.htm)
-    - [http://blog.muhammadattique.com/installing-configuring-alienvault-ossim-opensource-siem](blog.muhammadattique.com/installing-configuring-alienvault-ossim-opensource-siem)
-    - [http://blog.muhammadattique.com/configuring-ossec-clients-with-ossim/](blog.muhammadattique.com/configuring-ossec-clients-with-ossim)
+- YouTube: [https://www.youtube.com/user/alienvaulttv](Alienvaulttv)
+- YouTube: [https://www.youtube.com/watch?v=qjaO1cNj2fo&index=4&list=PLvc7OorCTShovyYGc_9Q6abTLt-ucE_wT](OSSIM Tutorial: Best Practices for OSSIM Configuration)
+(17.12.2015)
+- [https://www.alienvault.com/documentation/usm-appliance.htm](www.alienvault.com/documentation/usm-appliance.htm)
+- [http://blog.muhammadattique.com/installing-configuring-alienvault-ossim-opensource-siem](blog.muhammadattique.com/installing-configuring-alienvault-ossim-opensource-siem)
+- [http://blog.muhammadattique.com/configuring-ossec-clients-with-ossim/](blog.muhammadattique.com/configuring-ossec-clients-with-ossim)
 
 ## Answers
 
@@ -57,9 +57,9 @@ essential security capabilities you need like:
 
 ## Architecture
 ### OSSIM uses OSSEC agent software on client
-    -   add an asset on the server via wui
-    -   add an agent onto the asset
-    -   extract key from agent and use it with ```manage_agent```
+-   add an asset on the server via wui
+-   add an agent onto the asset
+-   extract key from agent and use it with ```manage_agent```
 #### Client Installation
 
 ```
