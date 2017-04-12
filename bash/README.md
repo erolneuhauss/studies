@@ -1,7 +1,7 @@
 # Learning bash
 
 ## Process and subprocess
-[./print_process_number.sh](ps $$)
+[ps $$](./print_process_number.sh)
 
 ```
 erol@erol-sony-VAIO  ~/Documents/GitHub/studies/bash (master)
