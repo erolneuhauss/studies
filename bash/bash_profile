@@ -1,0 +1,2 @@
+POWERLINE_PATH=/usr/local/lib/python2.7/site-packages/powerline
+source $POWERLINE_PATH/bindings/bash/powerline.sh
