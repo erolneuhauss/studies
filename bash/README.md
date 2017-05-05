@@ -19,7 +19,7 @@ $ . ./print_process_number.sh
      6196     216    6196       3816  pty0      197610 09:19:47 /usr/bin/ps
       216    6264     216       6608  pty0      197610 09:16:04 /usr/bin/bash
 ```
-### Hint 
+### Hint
 notice that ```./<cmd>``` starts a subprocess (via exec)
 while ```. /.<cmd>``` does not
 
@@ -36,12 +36,12 @@ brew install macvim
 brew install curl
 brew install git
 brew install bash
-brew install python
+brew install psutil
 ```
 
-#### Install software with python pip
+#### Install software with python
 ```
-pip install powerline-status
+install powerline-status
 ```
 
 #### Configure Powerline for bash
@@ -50,3 +50,12 @@ pip install powerline-status
 POWERLINE_PATH=/usr/local/lib/python2.7/site-packages/powerline
 source $POWERLINE_PATH/bindings/bash/powerline.sh
 ```
+cp -av /usr/local/lib/python2.7/site-packages/powerline/config_files/* ~/.config/powerline/
+```
+
+### .tmux.conf
+```
+source '/usr/local/lib/python2.7/site-packages/powerline/bindings/tmux/powerline.conf'
+```
+#### Powerline git integration
+https://github.com/jaspernbrouwer/powerline-gitstatus
