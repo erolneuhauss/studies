@@ -1,21 +1,20 @@
 version: '2'
 services:
-  puppet:
+  client:
     build:
       context: .
-      dockerfile: Dockerfile.puppet
-    container_name: puppet
+      dockerfile: Dockerfile.client
+    container_name: client
     image: eneuhauss/mypuppet:0.1v
     links:
       - puppetmaster
     networks:
       mynetwork:
         aliases:
-          - puppet
+          - client
     volumes:
       - /Users/eneuhauss/enron_mail_20150507_10000_files:/dataset_10000_files
       - /Users/eneuhauss/enron_mail_20150507_5000_files:/dataset_5000_files
-      - /Users/eneuhauss/git/studies/docker/puppet_recurse/manifests:/etc/puppet/manifests
 
   puppetmaster:
     build:
@@ -27,8 +26,6 @@ services:
       mynetwork:
         aliases:
           - puppetmaster
-    volumes:
-      - /Users/eneuhauss/git/studies/docker/puppet_recurse/puppetmaster:/etc/puppet/manifests
 
 networks:
   mynetwork:

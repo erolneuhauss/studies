@@ -1,13 +1,12 @@
 puppet {
 
-  $owner         = 'root'
-  $TenK = '/dataset_10000_files'
-  $FiveK    = '/dataset_5000_files'
-
- file { [$FiveK ]:
+  file { '/dataset_5000_files' :
     ensure  => directory,
-    owner   => $owner,
-    recurse => true,
+    owner   => root,
+  }
+
+  file { '/tmp/erol_puppet':
+    ensure => present,
   }
 
 }

@@ -4,7 +4,7 @@ MAINTAINER eneuhauss@gmx.de
 
 RUN apt-get update && \
   apt-get -y upgrade &&  \
-  apt-get -y install puppetmaster
+  apt-get -y install vim puppetmaster
 
 ADD puppetmaster/puppetmaster.conf /etc/puppet/puppet.conf
 ADD puppetmaster/Nodes.pp /etc/puppet/manifests/Nodes.pp
