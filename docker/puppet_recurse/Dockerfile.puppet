@@ -1,0 +1,7 @@
+# Dockerfile based on the latest debian 8 image
+FROM debian:latest
+MAINTAINER eneuhauss@gmx.de
+
+RUN apt-get update && \
+  apt-get -y upgrade &&  \
+  apt-get -y install puppet 

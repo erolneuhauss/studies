@@ -1,0 +1,23 @@
+version: '2'
+services:
+  puppet:
+    build:
+      context: .
+      dockerfile: Dockerfile.puppet
+    container_name: puppet
+    image: eneuhauss/mypuppet:0.1v
+    volumes:
+      - /Users/eneuhauss/enron_mail_20150507_10000_files:/dataset_10000_files
+      - /Users/eneuhauss/enron_mail_20150507_5000_files:/dataset_5000_files
+      - /Users/eneuhauss/git/studies/docker/puppet_recurse/manifests:/etc/puppet/manifests
+
+
+services:
+  puppetmaster:
+    build:
+      context: .
+      dockerfile: Dockerfile.puppetmaster
+    container_name: puppetmaster
+    image: eneuhauss/mypuppet:0.1v
+    volumes:
+      - /Users/eneuhauss/git/studies/docker/puppet_recurse/puppetmaster:/etc/puppet/manifests
