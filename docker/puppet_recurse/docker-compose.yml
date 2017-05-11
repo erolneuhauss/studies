@@ -4,8 +4,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.client
+    depends_on:
+      - puppetmaster
     container_name: client
-    image: eneuhauss/mypuppet:0.1v
+    hostname: client
+    image: eneuhauss/myclient:v0.1
     links:
       - puppetmaster
     networks:
@@ -21,7 +24,8 @@ services:
       context: .
       dockerfile: Dockerfile.puppetmaster
     container_name: puppetmaster
-    image: eneuhauss/mypuppetmaster:0.1v
+    hostname: puppetmaster
+    image: eneuhauss/mypuppetmaster:v0.1
     networks:
       mynetwork:
         aliases:
