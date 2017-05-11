@@ -4,11 +4,16 @@ MAINTAINER eneuhauss@gmx.de
 
 RUN apt-get update && \
   apt-get -y upgrade &&  \
-  apt-get -y install vim puppetmaster
+  apt-get -y install vim puppetmaster && \
+  mkdir /etc/puppet/files && \
+  mkdir /etc/puppet/templates && \
+  mkdir -p /etc/puppet/environments/production/manifests && \
+  mkdir /etc/puppet/environments/production/modules
+
 
 ADD puppetmaster/puppetmaster.conf /etc/puppet/puppet.conf
-ADD puppetmaster/Nodes.pp /etc/puppet/manifests/Nodes.pp
+ADD puppetmaster/Nodes.pp /etc/puppet/environments/production/manifests/Nodes.pp
 
 #EXPOSE 8140
 
-ENTRYPOINT  [ "/usr/bin/puppet", "master", "--no-daemonize", "--verbose" ]
+ENTRYPOINT  [ "/usr/bin/puppet", "master", "--no-daemonize", "--debug" ]

@@ -8,4 +8,6 @@ RUN apt-get update && \
 
 ADD puppet/puppet.conf /etc/puppet/puppet.conf
 
+RUN /usr/bin/puppet agent --enable
+
 ENTRYPOINT  [ "/usr/bin/puppet", "agent", "--no-daemonize", "--verbose" ]
