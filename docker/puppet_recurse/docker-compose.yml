@@ -6,6 +6,8 @@ services:
       dockerfile: Dockerfile.puppet
     container_name: puppet
     image: eneuhauss/mypuppet:0.1v
+    links:
+      - puppetmaster
     networks:
       mynetwork:
         aliases:
