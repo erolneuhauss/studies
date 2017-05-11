@@ -6,7 +6,7 @@ RUN apt-get update && \
   apt-get -y upgrade &&  \
   apt-get -y install puppetmaster 
 
-#ADD puppetmaster.conf /etc/puppet/puppet.conf
+ADD puppetmaster/puppetmaster.conf /etc/puppet/puppet.conf
 #
 #EXPOSE 8140
 #
