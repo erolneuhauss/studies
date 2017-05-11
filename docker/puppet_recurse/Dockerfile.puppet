@@ -4,6 +4,8 @@ MAINTAINER eneuhauss@gmx.de
 
 RUN apt-get update && \
   apt-get -y upgrade &&  \
-  apt-get -y install puppet 
+  apt-get -y install puppet
 
 ADD puppet/puppet.conf /etc/puppet/puppet.conf
+
+ENTRYPOINT  [ "/usr/bin/puppet", "agent", "--no-daemonize", "--verbose" ]
