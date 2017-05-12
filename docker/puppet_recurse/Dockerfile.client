@@ -6,8 +6,6 @@ RUN apt-get update && \
   apt-get -y upgrade &&  \
   apt-get -y install vim puppet
 
-ADD puppet/puppet.conf /etc/puppet/puppet.conf
+ADD config/client/etc/puppet/puppet.conf /etc/puppet/puppet.conf
 
 RUN /usr/bin/puppet agent --enable
-
-ENTRYPOINT  [ "/usr/bin/puppet", "agent", "--no-daemonize", "--verbose" ]

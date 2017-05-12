@@ -7,30 +7,30 @@ services:
     depends_on:
       - puppetmaster
     container_name: client
+    entrypoint:
+      - /usr/bin/puppet
+      - agent
+      - --no-daemonize
+      - --debug
     hostname: client
     image: eneuhauss/myclient:v0.1
     links:
       - puppetmaster
-    networks:
-      mynetwork:
-        aliases:
-          - client
     volumes:
-      - /Users/eneuhauss/enron_mail_20150507_10000_files:/dataset_10000_files
-      - /Users/eneuhauss/enron_mail_20150507_5000_files:/dataset_5000_files
+      - /Users/eneuhauss/enron_mail_20150507:/dataset
+      - /Users/eneuhauss/git/studies/docker/puppet_recurse/config/client/etc/puppet:/etc/puppet
 
   puppetmaster:
     build:
       context: .
       dockerfile: Dockerfile.puppetmaster
     container_name: puppetmaster
+    entrypoint:
+      - /usr/bin/puppet
+      - master
+      - --no-daemonize
+      - --debug
     hostname: puppetmaster
     image: eneuhauss/mypuppetmaster:v0.1
-    networks:
-      mynetwork:
-        aliases:
-          - puppetmaster
-
-networks:
-  mynetwork:
-    driver: bridge
+    volumes:
+      - /Users/eneuhauss/git/studies/docker/puppet_recurse/config/puppetmaster/etc/puppet:/etc/puppet
