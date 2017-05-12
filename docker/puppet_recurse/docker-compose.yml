@@ -8,10 +8,13 @@ services:
       - puppetmaster
     container_name: client
     entrypoint:
-      - /usr/bin/puppet
-      - agent
-      - --no-daemonize
-      - --debug
+      - /usr/bin/tail
+      - -f
+      - /dev/null
+#      - /usr/bin/puppet
+#      - agent
+#      - --no-daemonize
+#      - --debug
     hostname: client
     image: eneuhauss/myclient:v0.1
     links:

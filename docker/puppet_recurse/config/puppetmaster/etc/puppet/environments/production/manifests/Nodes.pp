@@ -1,6 +1,6 @@
 node 'client' {
 
-  file { '/dataset/dataset_5000_files' :
+  file { '/dataset/dataset_100000_files' :
     ensure  => directory,
     owner   => root,
     recurse => true,

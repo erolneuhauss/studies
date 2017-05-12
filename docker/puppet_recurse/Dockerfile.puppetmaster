@@ -4,8 +4,12 @@ MAINTAINER eneuhauss@gmx.de
 
 RUN apt-get update && \
   apt-get -y upgrade &&  \
-  apt-get -y install vim puppetmaster && \
-  mkdir /etc/puppet/files && \
-  mkdir /etc/puppet/templates && \
-  mkdir -p /etc/puppet/environments/production/manifests && \
-  mkdir /etc/puppet/environments/production/modules
+  apt-get -y install \
+    vim \
+    puppetmaster \
+    ruby-msgpack && \
+  mkdir -p \
+    /etc/puppet/files \
+    /etc/puppet/templates \
+    /etc/puppet/environments/production/manifests \
+    /etc/puppet/environments/production/modules
