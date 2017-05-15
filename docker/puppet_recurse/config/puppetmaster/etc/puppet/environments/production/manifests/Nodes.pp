@@ -4,6 +4,7 @@ node 'client' {
     ensure  => directory,
     owner   => root,
     recurse => true,
+    recurselimit => 1,
   }
 
   file { '/tmp/erol_client.txt':
