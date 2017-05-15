@@ -1,6 +1,8 @@
 # VIM
 
 ```
+gem install puppet-lint
+
 mkdir -p ~/.vim/{autoload,bundle}
 curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
 
@@ -11,6 +13,7 @@ git clone https://github.com/bling/vim-airline
 git clone https://github.com/ctrlpvim/ctrlp.vim
 git clone https://github.com/mhinz/vim-signify.git
 git clone https://github.com/mhinz/vim-startify
+git clone https://github.com/rodjek/vim-puppet.git
 git clone https://github.com/ryanoasis/vim-webdevicons
 git clone https://github.com/scrooloose/nerdtree
 git clone https://github.com/scrooloose/syntastic
