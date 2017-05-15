@@ -1,2 +1,6 @@
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+export EDITOR=/usr/local/bin/vim
+
 POWERLINE_PATH=/usr/local/lib/python2.7/site-packages/powerline
 source $POWERLINE_PATH/bindings/bash/powerline.sh
