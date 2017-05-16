@@ -20,8 +20,8 @@ services:
     links:
       - puppetmaster
     volumes:
-      - /Users/eneuhauss/enron_mail_20150507:/dataset
-      - /Users/eneuhauss/git/studies/docker/puppet_recurse/config/client/etc/puppet:/etc/puppet
+      - $HOME/enron_mail_20150507:/dataset
+      - $PWD/config/client/etc/puppet:/etc/puppet
 
   puppetmaster:
     build:
@@ -36,4 +36,4 @@ services:
     hostname: puppetmaster
     image: eneuhauss/mypuppetmaster:v0.1
     volumes:
-      - /Users/eneuhauss/git/studies/docker/puppet_recurse/config/puppetmaster/etc/puppet:/etc/puppet
+      - $PWD/config/puppetmaster/etc/puppet:/etc/puppet
