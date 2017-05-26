@@ -37,6 +37,9 @@ brew install curl
 brew install git
 brew install bash
 brew install psutil
+brew install pstree
+brew install tree
+brew install iproute2mac
 ```
 
 #### Install software with python
