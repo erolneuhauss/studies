@@ -1,0 +1,12 @@
+/boot
+/dev
+/home
+/run
+/proc
+/sys
+/tmp
+/var
+/var/backups
+/var/lib/mysql
+/var/lib/xymon/tmp
+/var/log
