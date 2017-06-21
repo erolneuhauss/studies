@@ -1,5 +1,13 @@
 # Learning bash
 
+## History
+### use argument of specific command 
+```
+ls -lh /var/log/
+cp /var/log/auth.log /tmp
+less !ls:$/messages
+```
+
 ## Process and subprocess
 [print_process_number.sh (ps $$)](./print_process_number.sh)
 
@@ -23,8 +31,8 @@ $ . ./print_process_number.sh
 notice that ```./<cmd>``` starts a subprocess (via exec)
 while ```. /.<cmd>``` does not
 
-##### Mac OS X
-#### Homebrew
+## Mac OS X
+### Homebrew
 ```
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 ```
