@@ -1,4 +1,9 @@
 # Learning bash
+## grep
+### grep for real ip addresses, count occurrence and sort them
+```
+grep -E -o "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)" /var/log/apache2/access.log | sort | uniq -c | sort -n
+```
 
 ## History
 ### use argument of specific command 
