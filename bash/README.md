@@ -11,6 +11,10 @@ grep -E -o "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0
 ls -lh /var/log/
 cp /var/log/auth.log /tmp
 less !ls:$/messages
+
+locate Dockerfile.puppetmaster
+/Users/eneuhauss/git/studies/puppet/provision/puppet_recurse/Dockerfile.puppetmaster
+vim $(!locate)
 ```
 
 ## Process and subprocess
