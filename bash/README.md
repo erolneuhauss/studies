@@ -14,7 +14,9 @@ less !ls:$/messages
 
 locate Dockerfile.puppetmaster
 /Users/eneuhauss/git/studies/puppet/provision/puppet_recurse/Dockerfile.puppetmaster
-vim $(!locate)
+vim $(!!)
+
+vim $(!less)
 ```
 
 ## Process and subprocess
