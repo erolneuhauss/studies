@@ -1,0 +1,28 @@
+# Dockerfile based on the latest debian 8 image
+FROM debian:8.8
+MAINTAINER eneuhauss@gmx.de
+
+RUN echo "deb http://ftp.debian.org/debian jessie-backports main" > \
+  /etc/apt/sources.list.d/jessie-backport.list && \
+  apt-get update && \
+  apt-get -y upgrade &&  \
+  apt-get -y install wget &&  \
+  wget https://apt.puppetlabs.com/puppet5-release-jessie.deb && \
+  dpkg -i puppet5-release-jessie.deb && \
+  apt-get update && \
+  apt-get -y -t jessie-backports install \
+    openjdk-8-jdk-headless
+
+RUN apt-get -y install \
+    vim \
+    puppet-agent \
+    puppetserver \
+    ruby-msgpack 
+
+RUN mkdir -p \
+    /etc/puppet/files \
+    /etc/puppet/templates \
+    /etc/puppet/environments/production/manifests \
+    /etc/puppet/environments/production/modules
+
+ENV PATH "$PATH:/opt/puppetlabs/bin"

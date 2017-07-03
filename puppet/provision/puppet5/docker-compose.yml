@@ -1,0 +1,39 @@
+version: '2'
+services:
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile.client
+    depends_on:
+      - puppetserver
+    container_name: client
+    entrypoint:
+      - /usr/bin/tail
+      - -f
+      - /dev/null
+#      - /usr/bin/puppet
+#      - agent
+#      - --no-daemonize
+#      - --debug
+    hostname: client
+    image: eneuhauss/myclient:v5.0
+    links:
+      - puppetserver
+    volumes:
+      - $HOME/enron_mail_20150507:/dataset
+      - $PWD/config/client/etc/puppet:/etc/puppet
+
+  puppetserver:
+    build:
+      context: .
+      dockerfile: Dockerfile.puppetserver
+    container_name: puppetserver
+    entrypoint:
+      - /opt/puppetlabs/bin/puppet
+      - master
+      - --no-daemonize
+      - --debug
+    hostname: puppetmaster
+    image: eneuhauss/mypuppetmaster:v5.0
+    volumes:
+      - $PWD/config/puppetmaster/etc/puppet:/etc/puppet
