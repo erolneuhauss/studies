@@ -19,10 +19,10 @@ RUN apt-get -y install \
     puppetserver \
     ruby-msgpack 
 
-RUN mkdir -p \
-    /etc/puppet/files \
-    /etc/puppet/templates \
-    /etc/puppet/environments/production/manifests \
-    /etc/puppet/environments/production/modules
+#RUN mkdir -p \
+#    /etc/puppet/files \
+#    /etc/puppet/templates \
+#    /etc/puppet/environments/production/manifests \
+#    /etc/puppet/environments/production/modules
 
 ENV PATH "$PATH:/opt/puppetlabs/bin"

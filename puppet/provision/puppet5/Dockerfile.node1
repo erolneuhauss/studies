@@ -1,5 +1,5 @@
 # Dockerfile based on the latest debian 8 image
-FROM debian:latest
+FROM debian:8.8
 MAINTAINER eneuhauss@gmx.de
 
 RUN apt-get update && \
@@ -13,8 +13,6 @@ RUN apt-get update && \
 RUN apt-get update && \
     apt-get -y install \
     puppet-agent
-
-ADD config/client/etc/puppet/puppet.conf /etc/puppet/puppet.conf
 
 ENV PATH "$PATH:/opt/puppetlabs/bin"
 
