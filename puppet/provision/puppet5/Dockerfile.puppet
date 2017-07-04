@@ -19,6 +19,7 @@ RUN apt-get -y install \
     puppetserver \
     ruby-msgpack 
 
+ADD config/puppet/etc/puppetlabs/puppet/puppet.conf /etc/puppetlabs/puppet/puppet.conf
 #RUN mkdir -p \
 #    /etc/puppet/files \
 #    /etc/puppet/templates \

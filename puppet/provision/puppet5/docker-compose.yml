@@ -1,31 +1,14 @@
 version: '2'
 services:
-  node1:
-    build:
-      context: .
-      dockerfile: Dockerfile.node1
-    container_name: node1
-    depends_on:
-      - puppet
-    entrypoint:
-      - /usr/bin/tail
-      - -f
-      - /dev/null
-#      - /usr/bin/puppet
-#      - agent
-#      - --no-daemonize
-#      - --debug
-    hostname: node1
-    image: eneuhauss/mynode1:v5.0
-    links:
-      - puppet
-
   puppet:
     build:
       context: .
       dockerfile: Dockerfile.puppet
     container_name: puppet
     entrypoint:
+      # - /usr/bin/tail
+      # - -f
+      # - /dev/null
       - /opt/puppetlabs/bin/puppet
       - master
       - --debug
@@ -35,5 +18,33 @@ services:
         # - --debug
     hostname: puppet
     image: eneuhauss/mypuppetmaster:v5.0
-    volumes:
-      - $PWD/config/puppetmaster/etc/puppetlabs:/etc/puppetlabs
+
+  node1:
+    build:
+      context: .
+      dockerfile: Dockerfile.node1
+    container_name: node1
+    depends_on:
+      - puppet
+    entrypoint:
+      # - /usr/bin/tail
+      # - -f
+      # - /dev/null
+      - /opt/puppetlabs/bin/puppet
+      - agent
+      - --no-daemonize
+      - --debug
+    hostname: node1
+    image: eneuhauss/mynode1:v5.0
+    links:
+      - puppet
+
+  wait:
+    container_name: wait
+    depends_on:
+      - puppet
+    image: waisbrot/wait
+    links:
+      - puppet
+    environment:
+      - TARGETS=puppet:8140
