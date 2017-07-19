@@ -13,17 +13,20 @@ RUN echo "deb http://ftp.debian.org/debian jessie-backports main" > \
   apt-get -y -t jessie-backports install \
     openjdk-8-jdk-headless
 
-RUN apt-get -y install \
-    vim \
+RUN apt-get update && \
+    apt-get -y install \
     puppet-agent \
     puppetserver \
-    ruby-msgpack 
+    ruby-msgpack
+
+ENV PATH "$PATH:/opt/puppetlabs/bin"
 
 ADD config/puppet/etc/puppetlabs/puppet/puppet.conf /etc/puppetlabs/puppet/puppet.conf
+
+RUN /opt/puppetlabs/bin/puppetserver gem install msgpack
 #RUN mkdir -p \
 #    /etc/puppet/files \
 #    /etc/puppet/templates \
 #    /etc/puppet/environments/production/manifests \
 #    /etc/puppet/environments/production/modules
 
-ENV PATH "$PATH:/opt/puppetlabs/bin"
