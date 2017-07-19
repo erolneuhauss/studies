@@ -1,0 +1,15 @@
+version: '2'
+services:
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile.client
+    container_name: client
+    entrypoint:
+      - /usr/bin/tail
+      - -f
+      - /dev/null
+    hostname: client
+    image: eneuhauss/myclient:v0.1
+    volumes:
+      - $HOME/git:/git
