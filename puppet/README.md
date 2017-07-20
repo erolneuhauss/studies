@@ -17,6 +17,13 @@ cd config/puppet/opt/puppetlabs/puppet/modules/
 puppet module generate eneuhauss-motd
 cd motd
 bundle install
+rake spec
+bundle clean --force
+rm Gemfile.lock
+bundle config specific_platform true
+bundle install
+bundle update
+rake spec
 ```
 ## Run
 ```
