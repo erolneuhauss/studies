@@ -44,5 +44,17 @@
 #
 class motd {
 
+  file { '/etc/motd':
+    ensure  => present,
+    content => 'Hello World',
+  }
+
+  user { 'eneuhauss':
+    ensure => present,
+  }
+
+  package { 'ntp':
+    ensure => present,
+  }
 
 }
