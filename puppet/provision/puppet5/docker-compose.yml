@@ -6,9 +6,10 @@ services:
       dockerfile: Dockerfile.puppet
     container_name: puppet
     hostname: puppet
+    domainname: ene.local
     image: eneuhauss/mypuppetmaster:v5.0
     volumes:
-      - $PWD/config/puppet/opt/puppetlabs/puppet/modules:/opt/puppetlabs/puppet/modules
+      - $PWD/../../code:/etc/puppetlabs/code
     entrypoint:
       - /opt/puppetlabs/bin/puppet
       - master
@@ -21,6 +22,7 @@ services:
       dockerfile: Dockerfile.node1
     container_name: node1
     hostname: node1
+    domainname: ene.local
     image: eneuhauss/mynode1:v5.0
     depends_on:
       - puppet
