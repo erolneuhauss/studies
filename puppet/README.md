@@ -7,7 +7,7 @@ With docker, I provision containers based on Debian to study and test different
   * [puppet_client](./projects/puppet_client): basic puppet client installation
   * [puppet_recurse](./projects/puppet_recurse): try out file attributes recurse and recurselimit
 
-## Systemrequirements
+## Systemrequirements on Mac OS X
 ### Homebrew and other essential software for development
 Read and follow instructions
 [studies/bash/README.md#homebrew](https://github.com/erolneuhauss/studies/blob/master/bash/README.md#homebrew)
