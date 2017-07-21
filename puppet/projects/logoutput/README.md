@@ -1,4 +1,4 @@
-# try out resource types
+# try out resource type tidy and excec attribute logoutput
 ## tidy
 [docs.puppet.com -> tidy](https://docs.puppet.com/puppet/latest/types/tidy.html)
 ### Description
