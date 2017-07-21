@@ -1,12 +1,12 @@
 # puppet
-## Installation on centos
-```
-puppetlabs-release-pc1-1.1.0-5.el7.noarch
-puppet-agent-1.9.2-1.el7.x86_64
-rubygem-puppet-lint-1.1.0-2.el7.noarch
-```
 
-## Installation on Mac OSX
+## Systemrequirements
+This Puppet study works fine on Mac OS X and depends on certain requirements:
+  * docker for Mac (17.06.0)
+  * docker-compose (1.14.0)
+
+
+## Installation on Mac OS X
 ```
 gem install puppet
 gem install puppet-lint rspec rspec-puppet
@@ -108,4 +108,11 @@ Finished in 1.13 seconds (files took 1.73 seconds to load)
 ## Run
 ```
 puppet apply Nodes.pp
+```
+
+## Installation on centos
+```
+puppetlabs-release-pc1-1.1.0-5.el7.noarch
+puppet-agent-1.9.2-1.el7.x86_64
+rubygem-puppet-lint-1.1.0-2.el7.noarch
 ```
