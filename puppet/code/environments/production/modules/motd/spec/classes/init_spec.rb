@@ -6,6 +6,7 @@ describe 'motd' do
       should contain_file('/etc/motd').with({
         'content' => /Hello World/,
         'owner'   => 'eneuhauss',
+        'require' => 'User[eneuhauss]',
       })
     end
     it { should contain_package('ntp') }

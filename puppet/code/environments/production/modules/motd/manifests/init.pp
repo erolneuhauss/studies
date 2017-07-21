@@ -48,6 +48,7 @@ class motd {
     ensure  => present,
     owner   => 'eneuhauss',
     content => 'Hello World',
+    require => User['eneuhauss'],
   }
 
   user { 'eneuhauss':
