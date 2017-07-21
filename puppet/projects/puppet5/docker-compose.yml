@@ -7,7 +7,7 @@ services:
     container_name: puppet
     hostname: puppet
     domainname: ene.local
-    image: eneuhauss/mypuppetmaster:v5.0
+    image: eneuhauss/project_puppet5_puppetmaster:1.0
     volumes:
       - $PWD/../../code:/etc/puppetlabs/code
     entrypoint:
@@ -23,7 +23,7 @@ services:
     container_name: node1
     hostname: node1
     domainname: ene.local
-    image: eneuhauss/mynode1:v5.0
+    image: eneuhauss/project_puppet5_node1:1.0
     depends_on:
       - puppet
     links:
