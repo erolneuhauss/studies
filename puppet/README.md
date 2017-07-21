@@ -14,7 +14,9 @@ This Puppet study works fine on Mac OS X and depends on certain requirements:
   * git (2.12.2)
   * iTerm2 (3.0.15)
 
-Fullfill other basic requirements on page [studies/bash/README.md](https://github.com/erolneuhauss/studies/blob/master/bash/README.md).
+Install Homebrew for Mac OS X and other basic software. 
+READ and follow instructions 
+[studies/bash/README.md#homebrew](https://github.com/erolneuhauss/studies/blob/master/bash/README.md#homebrew)
 
 ## Installation on Mac OS X
 ```
