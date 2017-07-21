@@ -7,10 +7,10 @@ This Puppet study works fine on Mac OS X and depends on certain requirements:
 
 With docker, I provision containers based on Debian to study and test different
 [projects](./projects):
-  * [projects/logoutoput](./projects/logoutput): try out resource type tidy and excec attribute logoutput
-  * [projects/puppet5](./projects/puppet5): try out puppet version 5
-  * [projects/puppet_client](./projects/puppet_client): 
-  * [projects/puppet_recurse](./projects/puppet_recurse): 
+  * [logoutoput](./projects/logoutput): try out resource type tidy and excec attribute logoutput
+  * [puppet5](./projects/puppet5): try out puppet version 5
+  * [puppet_client](./projects/puppet_client): basic puppet client installation
+  * [puppet_recurse](./projects/puppet_recurse): try out file attributes recurse and recurselimit
 
 ## Installation on Mac OS X
 ```
