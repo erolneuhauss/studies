@@ -8,17 +8,16 @@ With docker, I provision containers based on Debian to study and test different
   * [puppet_recurse](./projects/puppet_recurse): try out file attributes recurse and recurselimit
 
 ## Systemrequirements
+### Homebrew and other essential software for development
+Read and follow instructions
+[studies/bash/README.md#homebrew](https://github.com/erolneuhauss/studies/blob/master/bash/README.md#homebrew)
+
+### Docker
 This Puppet study works fine on Mac OS X and depends on certain requirements:
   * docker for Mac (17.06.0)
   * docker-compose (1.14.0)
-  * git (2.12.2)
-  * iTerm2 (3.0.15)
 
-Install Homebrew for Mac OS X and other basic software. 
-READ and follow instructions 
-[studies/bash/README.md#homebrew](https://github.com/erolneuhauss/studies/blob/master/bash/README.md#homebrew)
-
-## Installation on Mac OS X
+### Puppet (latest on darwin) Installation on Mac OS X
 ```
 gem install puppet
 gem install puppet-lint rspec rspec-puppet
@@ -122,7 +121,7 @@ Finished in 1.13 seconds (files took 1.73 seconds to load)
   * change to newly created directory 'git'
   * clone this repository: [study](git@github.com:erolneuhauss/studies.git)
   * change to directory ~/git/puppet/projects/<a project>
-  * run docker-compose up 
+  * run docker-compose up
 
 ### Example puppet5
 ```
