@@ -46,6 +46,7 @@ class motd {
 
   file { '/etc/motd':
     ensure  => present,
+    owner   => 'eneuhauss',
     content => 'Hello World',
   }
 

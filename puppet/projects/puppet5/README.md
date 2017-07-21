@@ -113,7 +113,7 @@ Finished in 1.13 seconds (files took 1.73 seconds to load)
 4 examples, 0 failures
 ```
 
-### Run your code in containers
+### Run your puppet code in containers
 ```
 cd ~/git/studies/puppet/projects/puppet5
 docker-compose up
@@ -127,4 +127,16 @@ node1     | Notice: /Stage[main]/Motd/User[eneuhauss]/ensure: created
 node1     | Notice: /Stage[main]/Motd/Package[ntp]/ensure: created
 node1     | Info: Creating state file /opt/puppetlabs/puppet/cache/state/state.yaml
 node1     | Notice: Applied catalog in 17.90 seconds
+```
+
+#### run your changed puppet code in container node1 without logging in
+```
+docker exec -it node1 puppet agent -t
+Info: Using configured environment 'production'
+Info: Retrieving pluginfacts
+Info: Retrieving plugin
+Info: Caching catalog for node1.ene.local
+Info: Applying configuration version '1500650266'
+Notice: /Stage[main]/Motd/File[/etc/motd]/owner: owner changed 'root' to 'eneuhauss'
+Notice: Applied catalog in 0.04 seconds
 ```

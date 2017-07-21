@@ -4,7 +4,8 @@ describe 'motd' do
     it { should contain_class('motd') }
     it do
       should contain_file('/etc/motd').with({
-        'content' => /Hello World/
+        'content' => /Hello World/,
+        'owner'   => 'eneuhauss',
       })
     end
     it { should contain_package('ntp') }
