@@ -11,10 +11,13 @@ services:
     volumes:
       - $PWD/../../code:/etc/puppetlabs/code
     entrypoint:
-      - /opt/puppetlabs/bin/puppetserver
-      - foreground
+      - /opt/puppetlabs/bin/puppet
+      - master
+      - --no-daemonize
       - --debug
-        #      - --no-daemonize
+      # - /opt/puppetlabs/bin/puppetserver
+      # - foreground
+      # - --debug
 
   node1:
     build:
