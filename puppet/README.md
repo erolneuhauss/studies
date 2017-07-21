@@ -5,6 +5,8 @@ This Puppet study works fine on Mac OS X and depends on certain requirements:
   * docker for Mac (17.06.0)
   * docker-compose (1.14.0)
 
+With docker, I provision containers based on Debian to study and test different
+[projects](./projects):
 
 ## Installation on Mac OS X
 ```
