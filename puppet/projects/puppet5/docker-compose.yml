@@ -11,10 +11,10 @@ services:
     volumes:
       - $PWD/../../code:/etc/puppetlabs/code
     entrypoint:
-      - /opt/puppetlabs/bin/puppet
-      - master
+      - /opt/puppetlabs/bin/puppetserver
+      - foreground
       - --debug
-      - --no-daemonize
+        #      - --no-daemonize
 
   node1:
     build:
@@ -28,4 +28,4 @@ services:
       - puppet
     links:
       - puppet
-    entrypoint: dockerize -wait tcp://puppet:8140 -timeout 20s /opt/puppetlabs/bin/puppet agent --no-daemonize --debug
+    entrypoint: dockerize -wait tcp://puppet:8140 -timeout 60s /opt/puppetlabs/bin/puppet agent --no-daemonize --debug
