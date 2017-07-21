@@ -4,7 +4,7 @@ In this project
   * node1 gets modified
 ## Prerequisites
   * clone repo
-  * install software according [puppet main study page](../)
+  * install software according [puppet main study page](../../)
 
 ```
 mkdir ~/git
@@ -107,9 +107,11 @@ I, [2017-07-20T18:02:59.710995 #35133]  INFO -- : Creating symlink from spec/fix
 
 Finished in 1.13 seconds (files took 1.73 seconds to load)
 4 examples, 0 failures
-
-
 ```
+
+### Run your code in containers
+```
+cd ~/git/studies/puppet/projects/puppet5
 docker-compose up
 <output>
 ...
