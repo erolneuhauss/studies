@@ -1,7 +1,11 @@
 # try out puppet version 5
 In this project
   * there are two containers: puppet (puppetmaster) and node1
-  * node1 gets modified
+  * node1 gets modified by puppet
+    * a text file motd in /etc gets created,
+    * ntp package installed and 
+    * user eneuhauss created
+
 ## Prerequisites
   * clone repo
   * install software according [puppet main study page](../../)
