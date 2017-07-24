@@ -102,6 +102,11 @@ class motd {
 }
 ```
 
+### Validate your code
+```
+puppet parser validate motd/manifests/init.pp
+```
+
 ### rake spec, example for success
 ```
 rake spec
@@ -111,6 +116,47 @@ I, [2017-07-20T18:02:59.710995 #35133]  INFO -- : Creating symlink from spec/fix
 
 Finished in 1.13 seconds (files took 1.73 seconds to load)
 4 examples, 0 failures
+```
+
+### Test your code in a container without changing
+```
+docker exec -it puppet puppet apply --noop /etc/puppetlabs/code/environments/production/modules/motd/examples/init.pp
+Warning: ModuleLoader: module 'motd' has unresolved dependencies - it will only see those that are resolved. Use 'puppet module list --tree' to see information about modules
+   (file & line not available)
+Notice: Compiled catalog for puppet.ene.local in environment production in 0.43 seconds
+Notice: /Stage[main]/Motd/Package[ntp]/ensure: current_value 'purged', should be 'present' (noop)
+Notice: Class[Motd]: Would have triggered 'refresh' from 1 event
+Notice: Stage[main]: Would have triggered 'refresh' from 1 event
+Notice: Applied catalog in 0.05 seconds
+```
+
+### Modules dependencies
+#### Missing dependency
+```
+docker exec -it puppet puppet module list --tree
+Warning: Missing dependency 'puppetlabs-stdlib':
+  'eneuhauss-apache' (v0.1.0) requires 'puppetlabs-stdlib' (>= 1.0.0)
+  'eneuhauss-motd' (v0.1.0) requires 'puppetlabs-stdlib' (>= 1.0.0)
+  'eneuhauss-profiles' (v0.1.0) requires 'puppetlabs-stdlib' (>= 1.0.0)
+/etc/puppetlabs/code/environments/production/modules
+├─┬ eneuhauss-apache (v0.1.0)
+│ └── UNMET DEPENDENCY puppetlabs-stdlib (>= 1.0.0)
+├─┬ eneuhauss-motd (v0.1.0)
+│ └── UNMET DEPENDENCY puppetlabs-stdlib (>= 1.0.0)
+└─┬ eneuhauss-profiles (v0.1.0)
+  └── UNMET DEPENDENCY puppetlabs-stdlib (>= 1.0.0)
+/etc/puppetlabs/code/modules (no modules installed)
+/opt/puppetlabs/puppet/modules (no modules installed)
+```
+
+#### Resolve dependency
+```
+root@puppet:/etc/puppetlabs/code/environments/production# puppet module install puppetlabs-stdlib
+Notice: Preparing to install into /etc/puppetlabs/code/environments/production/modules ...
+Notice: Downloading from https://forgeapi.puppet.com ...
+Notice: Installing -- do not interrupt ...
+/etc/puppetlabs/code/environments/production/modules
+└── puppetlabs-stdlib (v4.17.1)
 ```
 
 ### Run your puppet code in containers
@@ -140,3 +186,5 @@ Info: Applying configuration version '1500650266'
 Notice: /Stage[main]/Motd/File[/etc/motd]/owner: owner changed 'root' to 'eneuhauss'
 Notice: Applied catalog in 0.04 seconds
 ```
+
+
