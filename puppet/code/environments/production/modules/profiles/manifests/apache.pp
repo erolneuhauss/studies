@@ -1,4 +1,4 @@
-# What this class does
+# Class: profiles::apache
 class profiles::apache {
   include apache
 }

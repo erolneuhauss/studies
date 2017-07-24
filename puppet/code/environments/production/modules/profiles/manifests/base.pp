@@ -1,4 +1,4 @@
-# what this class does
+# Class: profiles::base
 class profiles::base {
   include motd
 }
