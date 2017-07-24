@@ -3,7 +3,7 @@ In this project
   * there are two containers: puppet (puppetmaster) and node1
   * node1 gets modified by puppet
     * a text file motd in /etc gets created,
-    * ntp package installed and 
+    * ntp package installed and
     * user eneuhauss created
 
 ## Prerequisites
@@ -118,7 +118,7 @@ Finished in 1.13 seconds (files took 1.73 seconds to load)
 4 examples, 0 failures
 ```
 
-### Test your code in a container without changing
+### Test your code in a container without changing anything via --noop
 ```
 docker exec -it puppet puppet apply --noop /etc/puppetlabs/code/environments/production/modules/motd/examples/init.pp
 Warning: ModuleLoader: module 'motd' has unresolved dependencies - it will only see those that are resolved. Use 'puppet module list --tree' to see information about modules
