@@ -32,3 +32,17 @@ services:
     links:
       - puppet
     entrypoint: dockerize -wait tcp://puppet:8140 -timeout 60s /opt/puppetlabs/bin/puppet agent --no-daemonize --debug
+
+  node2:
+    build:
+      context: .
+      dockerfile: Dockerfile.node1
+    container_name: node2
+    hostname: node2
+    domainname: ene.local
+    image: eneuhauss/project_puppet5_node1:1.1
+    depends_on:
+      - puppet
+    links:
+      - puppet
+    entrypoint: dockerize -wait tcp://puppet:8140 -timeout 60s /opt/puppetlabs/bin/puppet agent --no-daemonize --debug
