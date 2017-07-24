@@ -242,7 +242,46 @@ docker-compose up
 <output>
 ...
 puppet    | Notice: Starting Puppet master version 5.0.0
-node1     | 2017/07/21 12:55:45 Connected to tcp://puppet:8140
+puppet    | Warning: /etc/puppetlabs/code/environments/production/data/common.yaml: file does not contain a valid yaml hash
+puppet    | Debug: Lookup of 'classes'
+puppet    |   Searching for "classes"
+puppet    |     Merge strategy unique
+puppet    |       Global Data Provider (hiera configuration version 5)
+puppet    |         Using configuration "/etc/puppetlabs/puppet/hiera.yaml"
+puppet    |         No such key: "classes"
+puppet    |       Environment Data Provider (hiera configuration version 5)
+puppet    |         Using configuration "/etc/puppetlabs/code/environments/production/hiera.yaml"
+puppet    |         Merge strategy unique
+puppet    |           Hierarchy entry "Per-node data (yaml version)"
+puppet    |             Path "/etc/puppetlabs/code/environments/production/data/nodes/node1.ene.local.yaml"
+puppet    |               Original path: "nodes/%{::trusted.certname}.yaml"
+puppet    |               Found key: "classes" value: [
+puppet    |                 "roles::webserver"
+puppet    |               ]
+puppet    |           Hierarchy entry "Other YAML hierarchy levels"
+puppet    |             Path "/etc/puppetlabs/code/environments/production/data/common.yaml"
+puppet    |               Original path: "common.yaml"
+puppet    |               No such key: "classes"
+puppet    |           Merged result: [
+puppet    |             "roles::webserver"
+puppet    |           ]
+puppet    |       Merged result: [
+puppet    |         "roles::webserver"
+puppet    |       ]
+puppet    | Debug: importing '/etc/puppetlabs/code/environments/production/modules/roles/manifests/init.pp' in environment production
+puppet    | Debug: importing '/etc/puppetlabs/code/environments/production/modules/roles/manifests/webserver.pp' in environment production
+puppet    | Debug: Automatically imported roles::webserver from roles/webserver into production
+puppet    | Debug: importing '/etc/puppetlabs/code/environments/production/modules/profiles/manifests/init.pp' in environment production
+node2     | Debug: Executing: '/usr/sbin/useradd eneuhauss'
+puppet    | Debug: importing '/etc/puppetlabs/code/environments/production/modules/profiles/manifests/base.pp' in environment production
+puppet    | Debug: Automatically imported profiles::base from profiles/base into production
+puppet    | Debug: importing '/etc/puppetlabs/code/environments/production/modules/motd/manifests/init.pp' in environment production
+puppet    | Debug: Automatically imported motd from motd into production
+puppet    | Debug: importing '/etc/puppetlabs/code/environments/production/modules/profiles/manifests/apache.pp' in environment production
+puppet    | Debug: Automatically imported profiles::apache from profiles/apache into production
+puppet    | Debug: importing '/etc/puppetlabs/code/environments/production/modules/apache/manifests/init.pp' in environment production
+puppet    | Debug: Automatically imported apache from apache into production
+puppet    | Notice: Compiled catalog for node1.ene.local in environment production in 0.10 seconds
 ...
 node1     | Notice: /Stage[main]/Motd/File[/etc/motd]/content: content changed '{md5}9830e3dbb6a828f2cc824db8db0ceaf7' to '{md5}b10a8db164e0754105b7a99be72e3fe5'
 node1     | Notice: /Stage[main]/Motd/User[eneuhauss]/ensure: created

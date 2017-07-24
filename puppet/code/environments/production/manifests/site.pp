@@ -6,4 +6,4 @@
 # 'lookup'
 # Do a unique merge lookup of class names,
 # then add all of those classes to the catalog (like hiera_include):
-# lookup('classes', Array[String], 'unique').include
+lookup('classes', Array[String], 'unique').include
