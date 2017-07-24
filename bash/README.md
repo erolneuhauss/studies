@@ -31,6 +31,9 @@ cd !docker:2:s/docker-compose.yml/
 vim !cd:$:pREADME.md
 vim ~/git/studies/puppet/projects/puppet5/README.md
 ```
+### Links for History
+
+  * [https://www.cyberciti.biz/faq/bash-history-repeat-substitution-command-syntax](https://www.cyberciti.biz/faq/bash-history-repeat-substitution-command-syntax)
 
 ## Process and subprocess
 [print_process_number.sh (ps $$)](./print_process_number.sh)
