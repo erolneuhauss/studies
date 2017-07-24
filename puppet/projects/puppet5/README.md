@@ -18,12 +18,87 @@ cd ~/git/studies/puppet/projects/puppet5
 ```
 
 ## Features
-### hiera
+### hiera (Data Provider)
+#### Hierarchy / Lookup and Merge strategy
+```
+ Debug: Lookup of 'classes'
+   Searching for "classes"
+     Merge strategy unique
+       Global Data Provider (hiera configuration version 5)
+         Using configuration "/etc/puppetlabs/puppet/hiera.yaml"
+         No such key: "classes"
+       Environment Data Provider (hiera configuration version 5)
+         Using configuration "/etc/puppetlabs/code/environments/production/hiera.yaml"
+         Merge strategy unique
+           Hierarchy entry "Per-node data (yaml version)"
+             Path "/etc/puppetlabs/code/environments/production/data/nodes/node1.ene.local.yaml"
+               Original path: "nodes/%{::trusted.certname}.yaml"
+               No such key: "classes"
+           Hierarchy entry "Other YAML hierarchy levels"
+             Path "/etc/puppetlabs/code/environments/production/data/common.yaml"
+               Original path: "common.yaml"
+               No such key: "classes"
+```
+
+#### directory structure
+```
+cd ~/git/studies/puppet/code/environments/production
+tree -L 2
+.
+├── data
+│   ├── common.yaml
+│   └── nodes
+├── environment.conf
+├── hiera.yaml
+├── manifests
+│   └── site.pp
+└── modules
+    ├── apache
+    ├── motd
+    ├── profiles
+    ├── roles
+    └── stdlib
+```
+
+
+#### Environment Data Provider: hiera.yaml as in
+"/etc/puppetlabs/code/environments/production/hiera.yaml"
+```
+hierarchy:
+  - name: "Per-node data (yaml version)"
+    path: "nodes/%{::trusted.certname}.yaml"
+  - name: "Other YAML hierarchy levels"
+    paths:
+      - "common.yaml"
+```
+
+#### Per-node data: data/"nodes/%{::trusted.certname}.yaml" as in
+"/etc/puppetlabs/code/environments/production/data/nodes/node1.ene.local.yaml"
+
+#### data/common.yaml as in
+"/etc/puppetlabs/code/environments/production/data/common.yaml"
+```
+---
+classes:
+  - motd
+```
+
+#### Lookup manifests/site.pp as in
+"/etc/puppetlabs/code/environments/production/manifests/site.pp"
+```
+# 'lookup'
+# Do a unique merge lookup of class names,
+# then add all of those classes to the catalog (like hiera_include):
+lookup('classes', Array[String], 'unique').include
+```
+
 ### environments
 
 ## Create/Generate your first module
 ```
-cd <your puppet code directory>
+cd <your puppet module code directory>
+# e.g. cd ~/git/studies/puppet/code/environments/production
+
 puppet module generate eneuhauss-motd
 cd motd
 bundle install
@@ -117,6 +192,7 @@ I, [2017-07-20T18:02:59.710995 #35133]  INFO -- : Creating symlink from spec/fix
 Finished in 1.13 seconds (files took 1.73 seconds to load)
 4 examples, 0 failures
 ```
+
 
 ### Test your code in a container without changing anything via --noop
 ```
