@@ -30,3 +30,7 @@ RUN /opt/puppetlabs/bin/puppetserver gem install msgpack
 #    /etc/puppet/environments/production/manifests \
 #    /etc/puppet/environments/production/modules
 
+RUN apt-get -y install \
+  tree \
+  less
+

@@ -21,4 +21,8 @@ RUN wget -q https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VE
     && tar -C /usr/local/bin -xzf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
+RUN apt-get -y install \
+  tree \
+  less
+
 RUN /opt/puppetlabs/bin/puppet agent --enable
