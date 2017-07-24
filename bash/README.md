@@ -11,12 +11,25 @@ grep -E -o "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0
 ls -lh /var/log/
 cp /var/log/auth.log /tmp
 less !ls:$/messages
+<output> less /var/log/messages
 
 locate Dockerfile.puppetmaster
 /Users/eneuhauss/git/studies/puppet/provision/puppet_recurse/Dockerfile.puppetmaster
-vim $(!!)
+/Users/eneuhauss/git/studies/puppet/projects/logoutput/Dockerfile.puppetmaster
+vim -p $(!!)
+<output> vim -p /Users/eneuhauss/git/studies/puppet/projects/logoutput/Dockerfile.puppetmaster /Users/eneuhauss/git/studies/puppet/provision/puppet_recurse/Dockerfile.puppetmaster
 
-vim $(!less)
+vim !less:$
+<output> less /var/log/messages
+
+docker-compose -f ~/git/studies/puppet/projects/puppet5/docker-compose.yml down
+pwd
+/Users/eneuhauss/git/studies/puppet/code/environments/production/modules/motd
+cd !docker:2:s/docker-compose.yml/
+<output> cd ~/git/studies/puppet/projects/puppet5/
+
+vim !cd:$:pREADME.md
+vim ~/git/studies/puppet/projects/puppet5/README.md
 ```
 
 ## Process and subprocess
