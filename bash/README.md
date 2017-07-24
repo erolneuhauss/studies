@@ -30,6 +30,11 @@ cd !docker:2:s/docker-compose.yml/
 
 vim !cd:$:pREADME.md
 vim ~/git/studies/puppet/projects/puppet5/README.md
+
+cp data/nodes/node2.ene.local.yaml common.yaml
+echo '' > !!^ !!^:s/2/1
+<output> echo '' > data/nodes/node2.ene.local.yaml data/nodes/node1.ene.local.yaml
+
 ```
 ### Links for History
 
