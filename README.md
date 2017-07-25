@@ -44,6 +44,7 @@ pdflatex job_appl_sample.tex
 * [Scope](./go/04_scope)
 
 ## [puppet](./puppet)
+  * [puppet5](./puppet/projects/puppet5) -- most advanced puppet in this repo so far
 ## python
 ## vagrant
 ## and more
