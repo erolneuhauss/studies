@@ -43,7 +43,7 @@ pdflatex job_appl_sample.tex
 * [Variables](./go/03_variables)
 * [Scope](./go/04_scope)
 
-## puppet
+## [puppet](./puppet)
 ## python
 ## vagrant
 ## and more
