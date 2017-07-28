@@ -1,0 +1,81 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: hello-openshift
+    name: hello-openshift
+  spec:
+    replicas: 1
+    selector:
+      app: hello-openshift
+      deploymentconfig: hello-openshift
+    strategy:
+      resources: {}
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          app: hello-openshift
+          deploymentconfig: hello-openshift
+      spec:
+        containers:
+        - image: 172.30.1.1:5000/myproject/hello-openshift:latest
+          name: hello-openshift
+          ports:
+          - containerPort: 8888
+            protocol: TCP
+          - containerPort: 8080
+            protocol: TCP
+          resources: {}
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - hello-openshift
+        from:
+          kind: ImageStreamTag
+          name: hello-openshift:latest
+          namespace: myproject
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: hello-openshift
+    name: hello-openshift
+  spec:
+    ports:
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    - name: 8888-tcp
+      port: 8888
+      protocol: TCP
+      targetPort: 8888
+    selector:
+      app: hello-openshift
+      deploymentconfig: hello-openshift
+  status:
+    loadBalancer: {}
+kind: List
+metadata: {}

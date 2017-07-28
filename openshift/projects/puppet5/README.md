@@ -5,12 +5,13 @@
 brew info openshift-cli
 ```
 
-## Prepare docker images for openshift: docker image must be able to run as a daemon
+### Prepare docker images for openshift: docker image must be able to run as a daemon
 ```
 docker build -f Dockerfile.node1 -t eneuhauss/project_puppet5_node1:1.2 .
 docker run -d eneuhauss/project_puppet5_puppetmaster:1.2
 docker push eneuhauss/project_puppet5_puppetmaster:1.2
 ```
+
 ## oc cluster
 ### create oc cluster on VirtualBox
 oc cluster must run on a Mac OS X in VirtualBox instead on naked host
@@ -33,9 +34,25 @@ oc cluster up --docker-machine='openshift'
 ```
 
 ### Basic Concept
-  * create project
+  * create project (myproject is created per default)
   * add image to project - that creates deployment, pods and service
   * add route to service (routes and dns configuration takes a few minutes)
+
+#### adding an image
+```
+oc import-image hello-openshift --from='docker.io/openshift/hello-openshift:latest' --confirm
+```
+
+#### create an output first (-o yaml)
+```
+oc new-app hello-openshift -i "hello-openshift" -o yaml
+```
+[examples/oc-new-app-hello-openshift.yaml](./examples/oc-new-app-hello-openshift.yaml)
+
+#### create a new app
+```
+oc new-app hello-openshift -i "hello-openshift"
+```
 
 ### openshift/hello-openshift
 #### Container/Pods
@@ -69,6 +86,11 @@ This target port will route to Service Port 8080 → Container Port 8080 (TCP).
 curl http://hello-openshift-myproject.192.168.99.100.xip.io
 <output>
 Hello OpenShift!
+```
+
+#### Delete my app completly
+```
+oc delete all -l app=hello-openshift
 ```
 
 #### HA-Proxy is configured to work with port 80/443 only
