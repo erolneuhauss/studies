@@ -32,9 +32,11 @@ RUN /opt/puppetlabs/bin/puppetserver gem install msgpack
 
 RUN apt-get -y install \
   tree \
+  dnsutils \
+  curl \
   less
 
-EXPOSE 8140
+EXPOSE 8140 8140
 
 RUN mkdir .puppetlabs \
   && chgrp -R 0 .puppetlabs \
