@@ -6,13 +6,13 @@ metadata:
     openshift.io/generated-by: OpenShiftNewApp
   creationTimestamp: null
   labels:
-    app: hello-openshift
-  name: hello-openshift
+    app: puppet
+  name: puppet
 spec:
   replicas: 1
   selector:
-    app: hello-openshift
-    deploymentconfig: hello-openshift
+    app: puppet
+    deploymentconfig: puppet
   strategy:
     resources: {}
   template:
@@ -21,16 +21,14 @@ spec:
         openshift.io/generated-by: OpenShiftNewApp
       creationTimestamp: null
       labels:
-        app: hello-openshift
-        deploymentconfig: hello-openshift
+        app: puppet
+        deploymentconfig: puppet
     spec:
       containers:
-      - image: 172.30.1.1:5000/myproject/hello-openshift:latest
-        name: hello-openshift
+      - image: 172.30.1.1:5000/myproject/puppet:latest
+        name: puppet
         ports:
-        - containerPort: 8888
-          protocol: TCP
-        - containerPort: 8080
+        - containerPort: 8140
           protocol: TCP
         resources: {}
   test: false
@@ -39,10 +37,10 @@ spec:
   - imageChangeParams:
       automatic: true
       containerNames:
-      - hello-openshift
+      - puppet
       from:
         kind: ImageStreamTag
-        name: hello-openshift:latest
+        name: puppet:latest
         namespace: myproject
     type: ImageChange
 status:
@@ -60,34 +58,30 @@ metadata:
     openshift.io/generated-by: OpenShiftNewApp
   creationTimestamp: null
   labels:
-    app: hello-openshift
-  name: hello-openshift
+    app: puppet
+  name: puppet
 spec:
   ports:
-  - name: 8080-tcp
-    port: 8080
+  - name: 8140-tcp
+    port: 8140
     protocol: TCP
-    targetPort: 8080
-  - name: 8888-tcp
-    port: 8888
-    protocol: TCP
-    targetPort: 8888
+    targetPort: 8140
   selector:
-    app: hello-openshift
-    deploymentconfig: hello-openshift
+    app: puppet
+    deploymentconfig: puppet
 status:
   loadBalancer: {}
 ---
 apiVersion: v1
 kind: Route
 metadata:
-  name: hello-openshift
+  name: puppet
   namespace: myproject
 spec:
-  host: hello-openshift-myproject.192.168.99.100.xip.io
+  host: puppet-myproject.192.168.99.100.xip.io
   to:
     kind: Service
-    name: hello-openshift
+    name: puppet
   port:
-    targetPort: 8080-tcp
+    targetPort: 8140-tcp
   wildcardPolicy: None

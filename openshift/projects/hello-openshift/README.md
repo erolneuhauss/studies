@@ -57,6 +57,8 @@ oc new-app hello-openshift -i "hello-openshift"
 #### alternativ: create an app from yaml
 ```
 oc create -f ./examples/oc-new-app-hello-openshift.yaml
+# make changes to the .yaml file
+oc apply -f ./examples/oc-new-app-hello-openshift.yaml
 ```
 [examples/oc-new-app-hello-openshift.yaml](./examples/oc-new-app-hello-openshift.yaml)
 
@@ -98,6 +100,7 @@ Hello OpenShift!
 ```
 oc delete all -l app=hello-openshift
 oc delete route hello-openshift
+oc delete imagestreams hello-openshift
 ```
 
 #### HA-Proxy is configured to work with port 80/443 only
@@ -110,15 +113,7 @@ openshift cluster.
 oc --help
 oc status -v
 oc login -u system:admin
-oc import-image puppet --from='docker.io/eneuhauss/project_puppet5_puppetmaster:1.2' --confirm
 oc import-image hello-openshift --from='docker.io/openshift/hello-openshift:latest' --confirm
-oc create -f puppet-deployment.yaml
-oc create -f puppet-service.yaml
-oc apply -f puppet-deployment.yaml
-oc apply -f puppet-service.yaml
-oc delete DeploymentConfig puppet
-oc get DeploymentConfig
-oc get app
 oc get apps
 oc get dc
 oc get deploy
