@@ -31,4 +31,5 @@ RUN mkdir .puppetlabs \
   && chgrp -R 0 .puppetlabs \
   && chmod g+rwX .puppetlabs
 
-ENTRYPOINT  dockerize -wait tcp://puppet:8140 -timeout 60s /opt/puppetlabs/bin/puppet agent --no-daemonize --debug
+#ENTRYPOINT  dockerize -wait tcp://puppet:8140 -timeout 60s /opt/puppetlabs/bin/puppet agent --no-daemonize --debug
+ENTRYPOINT /opt/puppetlabs/bin/puppet agent --no-daemonize --debug
