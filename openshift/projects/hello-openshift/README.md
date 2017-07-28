@@ -3,6 +3,7 @@
 ### Installation
 ```
 brew info openshift-cli
+brew install openshift-cli
 ```
 
 ### Prepare docker images for openshift: docker image must be able to run as a daemon
@@ -164,7 +165,7 @@ oc get services
 ```
 
 ## Links
-[https://www.openshift.org/](https://www.openshift.org/)
-[https://github.com/openshift/origin/blob/master/docs/cluster_up_down.md](https://github.com/openshift/origin/blob/master/docs/cluster_up_down.md)
-[https://github.com/openshift/training](https://github.com/openshift/training)
-[https://developers.openshift.com/getting-started/osx.html](https://developers.openshift.com/getting-started/osx.html)
+  *[https://www.openshift.org/](https://www.openshift.org/)
+  *[https://github.com/openshift/origin/blob/master/docs/cluster_up_down.md](https://github.com/openshift/origin/blob/master/docs/cluster_up_down.md)
+  *[https://github.com/openshift/training](https://github.com/openshift/training)
+  *[https://developers.openshift.com/getting-started/osx.html](https://developers.openshift.com/getting-started/osx.html)
