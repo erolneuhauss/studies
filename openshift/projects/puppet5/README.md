@@ -54,6 +54,12 @@ oc new-app hello-openshift -i "hello-openshift" -o yaml
 oc new-app hello-openshift -i "hello-openshift"
 ```
 
+#### alternativ: create an app from yaml
+```
+oc create -f ./examples/oc-new-app-hello-openshift.yaml
+```
+[examples/oc-new-app-hello-openshift.yaml](./examples/oc-new-app-hello-openshift.yaml)
+
 ### openshift/hello-openshift
 #### Container/Pods
 ```
@@ -91,6 +97,7 @@ Hello OpenShift!
 #### Delete my app completly
 ```
 oc delete all -l app=hello-openshift
+oc delete route hello-openshift
 ```
 
 #### HA-Proxy is configured to work with port 80/443 only
