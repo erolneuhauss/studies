@@ -17,10 +17,45 @@ docker push eneuhauss/project_puppet5_puppetmaster:1.2
 oc cluster must run on a Mac OS X in VirtualBox instead on naked host
 ```
 oc cluster up --forward-ports=true --create-machine=true
-docker-machine ls
-oc cluster down --docker-machine='openshift'
-oc cluster up --docker-machine='openshift'
 <output>
+-- Checking OpenShift client ... OK
+-- Create Docker machine ...
+   Creating docker-machine openshift
+-- Checking Docker client ... OK
+-- Checking Docker version ...
+   WARNING: Cannot verify Docker version
+-- Checking for existing OpenShift container ... OK
+-- Checking for openshift/origin:v1.5.1 image ...
+   Pulling image openshift/origin:v1.5.1
+   Pulled 0/3 layers, 3% complete
+   Pulled 1/3 layers, 87% complete
+   Pulled 2/3 layers, 93% complete
+   Pulled 3/3 layers, 100% complete
+   Extracting
+   Image pull complete
+-- Checking Docker daemon configuration ... OK
+-- Checking for available ports ... OK
+-- Checking type of volume mount ...
+   Using Docker shared volumes for OpenShift volumes
+-- Creating host directories ... OK
+-- Finding server IP ...
+   Using docker-machine IP 192.168.99.100 as the host IP
+   Using 192.168.99.100 as the server IP
+-- Starting OpenShift container ...
+   Creating initial OpenShift configuration
+   Starting OpenShift using container 'origin'
+   Waiting for API server to start listening
+   OpenShift server started
+-- Adding default OAuthClient redirect URIs ... OK
+-- Installing registry ... OK
+-- Installing router ... OK
+-- Importing image streams ... OK
+-- Importing templates ... OK
+-- Login to server ... OK
+-- Creating initial project "myproject" ... OK
+-- Removing temporary directory ... OK
+-- Checking container networking ... OK
+-- Server Information ...
    OpenShift server started.
    The server is accessible via web console at:
        https://192.168.99.100:8443
@@ -31,6 +66,11 @@ oc cluster up --docker-machine='openshift'
 
    To login as administrator:
        oc login -u system:admin
+   OpenShift server started.
+
+docker-machine ls
+oc cluster down --docker-machine='openshift'
+oc cluster up --docker-machine='openshift'
 ```
 
 ### Basic Concept
