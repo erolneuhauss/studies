@@ -1,5 +1,11 @@
 # Puppet 5 on Openshift
-## docker image must be able to run as a daemon
+## Prerequisites
+### Installation
+```
+brew info openshift-cli
+```
+
+## Prepare docker images for openshift: docker image must be able to run as a daemon
 ```
 docker build -f Dockerfile.node1 -t eneuhauss/project_puppet5_node1:1.2 .
 docker run -d eneuhauss/project_puppet5_puppetmaster:1.2
@@ -44,7 +50,7 @@ Ports: 8080/TCP , 8888/TCP
 Selectors: deploymentconfig=hello-openshift
 Type: ClusterIP
 IP: 172.30.206.170
-Hostname: hello-openshift.myproject.svc 
+Hostname: hello-openshift.myproject.svc
 Session affinity: None
 ```
 
@@ -65,6 +71,9 @@ curl http://hello-openshift-myproject.192.168.99.100.xip.io
 Hello OpenShift!
 ```
 
+#### HA-Proxy is configured to work with port 80/443 only
+Therefore and by nature Puppetmaster is not suitable to work in an
+openshift cluster.
 
 
 ### login into and work with oc cluster
@@ -89,3 +98,9 @@ oc get pods
 oc get projects
 oc get services
 ```
+
+## Links
+[https://www.openshift.org/](https://www.openshift.org/)
+[https://github.com/openshift/origin/blob/master/docs/cluster_up_down.md](https://github.com/openshift/origin/blob/master/docs/cluster_up_down.md)
+[https://github.com/openshift/training](https://github.com/openshift/training)
+[https://developers.openshift.com/getting-started/osx.html](https://developers.openshift.com/getting-started/osx.html)
