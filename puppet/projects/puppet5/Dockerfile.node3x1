@@ -1,0 +1,18 @@
+# Dockerfile based on the latest debian 8 image
+FROM debian:8
+MAINTAINER eneuhauss@gmx.de
+
+RUN apt-get update && \
+    apt-get -y install \
+    wget \    
+    puppet
+
+ENV DOCKERIZE_VERSION v0.5.0
+
+ADD config/3x/node1/etc/puppet/puppet.conf /etc/puppet/puppet.conf
+
+RUN wget -q https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+    && tar -C /usr/local/bin -xzf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+    && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+
+RUN /usr/bin/puppet agent --enable

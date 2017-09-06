@@ -9,7 +9,7 @@ services:
     domainname: ene.local
     image: eneuhauss/project_puppet5_puppetmaster:1.1
     volumes:
-      - $PWD/../../code:/etc/puppetlabs/code
+      - $PWD/../../code5x:/etc/puppetlabs/code
     entrypoint:
       - /opt/puppetlabs/bin/puppet
       - master
@@ -31,7 +31,7 @@ services:
       - puppet5x
     links:
       - puppet5x
-    entrypoint: dockerize -wait tcp://puppet5x:8140 -timeout 60s /opt/puppetlabs/bin/puppet agent --no-daemonize
+    entrypoint: dockerize -wait tcp://puppet5x:8140 -timeout 60s /opt/puppetlabs/bin/puppet agent --no-daemonize --debug
 
   node5x2:
     build:
@@ -45,4 +45,49 @@ services:
       - puppet5x
     links:
       - puppet5x
-    entrypoint: dockerize -wait tcp://puppet5x:8140 -timeout 60s /opt/puppetlabs/bin/puppet agent --no-daemonize
+    entrypoint: dockerize -wait tcp://puppet5x:8140 -timeout 60s /opt/puppetlabs/bin/puppet agent --no-daemonize --debug
+ 
+# puppet version 3x            
+  puppet3x:
+    build:
+      context: .
+      dockerfile: Dockerfile.puppet3x
+    container_name: puppet3x
+    hostname: puppet3x
+    domainname: ene.local
+    image: eneuhauss/project_puppet3_puppetmaster:1.1
+    volumes:
+      - $PWD/../../code3x/environments:/etc/puppet/environments
+    entrypoint:
+      - /usr/bin/puppet
+      - master
+      - --no-daemonize
+      - --debug
+
+  node3x1:
+    build:
+      context: .
+      dockerfile: Dockerfile.node3x1
+    container_name: node3x1
+    hostname: node3x1
+    domainname: ene.local
+    image: eneuhauss/project_puppet3_node3x1:1.1
+    depends_on:
+      - puppet3x
+    links:
+      - puppet3x
+    entrypoint: dockerize -wait tcp://puppet3x:8140 -timeout 60s /usr/bin/puppet agent --no-daemonize --debug
+
+  node3x2:
+    build:
+      context: .
+      dockerfile: Dockerfile.node3x1
+    container_name: node3x2
+    hostname: node3x2
+    domainname: ene.local
+    image: eneuhauss/project_puppet3_node3x1:1.1
+    depends_on:
+      - puppet3x
+    links:
+      - puppet3x
+    entrypoint: dockerize -wait tcp://puppet3x:8140 -timeout 60s /usr/bin/puppet agent --no-daemonize --debug

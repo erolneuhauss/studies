@@ -1,7 +1,7 @@
 # try out puppet version 5
 In this project
-  * there are two containers: puppet (puppetmaster) and node1
-  * node1 gets modified by puppet
+  * there are 2 containers based on images: puppet5x (puppetmaster) and node5x1
+  * node5x1 gets modified by puppet5x
     * a text file motd in /etc gets created,
     * ntp package installed and
     * user eneuhauss created
@@ -17,6 +17,12 @@ git clone git@github.com:erolneuhauss/studies.git
 cd ~/git/studies/puppet/projects/puppet5
 ```
 
+## How to build and run docker containers
+```
+docker-compose build
+docker-compose up
+
+```
 ## Features
 ### hiera (Data Provider)
 #### Hierarchy / Lookup and Merge strategy
@@ -42,7 +48,7 @@ cd ~/git/studies/puppet/projects/puppet5
 
 #### directory structure
 ```
-cd ~/git/studies/puppet/code/environments/production
+cd ~/git/studies/puppet/code5x/environments/production
 tree -L 2
 .
 ├── data
@@ -97,7 +103,7 @@ lookup('classes', Array[String], 'unique').include
 ## Create/Generate your first module
 ```
 cd <your puppet module code directory>
-# e.g. cd ~/git/studies/puppet/code/environments/production
+# e.g. cd ~/git/studies/puppet/code5x/environments/production
 
 puppet module generate eneuhauss-motd
 cd motd
@@ -185,7 +191,7 @@ puppet parser validate motd/manifests/init.pp
 ### rake spec, example for success
 ```
 rake spec
-I, [2017-07-20T18:02:59.710995 #35133]  INFO -- : Creating symlink from spec/fixtures/modules/motd to /Users/eneuhauss/git/studies/puppet/provision/puppet5/config/puppet/opt/puppetlabs/puppet/modules/motd
+I, [2017-07-20T18:02:59.710995 #35133]  INFO -- : Creating symlink from spec/fixtures/modules/motd to /Users/eneuhauss/git/studies/puppet/provision/puppet5/config/5x/puppet/opt/puppetlabs/puppet/modules/motd
 /usr/local/Cellar/ruby/2.4.1_1/bin/ruby...
 ....
 
@@ -302,4 +308,25 @@ Notice: /Stage[main]/Motd/File[/etc/motd]/owner: owner changed 'root' to 'eneuha
 Notice: Applied catalog in 0.04 seconds
 ```
 
+# try out puppet version 3 with hiera
+## test hiera
+```
+root@puppet3x:/#
+hiera -c /etc/puppet/environments/production/hiera.yaml classes fqdn=node3x1.ene.local
+["roles::webserver"]
+
+# because
+cat /etc/puppet/environments/production/data/nodes/node3x1.ene.local.yaml
+---
+classes:
+  - roles::webserver
+
+hiera -c /etc/puppet/environments/production/hiera.yaml sshservicename osfamily=Debian
+ssh
+
+# because
+cat /etc/puppet/environments/production/data/Debian.yaml
+---
+sshservicename: ssh
+```
 
