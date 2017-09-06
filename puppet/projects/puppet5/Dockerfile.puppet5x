@@ -1,5 +1,5 @@
 # Dockerfile based on the latest debian 8 image
-FROM debian:8.8
+FROM debian:8
 MAINTAINER eneuhauss@gmx.de
 
 RUN echo "deb http://ftp.debian.org/debian jessie-backports main" > \
@@ -21,7 +21,7 @@ RUN apt-get update && \
 
 ENV PATH "$PATH:/opt/puppetlabs/bin"
 
-ADD config/puppet/etc/puppetlabs/puppet/puppet.conf /etc/puppetlabs/puppet/puppet.conf
+ADD config/5x/puppet/etc/puppetlabs/puppet/puppet.conf /etc/puppetlabs/puppet/puppet.conf
 
 RUN /opt/puppetlabs/bin/puppetserver gem install msgpack
 #RUN mkdir -p \

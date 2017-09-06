@@ -1,11 +1,11 @@
-version: '2'
+version: '3'
 services:
-  puppet:
+  puppet5x:
     build:
       context: .
-      dockerfile: Dockerfile.puppet
-    container_name: puppet
-    hostname: puppet
+      dockerfile: Dockerfile.puppet5x
+    container_name: puppet5x
+    hostname: puppet5x
     domainname: ene.local
     image: eneuhauss/project_puppet5_puppetmaster:1.1
     volumes:
@@ -19,30 +19,30 @@ services:
       # - foreground
       # - --debug
 
-  node1:
+  node5x1:
     build:
       context: .
-      dockerfile: Dockerfile.node1
-    container_name: node1
-    hostname: node1
+      dockerfile: Dockerfile.node5x1
+    container_name: node5x1
+    hostname: node5x1
     domainname: ene.local
-    image: eneuhauss/project_puppet5_node1:1.1
+    image: eneuhauss/project_puppet5_node5x1:1.1
     depends_on:
-      - puppet
+      - puppet5x
     links:
-      - puppet
-    entrypoint: dockerize -wait tcp://puppet:8140 -timeout 60s /opt/puppetlabs/bin/puppet agent --no-daemonize --debug
+      - puppet5x
+    entrypoint: dockerize -wait tcp://puppet5x:8140 -timeout 60s /opt/puppetlabs/bin/puppet agent --no-daemonize
 
-  node2:
+  node5x2:
     build:
       context: .
-      dockerfile: Dockerfile.node1
-    container_name: node2
-    hostname: node2
+      dockerfile: Dockerfile.node5x1
+    container_name: node5x2
+    hostname: node5x2
     domainname: ene.local
-    image: eneuhauss/project_puppet5_node1:1.1
+    image: eneuhauss/project_puppet5_node5x1:1.1
     depends_on:
-      - puppet
+      - puppet5x
     links:
-      - puppet
-    entrypoint: dockerize -wait tcp://puppet:8140 -timeout 60s /opt/puppetlabs/bin/puppet agent --no-daemonize --debug
+      - puppet5x
+    entrypoint: dockerize -wait tcp://puppet5x:8140 -timeout 60s /opt/puppetlabs/bin/puppet agent --no-daemonize
