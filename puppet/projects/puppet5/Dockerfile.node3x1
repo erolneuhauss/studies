@@ -5,6 +5,7 @@ MAINTAINER eneuhauss@gmx.de
 RUN apt-get update && \
     apt-get -y install \
     wget \    
+    less \
     puppet
 
 ENV DOCKERIZE_VERSION v0.5.0

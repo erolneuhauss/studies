@@ -6,6 +6,7 @@ RUN apt-get update && \
   apt-get -y upgrade &&  \
   apt-get -y install \
     vim \
+    less \
     wget && \
   wget https://apt.puppetlabs.com/puppet5-release-jessie.deb && \
   dpkg -i puppet5-release-jessie.deb
@@ -22,9 +23,5 @@ ADD config/5x/node1/etc/puppetlabs/puppet/puppet.conf /etc/puppetlabs/puppet/pup
 RUN wget -q https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && tar -C /usr/local/bin -xzf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
     && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
-
-RUN apt-get -y install \
-  tree \
-  less
 
 RUN /opt/puppetlabs/bin/puppet agent --enable

@@ -6,7 +6,9 @@ RUN echo "deb http://ftp.debian.org/debian jessie-backports main" > \
   /etc/apt/sources.list.d/jessie-backport.list && \
   apt-get update && \
   apt-get -y upgrade &&  \
-  apt-get -y install wget &&  \
+  apt-get -y install
+    wget \
+    less && \
   wget https://apt.puppetlabs.com/puppet5-release-jessie.deb && \
   dpkg -i puppet5-release-jessie.deb && \
   apt-get update && \
@@ -24,13 +26,3 @@ ENV PATH "$PATH:/opt/puppetlabs/bin"
 ADD config/5x/puppet/etc/puppetlabs/puppet/puppet.conf /etc/puppetlabs/puppet/puppet.conf
 
 RUN /opt/puppetlabs/bin/puppetserver gem install msgpack
-#RUN mkdir -p \
-#    /etc/puppet/files \
-#    /etc/puppet/templates \
-#    /etc/puppet/environments/production/manifests \
-#    /etc/puppet/environments/production/modules
-
-RUN apt-get -y install \
-  tree \
-  less
-

@@ -4,6 +4,7 @@ MAINTAINER eneuhauss@gmx.de
 
 RUN apt-get update && \
     apt-get -y install \
+    less \
     puppetmaster \
     ruby-msgpack
 
