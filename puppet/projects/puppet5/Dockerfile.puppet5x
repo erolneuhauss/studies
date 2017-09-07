@@ -6,9 +6,7 @@ RUN echo "deb http://ftp.debian.org/debian jessie-backports main" > \
   /etc/apt/sources.list.d/jessie-backport.list && \
   apt-get update && \
   apt-get -y upgrade &&  \
-  apt-get -y install
-    wget \
-    less && \
+  apt-get -y install wget vim less && \
   wget https://apt.puppetlabs.com/puppet5-release-jessie.deb && \
   dpkg -i puppet5-release-jessie.deb && \
   apt-get update && \
