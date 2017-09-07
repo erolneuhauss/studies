@@ -14,7 +14,7 @@ services:
       - /opt/puppetlabs/bin/puppet
       - master
       - --no-daemonize
-      - --debug
+      - --verbose
       # - /opt/puppetlabs/bin/puppetserver
       # - foreground
       # - --debug
@@ -29,11 +29,12 @@ services:
     image: eneuhauss/project_puppet5_node5x1:1.1
     volumes:
       - $PWD/working/5x/client_data/catalog:/opt/puppetlabs/puppet/cache/client_data/catalog
+      - $PWD/working/5x/state:/opt/puppetlabs/puppet/cache/state
     depends_on:
       - puppet5x
     links:
       - puppet5x
-    entrypoint: dockerize -wait tcp://puppet5x:8140 -timeout 60s /opt/puppetlabs/bin/puppet agent --no-daemonize --debug
+    entrypoint: dockerize -wait tcp://puppet5x:8140 -timeout 60s /opt/puppetlabs/bin/puppet agent --no-daemonize --verbose
 
 #  node5x2:
 #    build:
@@ -47,7 +48,7 @@ services:
 #      - puppet5x
 #    links:
 #      - puppet5x
-#    entrypoint: dockerize -wait tcp://puppet5x:8140 -timeout 60s /opt/puppetlabs/bin/puppet agent --no-daemonize --debug
+#    entrypoint: dockerize -wait tcp://puppet5x:8140 -timeout 60s /opt/puppetlabs/bin/puppet agent --no-daemonize --verbose
 #
 # puppet version 3x
   puppet3x:
@@ -64,7 +65,7 @@ services:
       - /usr/bin/puppet
       - master
       - --no-daemonize
-      - --debug
+      - --verbose
 
   node3x1:
     build:
@@ -76,11 +77,12 @@ services:
     image: eneuhauss/project_puppet3_node3x1:1.1
     volumes:
       - $PWD/working/3x/client_data/catalog:/var/lib/puppet/client_data/catalog
+      - $PWD/working/3x/state:/var/lib/puppet/state
     depends_on:
       - puppet3x
     links:
       - puppet3x
-    entrypoint: dockerize -wait tcp://puppet3x:8140 -timeout 60s /usr/bin/puppet agent --no-daemonize --debug
+    entrypoint: dockerize -wait tcp://puppet3x:8140 -timeout 60s /usr/bin/puppet agent --no-daemonize --verbose
 
 #  node3x2:
 #    build:
@@ -94,4 +96,4 @@ services:
 #      - puppet3x
 #    links:
 #      - puppet3x
-#    entrypoint: dockerize -wait tcp://puppet3x:8140 -timeout 60s /usr/bin/puppet agent --no-daemonize --debug
+#    entrypoint: dockerize -wait tcp://puppet3x:8140 -timeout 60s /usr/bin/puppet agent --no-daemonize --verbose
