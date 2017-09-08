@@ -1,4 +1,4 @@
 ---
 classes:
-  - roles::webserver
+  - roles::dgi
 
