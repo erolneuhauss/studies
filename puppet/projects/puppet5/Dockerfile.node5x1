@@ -5,10 +5,12 @@ MAINTAINER eneuhauss@gmx.de
 RUN apt-get update && \
   apt-get -y upgrade &&  \
   apt-get -y install \
-    vim \
     less \
-    wget && \
-  wget https://apt.puppetlabs.com/puppet5-release-jessie.deb && \
+    lsb-release \
+    vim \
+    wget
+
+RUN wget https://apt.puppetlabs.com/puppet5-release-jessie.deb && \
   dpkg -i puppet5-release-jessie.deb
 
 RUN apt-get update && \
