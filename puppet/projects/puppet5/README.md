@@ -51,25 +51,31 @@ docker-compose up
 cd ~/git/studies/puppet/code5x/environments/production
 tree -L 2
 .
-├── data
-│   ├── common.yaml
-│   └── nodes
 ├── environment.conf
 ├── hiera.yaml
+├── hieradata
+│   ├── common.yaml
+│   └── nodes
 ├── manifests
 │   └── site.pp
-└── modules
-    ├── apache
-    ├── motd
+├── modules
+│   ├── apache
+│   ├── motd
+│   ├── stdlib
+└── site
     ├── profiles
-    ├── roles
-    └── stdlib
+    └── roles
 ```
 
 
 #### Environment Data Provider: hiera.yaml as in
 "/etc/puppetlabs/code/environments/production/hiera.yaml"
 ```
+---
+version: 5
+defaults:
+  datadir: hieradata
+  data_hash: yaml_data
 hierarchy:
   - name: "Per-node data (yaml version)"
     path: "nodes/%{::trusted.certname}.yaml"
@@ -329,4 +335,3 @@ cat /etc/puppet/environments/production/data/Debian.yaml
 ---
 sshservicename: ssh
 ```
-
