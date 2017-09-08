@@ -2,7 +2,7 @@
 :backends:
   - yaml
 :yaml:
-  :datadir: /etc/puppet/environments/production/data
+  :datadir: /etc/puppet/environments/production/hieradata
 :hierarchy:
   - "%{osfamily}"
   - "nodes/%{fqdn}"
