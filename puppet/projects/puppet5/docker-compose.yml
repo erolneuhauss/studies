@@ -65,7 +65,7 @@ services:
       - /usr/bin/puppet
       - master
       - --no-daemonize
-      - --verbose
+      - --debug
 
   node3x1:
     build:
