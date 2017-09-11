@@ -33,3 +33,11 @@ gem install bundler
   * run docker-compose up
 
 ### see for example project [puppet5](./projects/puppet5)
+
+### useful gadgets
+```
+for module in \
+  $(puppet module list --modulepath=. | grep '^[^/]' | cut -d' ' -f2); do
+   puppet module uninstall $module --modulepath=.
+done
+```
