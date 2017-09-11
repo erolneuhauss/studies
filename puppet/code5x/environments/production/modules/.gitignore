@@ -1,7 +1,10 @@
-stdlib
 apt
+concat
 dgiaptrepos
 dgixymon
 filemapper
+mysql
+postgresql
+staging
+stdlib
 yamlfile
-concat
