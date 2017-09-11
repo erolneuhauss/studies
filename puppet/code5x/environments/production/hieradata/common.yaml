@@ -9,3 +9,11 @@ dgixymon::checks::docker_mongo::password: "very_secret"
 dgixymon::checks::mysql::monitor_password: "very_secret"
 dgixymon::checks::postgres::password: "very_secret"
 dgixymon::checks::mysqlrep::replcheck_password: "very_secret"
+dgicephclient::rados_map:
+  "%{::hostname}":
+    id: 0
+    key: mykey
+    image: myimage
+    pool: mypool
+    mount: /mnt/ceph
+    fstype: ext4

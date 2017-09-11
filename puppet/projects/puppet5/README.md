@@ -314,6 +314,36 @@ Notice: /Stage[main]/Motd/File[/etc/motd]/owner: owner changed 'root' to 'eneuha
 Notice: Applied catalog in 0.04 seconds
 ```
 
+
+# try out puppet version 5 with hiera
+## test on puppet server
+```
+root@puppet5x:/#
+puppet lookup --node node5x1.ene.local explain xymon::checks::docker_mongo::password
+--- very_secret
+...
+
+puppet lookup --node node5x1.ene.local explain dgicephclient::rados_map
+---
+node5x1:
+  id: 0
+  key: mykey
+  image: myimage
+  pool: mypool
+  mount: "/mnt/ceph"
+  fstype: ext4
+
+# because in hieradata/common.yaml
+cephclient::rados_map:
+  "%{::hostname}":
+    id: 0
+    key: mykey
+    image: myimage
+    pool: mypool
+    mount: /mnt/ceph
+    fstype: ext4
+```
+
 # try out puppet version 3 with hiera
 ## test hiera
 ```
