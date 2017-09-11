@@ -1,3 +1,7 @@
 ---
+dgi_proxy_out_host: "proxy.dus.dg-i.net"
+dgi_proxy_out_port: "3128"
+dgi_proxy_out: 'http://%{hiera("dgi_proxy_out_host")}:%{hiera("dgi_proxy_out_port")}/'
+dgixymon::checks::etcd::peers: ['a','b']
 #classes:
 #  - motd
