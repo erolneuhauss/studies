@@ -1,7 +1,11 @@
 ---
-dgi_proxy_out_host: "proxy.dus.dg-i.net"
-dgi_proxy_out_port: "3128"
-dgi_proxy_out: 'http://%{hiera("dgi_proxy_out_host")}:%{hiera("dgi_proxy_out_port")}/'
-dgixymon::checks::etcd::peers: ['a','b']
 #classes:
 #  - motd
+dgi_proxy_out_host: "proxy.dus.dg-i.net"
+dgi_proxy_out_port: "3128"
+dgi_proxy_out: 'http://%{lookup("dgi_proxy_out_host")}:%{lookup("dgi_proxy_out_port")}/'
+dgixymon::checks::etcd::peers: ['a','b']
+dgixymon::checks::docker_mongo::password: "very_secret"
+dgixymon::checks::mysql::monitor_password: "very_secret"
+dgixymon::checks::postgres::password: "very_secret"
+dgixymon::checks::mysqlrep::replcheck_password: "very_secret"
