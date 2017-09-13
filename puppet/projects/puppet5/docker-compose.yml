@@ -9,7 +9,7 @@ services:
     domainname: ene.local
     image: eneuhauss/project_puppet5_puppetmaster:1.1
     volumes:
-      - $PWD/../../code5x:/etc/puppetlabs/code
+      - $HOME/git/studies/puppet/code5x:/etc/puppetlabs/code
     entrypoint:
       - /opt/puppetlabs/bin/puppet
       - master
@@ -60,7 +60,7 @@ services:
     domainname: ene.local
     image: eneuhauss/project_puppet3_puppetmaster:1.1
     volumes:
-      - $PWD/../../code3x/environments:/etc/puppet/environments
+      - $HOME/git/studies/puppet/code3x/environments:/etc/puppet/environments
     entrypoint:
       - /usr/bin/puppet
       - master
