@@ -1,0 +1,12 @@
+version: '2'
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: test_nginx_conf
+    image: eneuhauss/test_nginx_conf:0.1
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./default_site_nginx.conf:/etc/nginx/conf.d/default.conf  
+
