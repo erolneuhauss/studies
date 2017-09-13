@@ -42,6 +42,11 @@ echo '' > !!^
 
   * [https://www.cyberciti.biz/faq/bash-history-repeat-substitution-command-syntax](https://www.cyberciti.biz/faq/bash-history-repeat-substitution-command-syntax)
 
+## make directories with given permissions and owner
+```
+install -o postgres -g backup -m 750 -d /var/backups/local/postgres/daily
+```
+
 ## Process and subprocess
 [print_process_number.sh (ps $$)](./print_process_number.sh)
 
