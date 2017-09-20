@@ -37,6 +37,7 @@ RUN mkdir -p /usr/local/src &&  \
         fontaxes \
         hyphen-german \
         koma-script \
+        lm \
         mdsymbol \
         microtype \
         mnsymbol \
@@ -62,4 +63,7 @@ RUN mkdir -p /usr/local/src &&  \
         git \
         perl-Digest-MD5 \
         perl-Tk && \
-    yum -y clean all
+    yum -y clean all && \
+    rm -rf /var/cache/yum
+RUN mkdir /texcode
+WORKDIR  /texcode
