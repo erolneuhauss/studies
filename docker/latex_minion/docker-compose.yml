@@ -1,0 +1,13 @@
+version: '3'
+services:
+  pdflatex:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: latex_minion
+    image: eneuhauss/latex_minion:latest
+    volumes:
+      - ./texcode:/texcode
+    entrypoint:
+      - pdflatex
+      - some-tex-file
