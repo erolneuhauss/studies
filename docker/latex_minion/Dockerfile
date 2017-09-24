@@ -2,7 +2,7 @@
 FROM centos:7
 MAINTAINER eneuhauss@gmx.de
 
-ENV PATH /usr/local/texlive/2016/bin/x86_64-linux:$PATH
+ENV PATH /usr/local/texlive/2017/bin/x86_64-linux:$PATH
 
 # Install required packages first
 RUN yum update -y && 	\
@@ -45,7 +45,7 @@ RUN mkdir -p /usr/local/src &&  \
         pdfpages \
         ucs \
         xcolor \
-	xkeyval && \
+	      xkeyval && \
     tar xzf /usr/local/src/minionpro.tgz -C /usr/local/texlive/texmf-local && \
     tar xzf /usr/local/src/myriadpro.tgz -C /usr/local/texlive/texmf-local && \
     mktexlsr /usr/local/texlive/texmf-local && \
