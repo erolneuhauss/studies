@@ -122,6 +122,7 @@ bundle install
 bundle update
 rake spec
 ```
+(But this works only if puppet installed via gem versus installation via distro)
 
 ## Write and test your own module
 ```
