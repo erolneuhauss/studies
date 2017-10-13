@@ -29,3 +29,16 @@ ENV PATH "$PATH:/opt/puppetlabs/bin"
 ADD config/5x/puppet/etc/puppetlabs/puppet/puppet.conf /etc/puppetlabs/puppet/puppet.conf
 
 RUN /opt/puppetlabs/bin/puppetserver gem install msgpack
+
+# instead of installing puppet via distro, you could installed it via gem.
+# This is a workaround for the bug: ruby unable to find command puppet, if
+# puppet 5.3.2 is installed via distro 
+# <code>
+# rake spec --trace
+# rake aborted!
+# LoadError: cannot load such file -- puppet
+# </code>
+#
+#RUN apt-get install -y ruby ruby-dev build-essential httpie \
+#  && rm -rf /var/lib/apt/lists/* \
+#  && gem install rake puppet-lint puppetlabs_spec_helper puppet:5
