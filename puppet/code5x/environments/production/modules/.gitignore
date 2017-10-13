@@ -1,8 +1,7 @@
 *
 apt
 concat
-dgiaptrepos
-dgixymon
+dgi*
 filemapper
 mysql
 postgresql
