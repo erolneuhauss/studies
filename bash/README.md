@@ -97,6 +97,9 @@ brew install psutil
 brew install pstree
 brew install tree
 brew install iproute2mac
+brew install ack
+brew install ruby@2.3
+brew install --with-default-names grep
 ```
 
 #### Install software with python
