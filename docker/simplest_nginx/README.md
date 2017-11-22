@@ -55,7 +55,7 @@ docker rm nginx
 
 
 ### mount html volume and simple index.html
-
+docker run --name nginx -v $(pwd):/usr/share/nginx/html -p 80:80 -d nginx
 ```
 cat > index.html << EOF
 <html>
