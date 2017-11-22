@@ -59,9 +59,9 @@ docker run --name nginx -v $(pwd):/usr/share/nginx/html -p 80:80 -d nginx
 ```
 cat > index.html << EOF
 <html>
-	<body>
-		Hi there
-	</body>
+  <body>
+    Hi there
+  </body>
 </html>
 EOF
 
