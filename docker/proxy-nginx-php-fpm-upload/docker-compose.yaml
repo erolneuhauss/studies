@@ -1,0 +1,31 @@
+version: '2'
+services:
+  proxy:
+    container_name: proxy
+    hostname: proxy
+    depends_on:
+      - "backend"
+    links:
+      - "backend"
+    image: richarvey/nginx-php-fpm
+    volumes:
+      - ./emptydir:/var/www/html
+      - ./proxy_nginx.conf:/etc/nginx/nginx.conf
+      - ./proxy_default_site_nginx.conf:/etc/nginx/sites-available/default.conf  
+    ports:
+      - "80:80"
+  backend:
+    container_name: backend
+    hostname: backend
+    environment:
+      - PHP_UPLOAD_MAX_FILESIZE=300
+      - PHP_POST_MAX_SIZE=300
+    image: richarvey/nginx-php-fpm
+    volumes:
+      - ./backend_nginx.conf:/etc/nginx/nginx.conf
+      - ./upload:/var/www/html/upload
+      - ./upload:/var/www/html
+      - ./additional.ini:/usr/local/etc/php/conf.d/additional.ini
+      - ./backend_default_site_nginx.conf:/etc/nginx/sites-available/default.conf  
+    ports:
+      - "8080:8080"
