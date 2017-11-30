@@ -10,7 +10,7 @@ docker-compose up
 docker-compose up
 [...]
 
-curl -F "fileupload=@5M_file"  http://127.0.0.1/upload.php
+curl -F "fileupload=@5M_file"  http://127.0.0.1/upload/upload.php
 <pre>
 Array
 (
@@ -26,7 +26,7 @@ Array
 )
 </pre>
 
-curl -F "fileupload=@10M_file"  http://127.0.0.1/upload.php
+curl -F "fileupload=@10M_file"  http://127.0.0.1/upload/upload.php
 <html>
 <head><title>413 Request Entity Too Large</title></head>
 <body bgcolor="white">
@@ -35,7 +35,7 @@ curl -F "fileupload=@10M_file"  http://127.0.0.1/upload.php
 </body>
 </html>
 
-curl -F "fileupload=@10M_file"  http://127.0.0.1/upload/upload.php
+curl -F "fileupload=@10M_file"  http://127.0.0.1/upload/20mfiles/upload.php
 <pre>
 Array
 (
@@ -51,7 +51,7 @@ Array
 )
 </pre>
 
-curl -F "fileupload=@20M_file"  http://127.0.0.1/upload/upload.php
+curl -F "fileupload=@20M_file"  http://127.0.0.1/upload/20mfiles/upload.php
 <html>
 <head><title>413 Request Entity Too Large</title></head>
 <body bgcolor="white">

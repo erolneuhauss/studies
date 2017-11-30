@@ -24,7 +24,6 @@ services:
     volumes:
       - ./backend_nginx.conf:/etc/nginx/nginx.conf
       - ./upload:/var/www/html/upload
-      - ./upload:/var/www/html
       - ./additional.ini:/usr/local/etc/php/conf.d/additional.ini
       - ./backend_default_site_nginx.conf:/etc/nginx/sites-available/default.conf  
     ports:
