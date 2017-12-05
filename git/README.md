@@ -1,4 +1,14 @@
 # git
+## useful commands
+
+```
+git log --stat -n3                  # show also which files changed
+git diff production development     # what happens, if merge dev -> prod?
+git diff --name-status production development # which file were modified
+git show 7d3b510790c42f694432d1f4936ec3fa8d7ee817
+git pull -r                         # pull, but rebase my commits
+git log --oneline --decorate --graph
+```
 ## user config
 ```
 [user]
