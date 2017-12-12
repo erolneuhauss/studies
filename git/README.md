@@ -9,6 +9,18 @@ git show 7d3b510790c42f694432d1f4936ec3fa8d7ee817
 git pull -r                         # pull, but rebase my commits
 git log --oneline --decorate --graph
 ```
+## squash commits before merge
+```
+git checkout development
+git pull --rebase
+git merge --squash feature
+git commit -m 'squash all commit into single one before merge to prod'
+git push origin development
+git checkout production
+git pull origin development
+git push origin production
+```
+
 ## user config
 ```
 [user]
