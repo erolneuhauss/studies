@@ -81,32 +81,6 @@ notice that ```./<cmd>``` starts a subprocess (via exec)
 while ```. /.<cmd>``` does not
 
 ## Mac OS X
-### Homebrew
-```
-/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-```
-
-#### Install software with brew
-```
-brew install python
-brew install macvim
-brew install curl
-brew install git
-brew install bash
-brew install psutil
-brew install pstree
-brew install tree
-brew install iproute2mac
-brew install ack
-brew install ruby@2.3
-brew install --with-default-names grep
-```
-
-#### Install software with python
-```
-install powerline-status
-```
-
 #### Configure Powerline for bash
 ### .bash_profile
 ```
