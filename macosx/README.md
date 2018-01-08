@@ -22,7 +22,6 @@ brew install macvim
 brew install nmap
 brew install perl
 brew install pstree
-brew install pstree
 brew install psutil
 brew install pwgen
 brew install python
@@ -33,7 +32,7 @@ brew install tree
 brew install vim
 brew install w3m
 brew install watch
-brew install wgeet
+brew install wget
 ```
 
 ## some things are somewhat different from Linux
