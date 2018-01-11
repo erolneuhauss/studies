@@ -1,4 +1,6 @@
 # Learning bash
+Keep in mind that some commands behave differently depending on platform
+e.g. BSD vs GNU and release date. 
 ## grep
 ### grep for real ip addresses, count occurrence and sort them
 ```
@@ -13,6 +15,12 @@ grep -o -P '"certname":".+?"' whichrolesarebeingused.json
 ### grep only-matching non-greedy extended regex style
 ```
 grep -o -E '"certname":"[^"]+"' whichrolesarebeingused.json
+```
+
+## find
+### mv files selected with find
+```
+find . -type f -mtime -3 -name '*.list' -exec mv -t eneuhauss_tsm_helper/ {} +
 ```
 
 ## History
