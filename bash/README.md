@@ -88,6 +88,12 @@ $ . ./print_process_number.sh
 notice that ```./<cmd>``` starts a subprocess (via exec)
 while ```. /.<cmd>``` does not
 
+## date
+### calculate days between two dates
+```
+expr $(expr $(date -d '20180123' +%s) - $(date -d '20160303' +%s)) / 86400
+```
+
 ## Mac OS X
 #### Configure Powerline for bash
 ### .bash_profile
