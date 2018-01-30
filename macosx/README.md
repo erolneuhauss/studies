@@ -27,6 +27,7 @@ brew install pwgen
 brew install python
 brew install ruby@2.3
 brew install socat
+brew install telnet
 brew install tmux
 brew install tree
 brew install vim
