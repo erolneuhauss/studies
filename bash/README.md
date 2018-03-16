@@ -7,14 +7,19 @@ e.g. BSD vs GNU and release date.
 grep -E -o "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)" /var/log/apache2/access.log | sort | uniq -c | sort -n
 ```
 
+### grep only-matching non-greedy extended regex style
+```
+grep -o -E '"certname":"[^"]+"' whichrolesarebeingused.json
+```
+
 ### grep only-matching non-greedy perl style
 ```
 grep -o -P '"certname":".+?"' whichrolesarebeingused.json
 ```
 
-### grep only-matching non-greedy extended regex style
+### grep only-matching substring non-greedy perl style with positive lookbehind
 ```
-grep -o -E '"certname":"[^"]+"' whichrolesarebeingused.json
+grep -o -P '(?<=roleOccupant: uid=)[^,]+' ldap.out
 ```
 
 ## find
