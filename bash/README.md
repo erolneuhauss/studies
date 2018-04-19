@@ -99,6 +99,44 @@ while ```. /.<cmd>``` does not
 expr $(expr $(date -d '20180123' +%s) - $(date -d '20160303' +%s)) / 86400
 ```
 
+## HTTP Response Time with curl
+```
+git clone https://gist.github.com/8888552.git curl-format
+cd curl-format
+cat curl-format
+\n
+            time_namelookup:  %{time_namelookup}\n
+               time_connect:  %{time_connect}\n
+            time_appconnect:  %{time_appconnect}\n
+           time_pretransfer:  %{time_pretransfer}\n
+              time_redirect:  %{time_redirect}\n
+         time_starttransfer:  %{time_starttransfer}\n
+                            ----------\n
+                 time_total:  %{time_total}\n
+\n
+
+curl -w "@curl-format" -o /dev/null -s https://www.google.de
+
+            time_namelookup:  0.004209
+               time_connect:  0.012263
+            time_appconnect:  0.058706
+           time_pretransfer:  0.058961
+              time_redirect:  0.000000
+         time_starttransfer:  0.096120
+                            ----------
+                 time_total:  0.096361
+
+while true
+  do sleep 10
+  curl \
+    -w "%{time_total}\n" \
+    -o /dev/null \
+    -s https://github.com/erolneuhauss/studies/blob/master/bash/README.md
+done
+```
+
+
+
 ## Mac OS X
 #### Configure Powerline for bash
 ### .bash_profile
