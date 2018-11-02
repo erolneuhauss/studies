@@ -1,6 +1,30 @@
 # Learning bash
 Keep in mind that some commands behave differently depending on platform
-e.g. BSD vs GNU and release date. 
+e.g. BSD vs GNU and release date.
+
+## for loops
+### count lines in a file matching a date
+Consider `/var/log/messages` with entries like
+```
+Nov  2 03:33:04 compute-infra01 journal: {"type":"response","@timestamp":"2018-11-02T02:33:04Z","tags":[],"pid":67,"method":"head","statusCode":200,"req":{"url":"/","method":"head","headers":{"user-agent":"curl/7.29.0","host":"localhost:5601","accept":"*/*"},"remoteAddress":"127.0.0.1","userAgent":"127.0.0.1"},"res":{"statusCode":200,"responseTime":2,"contentLength":9},"message":"HEAD / 200 2ms - 9.0B"}
+```
+You may want to know, how many lines is added by monthly, daily, hourly or by minutes or seconds at a time
+
+```
+for month in Oct Nov; do
+  for day in {1..31}; do
+    for hour in {00..23}; do
+      if grep -q -P "^${month}\s+${day}\s+${hour}" \
+        messages; then
+          echo -n "${month} ${day} ${hour} hits: "
+          grep -c -P "^${month}\s+${day}\s+${hour}" \
+            messages
+      fi
+    done
+  done
+done
+```
+
 ## grep
 ### grep for real ip addresses, count occurrence and sort them
 ```
@@ -29,7 +53,7 @@ find . -type f -mtime -3 -name '*.list' -exec mv -t eneuhauss_tsm_helper/ {} +
 ```
 
 ## History
-### use argument of specific command 
+### use argument of specific command
 ```
 ls -lh /var/log/
 cp /var/log/auth.log /tmp
@@ -55,7 +79,7 @@ vim !cd:$:pREADME.md
 vim ~/git/studies/puppet/projects/puppet5/README.md
 
 cp data/nodes/node2.ene.local.yaml common.yaml
-echo '' > !!^ 
+echo '' > !!^
 <output> echo '' > data/nodes/node2.ene.local.yaml
 ^2^1^
 <output> echo '' > data/nodes/node1.ene.local.yaml
