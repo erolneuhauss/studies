@@ -1,0 +1,23 @@
+# my owncloud server
+version: '3'
+services:
+  web:
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile
+    container_name: nginx
+    image: eneuhauss/my_stretch-slim
+  db:
+    image: mariadb
+    restart: always
+    environment:
+      - MARIADB_ROOT_PASSWORD=owncloud
+      - MARIADB_USERNAME=owncloud
+      - MARIADB_PASSWORD=owncloud
+      - MARIADB_DATABASE=owncloud
+    volumes:
+      - db-data:/var/lib/mysql
+  owncloud:
+    image: owncloud/server
+    restart: always
+

@@ -1,0 +1,14 @@
+# my owncloud server
+version: '3'
+services:
+  db:
+    image: mariadb
+    container_name: mariadb
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=owncloud
+      - MYSQL_USERNAME=owncloud
+      - MYSQL_PASSWORD=owncloud
+      - MYSQL_DATABASE=owncloud
+    volumes:
+      - ./db-data:/var/lib/mysql
