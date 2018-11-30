@@ -1,6 +1,10 @@
 version: '3'
 services:
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: eneuhauss/my_stretch-slim
+    container_name: nginx
     #    ports:
     #      - "80:8080"
