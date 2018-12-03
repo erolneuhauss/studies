@@ -1,23 +1,71 @@
 # my owncloud server
 version: '3'
+
+volumes:
+  files:
+    driver: local
+  mysql:
+    driver: local
+  redis:
+    driver: local
+
 services:
-  web:
-    build:
-      context: .
-      dockerfile: ./nginx/Dockerfile
-    container_name: nginx
-    image: eneuhauss/my_stretch-slim
+  owncloud:
+    image: owncloud/server
+    restart: always
+    ports:
+      - "80:8080"
+    depends_on:
+      - db
+      - redis
+    environment:
+      - OWNCLOUD_DOMAIN=localhost
+      - OWNCLOUD_DB_TYPE=mysql
+      - OWNCLOUD_DB_NAME=owncloud
+      - OWNCLOUD_DB_USERNAME=owncloud
+      - OWNCLOUD_DB_PASSWORD=owncloud
+      - OWNCLOUD_DB_HOST=db
+      - OWNCLOUD_ADMIN_USERNAME=owncloud
+      - OWNCLOUD_ADMIN_PASSWORD=owncloud
+      - OWNCLOUD_REDIS_ENABLED=false
+    healthcheck:
+      test: ["CMD", "/usr/bin/healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - files:/mnt/data
+
   db:
     image: mariadb
     restart: always
     environment:
-      - MARIADB_ROOT_PASSWORD=owncloud
-      - MARIADB_USERNAME=owncloud
-      - MARIADB_PASSWORD=owncloud
-      - MARIADB_DATABASE=owncloud
+      - MYSQL_ROOT_PASSWORD=owncloud
+      - MYSQL_USERNAME=owncloud
+      - MYSQL_PASSWORD=owncloud
+      - MYSQL_DATABASE=owncloud
     volumes:
-      - db-data:/var/lib/mysql
-  owncloud:
-    image: owncloud/server
-    restart: always
+      - mysql:/var/lib/mysql
 
+  redis:
+    image: webhippie/redis:latest
+    restart: always
+    environment:
+      - REDIS_DATABASES=1
+    healthcheck:
+      test: ["CMD", "/usr/bin/healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - redis:/var/lib/redis
+
+  web:
+    image: debian
+    entrypoint: /bin/bash
+    stdin_open: true
+    tty: true
+#    build:
+#      context: .
+#      dockerfile: ./nginx/Dockerfile
+#    image: eneuhauss/my_stretch-slim
