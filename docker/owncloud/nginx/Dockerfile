@@ -1,3 +1,4 @@
-FROM debian:stretch-slim
+FROM nginx:latest
+
 MAINTAINER erol.neuhauss@gmx.de
 
