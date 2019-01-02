@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  apkv:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: eneuhauss/php_apache
+    ports:
+      - 80:80
+    volumes:
+      - ./index.html:/var/www/html/index.html
+    command: ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
+
