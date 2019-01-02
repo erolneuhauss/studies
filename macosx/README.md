@@ -7,19 +7,90 @@
 
 ### Install software with brew/brew cask
 ```
-brew cask install homebrew/cask/iterm2
-brew install zsh
-brew cask install homebrew/cask-fonts/font-dejavu-sans-mono-for-powerline
-brew cask install google-chrome
-brew cask install tunnelblick
-brew cask install homebrew/cask-versions/microsoft-remote-desktop-beta
-brew cask install docker
-brew cask install google-backup-and-sync
-brew cask install apache-directory-studio
-brew cask install alinof-timer gpg-suite java8
+brew cask install \
+  alinof-timer \
+  anki \
+  apache-directory-studio \
+  copyq \
+  cyberduck \
+  docker \
+  firefox \
+  flash-npapi \
+  flash-player \
+  font-dejavu-sans-mono-for-powerline \
+  font-dejavusansmono-nerd-font-mono \
+  google-backup-and-sync \
+  google-chrome \
+  gpg-suite \
+  iterm2 \
+  java8 \
+  microsoft-remote-desktop-beta \
+  mysql-shell \
+  mysqlworkbench \
+  tunnelblick
 
 brew install --with-default-names grep
-brew install ack curl elinks iproute2mac nmap perl pstree psutils pwgen socat telnet tree tmux watch wget w3m
+
+brew install \
+  ack \
+  autoconf \
+  awscli \
+  bdw-gc \
+  cfssl \
+  curl \
+  elinks \
+  gawk \
+  gdbm \
+  gettext \
+  glib \
+  gmp \
+  htop \
+  httpie \
+  iproute2mac \
+  kubernetes-cli \
+  ldapvi \
+  libevent \
+  libffi \
+  libidn2 \
+  libtool \
+  libunistring \
+  lz4 \
+  lzo \
+  mpfr \
+  ncdu \
+  ncurses \
+  nmap \
+  openshift-cli \
+  openssl \
+  openssl@1.1 \
+  openvpn \
+  pcre \
+  peco \
+  perl \
+  pkg-config \
+  popt \
+  pstree \
+  psutils \
+  pv \
+  pwgen \
+  python \
+  python@2 \
+  rbenv \
+  readline \
+  ruby-build \
+  socat \
+  sqlite \
+  telnet \
+  terraform \
+  tig \
+  tmux \
+  tree \
+  v \
+  w3m \
+  watch \
+  wget \
+  xz \
+  zsh
 ```
 
 ## .dotfiles
