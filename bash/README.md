@@ -25,6 +25,13 @@ for month in Oct Nov; do
 done
 ```
 
+## sort and uniq
+### count with uniq
+show me the top 20 number of occurrences 4th column of a file
+```
+awk '{ print $4 }' debug-20190327 | sort | uniq -c | sort -rn | head -n20
+```
+
 ## grep
 ### grep for real ip addresses, count occurrence and sort them
 ```
