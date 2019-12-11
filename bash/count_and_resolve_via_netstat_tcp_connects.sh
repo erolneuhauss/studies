@@ -1,4 +1,4 @@
-/bin/bash
+#!/bin/bash
 
 netstat -ante | awk '{ print $5 }' | sed 's/:[0-9]\{1,\}//' | sort | uniq -c | sort
 
