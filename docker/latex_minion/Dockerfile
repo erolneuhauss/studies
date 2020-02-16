@@ -42,6 +42,7 @@ RUN mkdir -p /usr/local/src &&  \
         microtype \
         mnsymbol \
         paralist \
+        pdfescape \
         pdfpages \
         ucs \
         xcolor \
