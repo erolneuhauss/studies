@@ -38,6 +38,7 @@ RUN mkdir -p /usr/local/src &&  \
         hyphen-german \
         koma-script \
         lm \
+        letltxmacro \
         mdsymbol \
         microtype \
         mnsymbol \
