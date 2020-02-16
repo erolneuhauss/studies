@@ -31,31 +31,29 @@ RUN tlmgr option docfiles 0 && \
         collection-fontutils \
         csquotes \
         currvita \
-        ec \
         etoolbox \
         fltpoint \
         fontaxes \
         hyphen-german \
         koma-script \
-        lm \
         letltxmacro \
         mdsymbol \
         microtype \
         mnsymbol \
-        oberdiek \
         paralist \
         pdfescape \
         pdfpages \
         ucs \
         xcolor \
         xkeyval
+RUN tlmgr install bitset
 RUN tar xzf /usr/local/src/minionpro.tgz -C /usr/local/texlive/texmf-local && \
     tar xzf /usr/local/src/myriadpro.tgz -C /usr/local/texlive/texmf-local && \
     mktexlsr /usr/local/texlive/texmf-local && \
     updmap-sys --enable Map=MinionPro.map && \
     updmap-sys --enable Map=MyriadPro.map && \
     tex -version && \
-    latex -version && \
+    latex -version
     cd /usr/local/src && \
     latex $(find /usr/local -name sample2e.tex) && \
     pdflatex $(find /usr/local -name sample2e.tex) && \
