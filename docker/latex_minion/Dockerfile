@@ -53,7 +53,7 @@ RUN tar xzf /usr/local/src/minionpro.tgz -C /usr/local/texlive/texmf-local && \
     updmap-sys --enable Map=MinionPro.map && \
     updmap-sys --enable Map=MyriadPro.map && \
     tex -version && \
-    latex -version
+    latex -version && \
     cd /usr/local/src && \
     latex $(find /usr/local -name sample2e.tex) && \
     pdflatex $(find /usr/local -name sample2e.tex) && \
