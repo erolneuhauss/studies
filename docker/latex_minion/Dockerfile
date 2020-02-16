@@ -23,8 +23,8 @@ RUN mkdir -p /usr/local/src &&  \
         https://raw.githubusercontent.com/erolneuhauss/studies/master/docker/latex_minion/texlive.profile && \
     tar xzf /usr/local/src/install-tl-unx.tar.gz -C /usr/local/bin &&   \
     perl /usr/local/bin/install-tl-*/install-tl \
-        -profile /usr/local/src/texlive.profile && \
-    tlmgr option docfiles 0 && \
+        -profile /usr/local/src/texlive.profile
+RUN tlmgr option docfiles 0 && \
     tlmgr option srcfiles 0 && \
     tlmgr install \
         babel-german \
@@ -42,13 +42,14 @@ RUN mkdir -p /usr/local/src &&  \
         mdsymbol \
         microtype \
         mnsymbol \
+        oberdiek \
         paralist \
         pdfescape \
         pdfpages \
         ucs \
         xcolor \
-        xkeyval && \
-    tar xzf /usr/local/src/minionpro.tgz -C /usr/local/texlive/texmf-local && \
+        xkeyval
+RUN tar xzf /usr/local/src/minionpro.tgz -C /usr/local/texlive/texmf-local && \
     tar xzf /usr/local/src/myriadpro.tgz -C /usr/local/texlive/texmf-local && \
     mktexlsr /usr/local/texlive/texmf-local && \
     updmap-sys --enable Map=MinionPro.map && \
