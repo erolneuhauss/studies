@@ -31,6 +31,7 @@ RUN tlmgr option docfiles 0 && \
         collection-fontutils \
         csquotes \
         currvita \
+        enumitem \
         etoolbox \
         fltpoint \
         fontaxes \
