@@ -44,11 +44,13 @@ RUN tlmgr option docfiles 0 && \
         paralist \
         pdfescape \
         pdfpages \
+        tools \
         ucs \
         xcolor \
         xkeyval
 RUN tlmgr install bitset
 RUN tlmgr install pdflscape
+RUN tlmgr install eurosym
 RUN tar xzf /usr/local/src/minionpro.tgz -C /usr/local/texlive/texmf-local && \
     tar xzf /usr/local/src/myriadpro.tgz -C /usr/local/texlive/texmf-local && \
     mktexlsr /usr/local/texlive/texmf-local && \
