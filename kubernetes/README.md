@@ -1,13 +1,16 @@
 kubectl version --client
-mv ~/Downloads/kubeconfig-k8s04 .
-mkdir -p kubernetes-hackathon_2020-04-02
-cd kubernetes-hackathon_2020-04-02
-cat kubeconfig-k8s04
 brew install int128/kubelogin/kubelogin
-cp ~/.kube/config ~/.kube/config.old
-mv kubeconfig-k8s04 ~/.kube/config
+rm ~/.kube/config
+touch ~/.kube/config
+chmod 400 ~/.kube/config
+ls -lh ~/.kube/config
+mv ~/Downloads/kubeconfig-k8s04 ~/.kube/
+export KUBECONFIG=~/.kube/kubeconfig-k8s04
 kubectl config view
-kubectl get pod
 kubectl cluster-info
+kubectl get pod
 alias k='kubectl'
 k cluster-info
+source <(kubectl completion zsh)
+k <tab> get <tab> ns
+k get pod -n kube-system
