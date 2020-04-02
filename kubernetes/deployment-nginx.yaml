@@ -2,24 +2,24 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: foo
-  name: foo
+    app: nginx
+  name: nginx
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
-      app: foo
+      app: nginx
   strategy: {}
   template:
     metadata:
       labels:
-        app: foo
+        app: nginx
     spec:
       containers:
-      - image: busybox
-        name: busybox
+      - image: nginx
+        name: nginx
         resources: {}
-        command:
-          - 'sleep'
-          - '3600'
+        ports:
+          - name: http
+            containerPort: 80
 status: {}
