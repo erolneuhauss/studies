@@ -40,3 +40,8 @@ k -n troubleshooting-5 top pod
 k -n troubleshooting-5 top node
 
 watch -d -n2 'k get pods -o wide'
+
+k -n ene port-forward nginx-79f5849f8d-q9flr 8080:80
+
+k -n ene delete deployment.apps/nginx
+k -n ene delete service/nginx
