@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: foo
+  name: foo
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: foo
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: foo
+    spec:
+      containers:
+      - image: busybox
+        name: busybox
+        resources: {}
+        command:
+          - 'sleep'
+          - '3600'
