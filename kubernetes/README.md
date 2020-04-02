@@ -23,3 +23,20 @@ k expose deployment --dry-run=client --output yaml --image nginx nginx
 k -n ene apply -f deployment-nginx.yaml
 k -n ene apply -f service-nginx.yaml
 
+k -n troubleshooting-5 logs -l app=busybox
+k -n troubleshooting-5 logs -l app=busybox -p # previous
+k -n troubleshooting-5 logs -l app=busybox -f # follow
+
+k -n troubleshooting-1 get all
+k -n troubleshooting-1 get pods
+k -n troubleshooting-1 get event
+
+k -n troubleshooting-1 describe pod broken-app
+k -n troubleshooting-2 edit deployments.apps
+k -n troubleshooting-3 create configmap config --dry-run=client
+
+k -n troubleshooting-4 edit deployments.apps busybox
+k -n troubleshooting-5 top pod
+k -n troubleshooting-5 top node
+
+watch -d -n2 'k get pods -o wide'
