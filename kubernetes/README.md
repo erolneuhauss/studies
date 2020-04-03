@@ -1,3 +1,5 @@
+# Hackathon notes from April 2nd 2020
+
 kubectl version --client
 brew install int128/kubelogin/kubelogin
 rm ~/.kube/config
@@ -45,3 +47,14 @@ k -n ene port-forward nginx-79f5849f8d-q9flr 8080:80
 
 k -n ene delete deployment.apps/nginx
 k -n ene delete service/nginx
+
+
+## Testing:
+
+```
+parallel --jobs 1000 ./my_curl.sh ::: {1..1000}
+
+#!/bin/bash
+
+curl 127.0.0.1:8080 -o /dev/null
+```
