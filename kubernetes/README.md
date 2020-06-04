@@ -1,5 +1,14 @@
-# Hackathon notes from April 2nd 2020
+# Kubernetes
+## terraform
+```
 
+```
+
+
+## Hackathon notes from April 2nd 2020
+kubernetes platform via aws existent (build with terraform)
+### Configuration
+```
 kubectl version --client
 brew install int128/kubelogin/kubelogin
 rm ~/.kube/config
@@ -8,15 +17,35 @@ chmod 400 ~/.kube/config
 ls -lh ~/.kube/config
 mv ~/Downloads/kubeconfig-k8s04 ~/.kube/
 export KUBECONFIG=~/.kube/kubeconfig-k8s04
-kubectl config view
-kubectl cluster-info
-kubectl get pod
 alias k='kubectl'
-k cluster-info
 source <(kubectl completion zsh)
+```
+
+### Lookaround with kubectl
+```
 k <tab> get <tab> ns
+k config view
+k cluster-info
+k get namespaces
+k get po --all-namespaces -o=wide
 k get pod -n kube-system
 k get services -n kube-system
+```
+
+### Work with kubernetes (nginx and busybox)
+```
+k create namespace myproject
+# GEFAHR (namespace wird fixiert. Man vergisst of den context zu wechslen)
+k config set-context --current --namespace=myproject
+k run nginx --image=nginx --port=80
+k get pods -o wide
+k get pods -o yaml > nging_pod.yaml
+cat nging_pod.yaml
+k delete pods nginx
+kubectl apply -f https://k8s.io/examples/controllers/nginx-deployment.yaml
+k describe deployments.apps
+k get deployments.apps
+k delete deployments.apps nginx-deployment
 
 k create deployment --dry-run=client --output=yaml --image busybox foo
 k create deployment --dry-run=client --output=yaml --image nginx nginx
@@ -47,7 +76,7 @@ k -n ene port-forward nginx-79f5849f8d-q9flr 8080:80
 
 k -n ene delete deployment.apps/nginx
 k -n ene delete service/nginx
-
+```
 
 ## Testing:
 
