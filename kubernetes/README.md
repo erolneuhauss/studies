@@ -60,7 +60,30 @@ k delete deployments.apps nginx-deployment
 
 k create deployment --dry-run=client --output=yaml --image busybox foo
 k create deployment --dry-run=client --output=yaml --image nginx nginx
+
+# creates a corresponding service
 k expose deployment --dry-run=client --output yaml --image nginx nginx
+
+
+# LoadBalancer
+service-nginx.yaml:
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: nginx
+  name: nginx
+spec:
+  selector:
+    app: nginx
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  type: LoadBalancer
+
+k -n ene describe service/nginx
+# provides an external IP. Browse via Webbrowser after a while (DNS takes a couple of minutes)
 
 # browse http://127.0.0.1:8001/api/v1/namespaces/ene/pods
 # browse http://127.0.0.1:8001/api/v1/namespaces/ene/services

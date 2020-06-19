@@ -5,9 +5,10 @@ metadata:
     app: nginx
   name: nginx
 spec:
+  selector:
+    app: nginx
   ports:
   - port: 80
     protocol: TCP
     targetPort: 80
-  selector:
-    app: nginx
+  type: LoadBalancer
