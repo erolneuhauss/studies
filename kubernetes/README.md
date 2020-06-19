@@ -39,9 +39,15 @@ k get services -n kube-system
 
 ### Work with kubernetes (nginx and busybox)
 ```
-k create namespace myproject
+k create namespace ene
 # GEFAHR (namespace wird fixiert. Man vergisst of den context zu wechslen)
-k config set-context --current --namespace=myproject
+k config set-context --current --namespace=ene
+
+k proxy
+Starting to serve on 127.0.0.1:8001
+# browse http://127.0.0.1:8001/api/v1/
+# browse http://127.0.0.1:8001/api/v1/namespaces/ene/
+
 k run nginx --image=nginx --port=80
 k get pods -o wide
 k get pods -o yaml > nging_pod.yaml
@@ -56,8 +62,16 @@ k create deployment --dry-run=client --output=yaml --image busybox foo
 k create deployment --dry-run=client --output=yaml --image nginx nginx
 k expose deployment --dry-run=client --output yaml --image nginx nginx
 
+# browse http://127.0.0.1:8001/api/v1/namespaces/ene/pods
+# browse http://127.0.0.1:8001/api/v1/namespaces/ene/services
+
 k -n ene apply -f deployment-nginx.yaml
 k -n ene apply -f service-nginx.yaml
+k -n ene port-forward service/nginx 8080:80
+# browse http://127.0.0.1:8080
+
+k -n ene get pods -o wide
+k -n ene exec -it nginx-86c57db685-km59p -- /bin/bash
 
 k -n troubleshooting-5 logs -l app=busybox
 k -n troubleshooting-5 logs -l app=busybox -p # previous
@@ -75,7 +89,7 @@ k -n troubleshooting-4 edit deployments.apps busybox
 k -n troubleshooting-5 top pod
 k -n troubleshooting-5 top node
 
-watch -d -n2 'k get pods -o wide'
+watch -d -n2 'kubectl -n ene get pods -o wide'
 
 k -n ene port-forward nginx-79f5849f8d-q9flr 8080:80
 
