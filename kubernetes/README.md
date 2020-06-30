@@ -9,6 +9,127 @@ terraform apply
 export KUBECONFIG=kubeconfig_<your_name>
 ```
 
+## Create Wordpress Site on AWS
+### Create wordpress backend
+```
+k -n ene create deploy mysql --image=mysql --dry-run=client -o yaml > mysql_deploy.yaml
+```
+Edit environment variables:
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: backend
+  name: mysql
+  namespace: ene
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: mysql
+          image: mysql
+          ports:
+          - containerPort: 3306
+          env:
+            - name : MYSQL_ROOT_PASSWORD
+              value: my-secret-pw
+            - name : MYSQL_DATABASE
+              value: wordpress
+            - name: MYSQL_USER
+              value: wordpress
+            - name: MYSQL_PASSWORD
+              value: password
+```
+Apply:
+```
+k -n ene apply -f mysql_deploy.yaml
+```
+### Create wordpress frontend
+```
+k -n ene create deploy wordpress --image=wordpress --dry-run=client -o yaml > wordpress_deploy.yaml
+```
+Edit environment variables:
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: frontend
+  name: wordpress
+  namespace: ene
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: wordpress
+          image: wordpress
+          ports:
+          - containerPort: 80
+          env:
+            - name : WORDPRESS_DB_HOST
+              value: mysql
+            - name: WORDPRESS_DB_USER
+              value: wordpress
+            - name: WORDPRESS_DB_PASSWORD
+              value: password
+            - name : WORDPRESS_DB_NAME
+              value: wordpress
+```
+Apply:
+```
+k -n ene apply -f wordpress_deploy.yaml
+```
+
+### create wordpress service
+```
+k -n ene expose deployment.apps/mysql --dry-run=client -o yaml > mysql_service.yaml
+```
+Check yaml and apply as usual
+
+### Expose wordpress frontend
+```
+k -n ene expose deployment.apps/wordpress --dry-run=client -o yaml > wordpress_service.yaml
+```
+Change type to loadbalancer
+```
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: frontend
+  name: wordpress
+  namespace: ene
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: frontend
+  type: LoadBalancer
+```
+Apply as usual
+
+Login to your site, after you know your URL by
+```
+k -n ene get all -o wide
+```
 
 ## Hackathon notes from April 2nd 2020
 kubernetes platform via aws existent (build with terraform)

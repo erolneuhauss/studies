@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: backend
+  name: mysql
+  namespace: ene
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: mysql
+          image: mysql
+          ports:
+          - containerPort: 3306
+          env:
+            - name : MYSQL_ROOT_PASSWORD
+              value: my-secret-pw
+            - name : MYSQL_DATABASE
+              value: wordpress
+            - name: MYSQL_USER
+              value: wordpress
+            - name: MYSQL_PASSWORD
+              value: password
+
+
+
+
