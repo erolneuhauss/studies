@@ -9,6 +9,13 @@ terraform apply
 export KUBECONFIG=kubeconfig_<your_name>
 ```
 
+one time wget
+```
+k run --labels=name=internal --rm --restart Never -it busybox --image=busybox \
+-- wget --spider --timeout=1 payroll-service.default.svc.cluster.local:8080
+```
+
+
 ## Create Wordpress Site on AWS
 ### Create wordpress backend
 ```
