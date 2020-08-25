@@ -1,0 +1,177 @@
+---
+-
+  name: accomplished tasks
+  hosts: all
+  gather_facts: false
+  vars_files:
+    - vars/"{{ansible_hostname}}.yaml"
+    - vars/packages.yaml
+  tasks:
+    - name: ping test
+      ping:
+
+    - name: check the date
+      command: date
+      register: out
+    - debug: var=out.stdout_lines
+
+    - name: check hosts
+      command: cat /etc/hosts
+      register: out
+    - debug: var=out.stdout_lines
+
+    - name: check resolv.conf
+      command: file resolv.conf chdir=/etc
+      register: out
+    - debug: var=out.stdout_lines
+
+    - name: create folder
+      command: mkdir folder chdir=/tmp creates=/tmp/folder
+      register: out
+    - debug: var=out.stdout_lines
+
+    - name: remove folder
+      command: rmdir remove-me chdir=/tmp removes=/tmp/remove-me
+      register: out
+    - debug: var=out.stdout_lines
+
+    - name: copy file from on directory to another
+      copy: src=inventory dest=/tmp
+      register: out
+    - debug: var=out.stdout_lines
+
+    - name: install httpd
+      yum: name=httpd state=present
+
+    - name: start web service
+      service: name=httpd state=started
+
+    - name: remove lines from resolv.conf
+      lineinfile:
+        path: /etc/resolv.conf
+        regex: '^options.*'
+        state: absent
+
+    - name: add DNS server to resolv.conf
+      lineinfile:
+        path: /etc/resolv.conf
+        line: 'nameserver 172.28.128.124'
+        state: absent
+
+    - debug:
+        msg: " {{ ansible_eth1.ipv4.address }} "
+
+    - debug:
+        msg: " {{ ansible_hostname }} "
+
+    - name: Update the /etc/hosts file with node name
+      become: true
+      become_user: root
+      lineinfile:
+        path: "/etc/hosts"
+        regexp: >-
+          ".*\t{{ hostvars[item]['ansible_hostname']}}
+          \t{{ hostvars[item]['ansible_hostname']}}"
+        line: "{{ hostvars[item].ansible_eth1.ipv4.address }} {{item}}"
+        state: present
+        backup: true
+      with_items: "{{groups['all']}}"
+
+    - debug:
+        msg: "{{ httpd_software }}"
+    - debug:
+        msg: Install "{{ item.name }}"
+      loop: "{{ packages }}"
+      when: item.required == true and ansible_os_family == "RedHat"
+
+    - command: cat /etc/hosts
+      register: result
+    - debug:
+        msg: "target1 found"
+      when: result.stdout.find('target1') !=-1
+
+    - name: list of / directory
+      command: ls /
+      register: root_dirs
+    - debug:
+        var: root_dirs.stdout_lines
+    - name: add root dirs to /tmp
+      file:
+        path: /tmp/{{ item }}
+        src: /{{ item }}
+        state: link
+      loop: "{{ root_dirs.stdout_lines }}"
+
+    - user:
+        name: "{{ item.name }}"
+        uid: "{{ item.uid }}"
+        state: present
+
+      loop:
+        - name: jane
+          uid: 2000
+        - name: ginger
+          uid: 2001
+        - name: joe
+          uid: 2002
+        - name: james
+          uid: 2003
+
+    - user:
+        name: "{{ item.name }}"
+        uid: "{{ item.uid }}"
+        state: absent
+
+      with_items:
+        - name: jane
+          uid: 2000
+        - name: ginger
+          uid: 2001
+        - name: joe
+          uid: 2002
+        - name: james
+          uid: 2003
+
+    - name: find index.htmls
+      find:
+        paths: /home
+        recurse: true
+        patterns: "index.html.*?"
+        use_regex: true
+      register: files_matched
+    - debug:
+        msg: "{{ files_matched }}"
+
+    - name: remove files
+      file:
+        path: "{{ item.path }}"
+        state: absent
+      with_items: "{{ files_matched.files }}"
+
+    - firewalld:
+        port: 4444/tcp
+        permanent: false
+        state: enabled
+    - firewalld:
+        service: http
+        permanent: true
+        state: enabled
+
+-
+  name: accomplished is install apache and open firewall on port 80
+  hosts: controller
+  become: true
+  gather_facts: false
+  vars:
+    firewalld_allow_services:
+      - {service: "http"}
+  roles:
+    - geerlingguy.apache
+    - marcelnijenhof.firewalld
+
+-
+  name: latest
+  hosts: all
+  become: true
+  tags: latest
+  tasks:

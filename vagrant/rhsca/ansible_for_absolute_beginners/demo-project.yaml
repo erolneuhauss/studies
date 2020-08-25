@@ -1,0 +1,119 @@
+---
+-
+  name: install and configure apache
+  hosts: controller
+  become: true
+  tags: demo
+  tasks:
+    - name: install packages
+      yum:
+        name:
+          - firewalld
+          - git
+          - httpd
+          - php
+          - php-mysqlnd
+        state: present
+
+    - name: Start service firewalld, if not started
+      service:
+        name: firewalld
+        state: started
+
+    - firewalld:
+        service: http
+        permanent: true
+        state: enabled
+      register: enable_http
+
+    - name: reload firewall
+      command: firewall-cmd --reload
+      when: enable_http.changed
+
+    - name: Start service httpd, if not started
+      service:
+        name: httpd
+        state: started
+
+    - git:
+        repo: 'https://github.com/kodekloudhub/learning-app-ecommerce.git'
+        dest: /var/www/html
+        update: false
+
+    - name: search and replace line index.html
+      lineinfile:
+        path: /etc/httpd/conf/httpd.conf
+        regex: '^(.*)index.html(.*)$'
+        line: '\g<1>index.php\g<2>'
+        backrefs: true
+
+    - name: search and replace IP
+      lineinfile:
+        path: /var/www/html/index.php
+        regex: '^(.*)172.20.1.101(.*)$'
+        line: '\g<1>172.28.128.7\g<2>'
+        backrefs: true
+
+		- name: Set httpd_can_network_connect flag on and keep it persistent across reboots
+			seboolean:
+				name: httpd_can_network_connect
+				state: yes
+				persistent: yes
+-
+  name: install and configure mariadb
+  hosts: target1
+  become: true
+  vars_files:
+    - vars/mariadb-server.yaml
+  tags: demo
+  tasks:
+    - name: install packages
+      yum:
+        name:
+          - firewalld
+          - git
+          - mariadb-server
+        state: present
+
+    - name: Start service firewalld, if not started
+      service:
+        name: firewalld
+        state: started
+
+    - firewalld:
+        port: 3306/tcp
+        permanent: true
+        state: enabled
+      register: enable_mysql
+
+    - name: reload firewall
+      command: firewall-cmd --reload
+      when: enable_mysql.changed
+
+    - name: Start service mariadb, if not started
+      service:
+        name: mariadb
+        state: started
+
+    - git:
+        repo: 'https://github.com/kodekloudhub/learning-app-ecommerce.git'
+        dest: /var/tmp/ecomdb
+        update: false
+
+    - mysql_user:
+        name: ecomuser
+        host: "172.28.128.6"
+        password: ecompassword
+        priv: "*.*:ALL"
+
+    - mysql_db:
+        name: ecomdb
+        state: present
+      register: db_created
+
+    - name: Import db-load-script.sql
+      mysql_db:
+        state: import
+        name: all
+        target: /var/tmp/ecomdb/assets/db-load-script.sql
+      when: db_created.changed
