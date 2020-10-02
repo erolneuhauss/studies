@@ -3,11 +3,11 @@
 
 boxes = [
     {
-        :name => "master-0",
+        :name => "source-0",
         :ip   => "172.28.128.6",
     },
     {
-        :name => "slave-1",
+        :name => "target-1",
         :ip   => "172.28.128.7",
     },
 #    {

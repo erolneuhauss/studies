@@ -1,7 +1,7 @@
 ---
 -
   name: latest
-  hosts: master-0
+  hosts: source-0
   tags: latest
   tasks:
     - name: copy faulty script on controller
