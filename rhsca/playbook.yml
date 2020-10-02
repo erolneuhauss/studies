@@ -1,0 +1,8 @@
+---
+-
+  name: latest
+  hosts: master-0
+  tags: latest
+  tasks:
+    - name: copy faulty script on controller
+      copy: src=./myscr.sh dest=/home/vagrant mode='0755'

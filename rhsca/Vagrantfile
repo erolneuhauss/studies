@@ -1,0 +1,54 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+boxes = [
+    {
+        :name => "master-0",
+        :ip   => "172.28.128.6",
+    },
+    {
+        :name => "slave-1",
+        :ip   => "172.28.128.7",
+    },
+#    {
+#        :name => "target2",
+#        :ip   => "172.28.128.10",
+#    },
+]
+
+Vagrant.configure("2") do |config|
+
+  boxes.each do |box|
+    config.vm.define box[:name] do |config|
+      config.vm.box = "generic/centos8"
+      config.vm.hostname = box[:name]
+      config.vm.network "private_network", ip: box[:ip]
+      config.vm.provider "virtualbox" do |vb|
+        (1..3).each do |i|
+          if not File.exists?(".vagrant/additional_disks/#{box[:name]}-disk-#{i}.vdi")
+            vb.customize [
+              'createmedium',
+              'disk',
+              '--filename', ".vagrant/additional_disks/#{box[:name]}-disk-#{i}.vdi",
+              '--format', 'VDI',
+              '--size', 5 * 1024
+              ]
+            vb.customize [
+              'storageattach', :id,
+              '--storagectl',
+              'AHCI',
+              '--port', "#{i}", '--device', 0,
+              '--type', 'hdd', '--medium',
+              ".vagrant/additional_disks/#{box[:name]}-disk-#{i}.vdi"
+              ]
+          end
+        end
+      end
+    end # config.vm
+  end # boxes.each.loop
+
+  config.vm.provision "ansible" do |ansible|
+    ansible.verbose = "v"
+    ansible.playbook = "playbook.yml"
+  end # config.vm.provision
+end # Vagrant
