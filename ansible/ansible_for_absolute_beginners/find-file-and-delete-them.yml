@@ -1,0 +1,23 @@
+---
+- hosts: all
+  gather_facts: yes
+  vars:
+    Files: []
+  tasks:
+    - name: find files matching pattern [3-9]
+      become: true
+      find:
+        paths: /var/log
+        file_type: file
+        patterns:
+          - '[4-9]+\.log$'
+        use_regex: yes
+      register: output
+
+    - name: Adding Files to the LIST
+      no_log: true
+      set_fact:
+        Files: "{{ Files + [item.path]}}" 
+      with_items: "{{ output.files }}"
+
+    - debug: var=Files

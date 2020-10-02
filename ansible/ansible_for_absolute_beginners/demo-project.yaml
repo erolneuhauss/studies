@@ -6,11 +6,13 @@
   tags: demo
   tasks:
     - name: install packages
+      tags: install
       yum:
         name:
           - firewalld
           - git
           - httpd
+          - python3-libsemanage
           - php
           - php-mysqlnd
         state: present
@@ -54,11 +56,11 @@
         line: '\g<1>172.28.128.7\g<2>'
         backrefs: true
 
-		- name: Set httpd_can_network_connect flag on and keep it persistent across reboots
-			seboolean:
-				name: httpd_can_network_connect
-				state: yes
-				persistent: yes
+    - name: Set httpd_can_network_connect on and keep it persistent
+      seboolean:
+        name: httpd_can_network_connect
+        state: true
+        persistent: true
 -
   name: install and configure mariadb
   hosts: target1
