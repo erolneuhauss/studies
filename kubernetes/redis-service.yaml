@@ -1,0 +1,19 @@
+kubectl create svc clusterip redis-service --tcp=6379:6379 --dry-run=client -o yaml
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: redis-service
+  name: redis-service
+spec:
+  ports:
+  - name: 6379-6379
+    port: 6379
+    protocol: TCP
+    targetPort: 6379
+  selector:
+    app: redis-service
+  type: ClusterIP
+status:
+  loadBalancer: {}

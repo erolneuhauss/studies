@@ -9,12 +9,24 @@ terraform apply
 export KUBECONFIG=kubeconfig_<your_name>
 ```
 
-one time wget
+## check connectability with wget
 ```
 k run --labels=name=internal --rm --restart Never -it busybox --image=busybox \
 -- wget --spider --timeout=1 payroll-service.default.svc.cluster.local:8080
 ```
 
+## check connectability with nc
+```
+k run --labels=name=internal --rm --restart Never -it busybox --image=busybox \
+-- nc -z -v -w1 db-service 3306
+```
+
+### side note to https://www.udemy.com/course/certified-kubernetes-administrator-with-practice-tests
+In order to open an connectivity window start the webcolor deployment and use the web browser on exposed NodePort e.g. 30082 add +1 to the subdomain
+when quiz: https://2886795279-8080-kitek06h.environments.katacoda.com/#!/viewExam
+than webcolor app on : https://2886795280-30082-kitek06h.environments.katacoda.com
+
+```
 
 ## Create Wordpress Site on AWS
 ### Create wordpress backend
