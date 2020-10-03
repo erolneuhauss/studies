@@ -1,0 +1,9 @@
+version: '3'
+services:
+  pdflatex:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nginx_hello
+    image: eneuhauss/nginx_hello:latest
+    volumes:
