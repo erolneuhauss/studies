@@ -4,8 +4,12 @@
 ### sudo
 Rather than `sudo su -` use `sudo -i` (simulated initial login shell with environment variables)
 
+### old cmd inline search and replace string in last command globally
+`^foo^bar^:G`
+
 ### bash line editing
 Type `fc` to edit your last command
+`fc -s foo=bar`
 
 ### grep
 `grep -w foo` respects word boundaries and omits `foobar`
