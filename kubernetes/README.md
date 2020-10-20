@@ -26,13 +26,12 @@ In order to open an connectivity window start the webcolor deployment and use th
 when quiz: https://2886795279-8080-kitek06h.environments.katacoda.com/#!/viewExam
 than webcolor app on : https://2886795280-30082-kitek06h.environments.katacoda.com
 
-```
-
 ## Create Wordpress Site on AWS
 ### Create wordpress backend
 ```
 k -n ene create deploy mysql --image=mysql --dry-run=client -o yaml > mysql_deploy.yaml
 ```
+
 Edit environment variables:
 ```
 apiVersion: apps/v1
@@ -67,14 +66,17 @@ spec:
             - name: MYSQL_PASSWORD
               value: password
 ```
+
 Apply:
 ```
 k -n ene apply -f mysql_deploy.yaml
 ```
+
 ### Create wordpress frontend
 ```
 k -n ene create deploy wordpress --image=wordpress --dry-run=client -o yaml > wordpress_deploy.yaml
 ```
+
 Edit environment variables:
 ```
 apiVersion: apps/v1
@@ -109,6 +111,7 @@ spec:
             - name : WORDPRESS_DB_NAME
               value: wordpress
 ```
+
 Apply:
 ```
 k -n ene apply -f wordpress_deploy.yaml
@@ -124,6 +127,7 @@ Check yaml and apply as usual
 ```
 k -n ene expose deployment.apps/wordpress --dry-run=client -o yaml > wordpress_service.yaml
 ```
+
 Change type to loadbalancer
 ```
 apiVersion: v1
