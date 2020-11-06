@@ -2,8 +2,10 @@
 ## Tipps
 open tmux, create a second pane and check constantly with
 ```
-watch -d -n2 ls -lhd /shares/cases && gefacl /shares/cases
+watch -d -n2 'ls -lhd /shares/cases && gefacl /shares/cases'
 ```
+resize pane down 10 line  with `ctrl + b :resize-pane -D 10`
+
 and work with pane 1
 
 ## Solutions
