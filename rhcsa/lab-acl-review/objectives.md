@@ -14,8 +14,8 @@ and users should have corresponding groups as primary group
 ## Tasks
 ### modify sharefolder
 * set setgid bit onto subfolder `cases`
-* set group `manager` permissions on subfolder `cases`
+* set group `managers` permissions on subfolder `cases`
 * set acl group `contractors` read, write and executable on `cases`
 * user `contractor3` should have read and execute acls on subfolder
-* set default acls for group `contractor` read, write and execute
+* set default acls for group `contractors` read, write and execute
 * set default acls for user `contractor3` read and execute
