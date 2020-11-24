@@ -1,8 +1,0 @@
----
-packages:
-  - name: nginx
-    required: true
-  - name: mysql
-    required: true
-  - name: apache
-    required: false
