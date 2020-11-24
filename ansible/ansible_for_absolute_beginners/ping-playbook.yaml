@@ -175,3 +175,11 @@
   become: true
   tags: latest
   tasks:
+    - name: using register
+      file:
+        path: /tmp/mytest.file
+        state: touch
+      register: myvar
+    - name: display message via variable
+      debug:
+        msg: "Output is {{ myvar }}"

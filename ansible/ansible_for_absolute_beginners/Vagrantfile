@@ -6,14 +6,14 @@ boxes = [
         :name => "controller",
         :ip   => "172.28.128.6",
     },
-    {
-        :name => "target1",
-        :ip   => "172.28.128.7",
-    },
-    {
-        :name => "target2",
-        :ip   => "172.28.128.10",
-    },
+#    {
+#        :name => "target1",
+#        :ip   => "172.28.128.7",
+#    },
+#    {
+#        :name => "target2",
+#        :ip   => "172.28.128.10",
+#    },
 ]
 
 Vagrant.configure("2") do |config|
