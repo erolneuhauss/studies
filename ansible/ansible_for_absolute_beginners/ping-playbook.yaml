@@ -156,7 +156,49 @@
         service: http
         permanent: true
         state: enabled
+    # learn.cloud
+    - name: using register
+      file: path=/tmp/mytest.file state=touch
+      register: myvar
 
+    - name: display message via variable
+      debug:
+        msg: "Output is {{ myvar }}"
+
+    - name: edit mytest.file
+      lineinfile:
+        path: /tmp/mytest.file
+        line: "The uid is {{ myvar.uid }} and gid is {{ myvar.uid }}"
+
+    - name: read file content
+      command: cat /tmp/mytest.file
+      register: filecontent
+
+    - name: display filecontent
+      debug: var=filecontent.stdout_lines
+
+    - name: install httpd
+      yum: name=httpd state=present
+
+    - name: enable and start service
+      service: name=httpd enabled=true state=started
+
+    - name: update httpd.conf
+      replace:
+        path: /etc/httpd/conf/httpd.conf
+        regexp: '^ServerAdmin.*$'
+        replace: 'ServerAdmin hostmaster@example.com'
+        backup: yes
+      notify: "restart httpd service"
+
+  handlers:
+    - name: "restart apache"
+      service: name=httpd state=restarted
+      listen: "restart httpd service"
+
+    - name: copy file on conditions
+      copy: src=./ping-playbook.yaml dest=/tmp/
+      when: ansible_hostname == "target1"
 -
   name: accomplished is install apache and open firewall on port 80
   hosts: controller
@@ -175,11 +217,12 @@
   become: true
   tags: latest
   tasks:
-    - name: using register
-      file:
-        path: /tmp/mytest.file
-        state: touch
-      register: myvar
-    - name: display message via variable
-      debug:
-        msg: "Output is {{ myvar }}"
+    - name: create a bunch of users 
+      user:
+        name: "{{ item }}"
+        state: present
+        groups: wheel
+      loop:
+        - rudolf
+        - hermann
+        - klaus
