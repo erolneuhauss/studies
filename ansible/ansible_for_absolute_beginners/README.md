@@ -8,6 +8,7 @@ ansible-config dump
 ansible-config list
 ansible localhost -m setup --tree
 ansible localhost -m setup -a 'filter=ansible_hostname'
+ansible localhost -m setup -a 'filter=*ipv4*'
 ansible localhost -m ping
 ansible localhost --become -m yum -a 'name=httpd state=present'
 ansible localhost --become -m yum -a 'list=tcpdump'

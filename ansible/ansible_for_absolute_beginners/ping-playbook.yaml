@@ -156,7 +156,24 @@
         service: http
         permanent: true
         state: enabled
-    # learn.cloud
+
+-
+  name: accomplished is install apache and open firewall on port 80
+  hosts: controller
+  become: true
+  gather_facts: false
+  vars:
+    firewalld_allow_services:
+      - {service: "http"}
+  roles:
+    - geerlingguy.apache
+    - marcelnijenhof.firewalld
+
+- name: learn via cloud guru
+  hosts: controller
+  become: true
+  gather_facts: true
+  tasks:
     - name: using register
       file: path=/tmp/mytest.file state=touch
       register: myvar
@@ -191,33 +208,7 @@
         backup: yes
       notify: "restart httpd service"
 
-  handlers:
-    - name: "restart apache"
-      service: name=httpd state=restarted
-      listen: "restart httpd service"
-
-    - name: copy file on conditions
-      copy: src=./ping-playbook.yaml dest=/tmp/
-      when: ansible_hostname == "target1"
--
-  name: accomplished is install apache and open firewall on port 80
-  hosts: controller
-  become: true
-  gather_facts: false
-  vars:
-    firewalld_allow_services:
-      - {service: "http"}
-  roles:
-    - geerlingguy.apache
-    - marcelnijenhof.firewalld
-
--
-  name: latest
-  hosts: all
-  become: true
-  tags: latest
-  tasks:
-    - name: create a bunch of users 
+    - name: create a bunch of users
       user:
         name: "{{ item }}"
         state: present
@@ -226,3 +217,358 @@
         - rudolf
         - hermann
         - klaus
+  handlers:
+    - name: "restart apache"
+      service: name=httpd state=restarted
+      listen: "restart httpd service"
+
+    - name: copy file on conditions
+      copy: src=./ping-playbook.yaml dest=/tmp/
+      when: ansible_hostname == "target1"
+
+    - name: rescue errors
+      block:
+        - fetch: src=/tmp/blockFile dest=/tmp/
+      rescue:
+        - debug:
+            msg: "File on {{ ansible_hostname }} does not exist"
+      always:
+        - debug:
+            msg: "Playbook finished"
+
+    - name: ignore errors
+      fetch: src=/tmp/non-existant.file dest=/tmp
+      ignore_errors: true
+
+    - name: install apache
+      yum: name=httpd state=latest
+
+    - name: create user and add them to the apache group
+      user:
+        name: "{{ item }}"
+        groups: apache
+      loop:
+        - willy
+        - anton
+
+    - name: use template to create index.html
+      template:
+        src: templates/index.j2
+        dest: /var/www/html/index.html
+        owner: apache
+        group: apache
+        mode: 0644
+
+    - name: start and enable httpd
+      service: name=httpd state=started enabled=true
+
+    - name: install git
+      yum: name=git state=present
+
+    - name: use git
+      git:
+        repo: https://github.com/ansible/ansible.git
+        dest: /opt
+
+    - name: create index.html
+      lineinfile:
+        line: "This is me: {{ ansible_hostname }}"
+        group: apache
+        owner: apache
+        mode: 0640
+        path: /var/www/html/index.html
+        state: present
+        create: true
+
+    - name: check for file
+      command: ls /root/archive.tar
+      register: check_result
+      ignore_errors: true
+
+    - name: touch archive file
+      file: path=/root/archive.tar state=touch
+      when: check_result is failed
+
+    - name: populate file with IP addresses
+      lineinfile:
+        path: /root/addresses
+        line: "{{ ansible_facts['all_ipv4_addresses'] }}"
+        create: yes
+      when: ansible_facts['os_family'] == 'RedHat'
+      ignore_errors: true
+
+    - name: install postgresql
+      yum:
+        name: postgresql-server
+        state: latest
+
+    - name:
+      stat: path=/var/lib/pgsql/data
+      register: data
+
+    - name: init db
+      command: /usr/bin/postgresql-setup --initdb
+      when: not data.stat.exists
+
+    - name: create users
+      user:
+        name: "{{ item }}"
+        groups: postgres
+      loop:
+        - herbert
+        - tina
+
+    - name: start and enable postgresql
+      service: name=postgresql state=started enabled=true
+
+    - name: stop apache service
+      service: name=httpd state=stopped enabled=false
+
+    - name: stop postgresql service
+      service: name=postgresql state=stopped enabled=false
+
+    - name: reboot
+      reboot:
+        reboot_timeout: 180
+
+    - name: start postgresql
+      service: name=postgresql state=started enabled=true
+
+    - name: start apache service
+      service: name=httpd state=started enabled=true
+
+    - name: add a repository
+      yum_repository:
+        name: epel_via_ansible
+        description: Epel Repo via ansible
+        baseurl: https://download.fedoraproject.org/pub/epel/$releasever/Everything
+        gpgcheck: no
+        state: present
+
+    - name: remove a repository
+      yum_repository:
+        name: epel_via_ansible
+        description: Epel Repo via ansible
+        baseurl: https://download.fedoraproject.org/pub/epel/$releasever/Everything
+        gpgcheck: no
+        state: absent
+
+    - name: add a repository
+      yum_repository:
+        name: epel_via_ansible
+        description: Epel Repo via ansible
+        baseurl: https://download.fedoraproject.org/pub/epel/$releasever/Everything
+        gpgcheck: no
+        state: present
+        enabled: false
+
+    - name: use systemd instead of service
+      systemd:
+        name: httpd
+        state: restarted
+        enabled: true
+        daemon_reload: true
+        force: true
+
+    - name: create partition
+      parted: device=/dev/sdb number=1 state=present
+
+    - name: delete partition
+      parted: device=/dev/sdb number=1 state=absent
+
+    - name: create primary partition given size
+      parted: device=/dev/sdb number=1 state=present part_end=1GiB
+
+    - name: create partions for lvm
+      parted:
+        device: /dev/sdb
+        number: 2
+        flags: [ lvm ]
+        state: present
+        part_start: 1GiB
+
+    - name: Read device information (always use unit when probing)
+      parted: device=/dev/sdb unit=MiB
+      register: sdb_info
+
+    - name: Remove all partitions from disk
+      parted:
+        device: /dev/sdb
+        number: '{{ item.num }}'
+        state: absent
+      loop: '{{ sdb_info.partitions }}'
+
+    - name: create gpt partition
+      parted:
+        device: /dev/sdb
+        label: gpt
+        name: backup
+        number: 1
+        state: present
+        part_end: 1GiB
+
+    - name: create gpt partition
+      parted:
+        device: /dev/sdb
+        label: gpt
+        name: swap
+        flags: [ swap ]
+        number: 2
+        state: present
+        part_start: 1GiB
+        part_end: 2GiB
+
+    - name: create swap filesystem
+      filesystem:
+        fstype: swap
+        dev: /dev/sdb2
+
+    - name: Read device
+      parted: device=/dev/sdb unit=MiB
+      register: sdb_info
+
+    - name: Remove all partitions from disk
+      parted:
+        device: /dev/sdb
+        number: '{{ item.num }}'
+        state: absent
+      loop: '{{ sdb_info.partitions }}'
+
+    - name: wipe all labels
+      command: "wipefs -a {{ item }}"
+      loop: [ /dev/sdb, /dev/sdc ]
+      #    name "swap" oder "none" funzt nicht,
+      #    weil mount keine Unterstützung für swap bietet
+#    - name: mount swap
+#      mount:
+#        name: swap
+#        fstype: swap
+#        src: /dev/sdb2
+#        state: mounted
+
+    - name: create vg
+      lvg:
+        pvs: /dev/sdb,/dev/sdc
+        vg: vg01
+        state: present
+
+    - name: create lv www
+      lvol:
+        vg: vg01
+        lv: var_www
+        size: 1g
+        state: present
+
+    - name: create lv log
+      lvol:
+        vg: vg01
+        lv: var_log
+        size: 1g
+        state: present
+
+    - name: create www fs
+      filesystem:
+        fstype: xfs
+        dev: /dev/vg01/var_www
+
+    - name: create log fs
+      filesystem:
+        fstype: ext4
+        dev: /dev/vg01/var_log
+
+    - name: mount www
+      mount:
+        fstype: xfs
+        path: /var/www
+        src: /dev/vg01/var_www
+        state: present
+
+    - name: mount log
+      mount:
+        fstype: ext4
+        path: /var/log
+        src: /dev/vg01/var_log
+        state: present
+
+    - name: unmount www
+      mount:
+        fstype: xfs
+        path: /var/www
+        src: /dev/vg01/var_www
+        state: absent
+      ignore_errors: true
+
+    - name: unmount log
+      mount:
+        fstype: ext4
+        path: /var/log
+        src: /dev/vg01/var_log
+        state: absent
+      ignore_errors: true
+
+    - name: delete lv www
+      lvol:
+        vg: vg01
+        lv: var_www
+        state: absent
+        force: true
+      ignore_errors: true
+
+    - name: delete lv log
+      lvol:
+        vg: vg01
+        lv: var_log
+        state: absent
+        force: true
+      ignore_errors: true
+
+    - name: delete vg
+      lvg:
+        pvs: /dev/sdb,/dev/sdc
+        vg: vg01
+        state: absent
+        force: true
+      ignore_errors: true
+
+    - name: wipe all label
+      command: "wipefs -a {{ item }}"
+      loop: [ /dev/sdb, /dev/sdc ]
+-
+  name: latest
+  hosts: all
+  become: true
+  tags: latest
+  tasks:
+    - name: create file
+      file:
+        path: /tmp/foobar
+        state: touch
+    
+    - name: add content
+      copy:
+        content: |
+          first line
+          second line
+          becky tom huck jim 
+          third line
+          fourth line
+        dest: /tmp/foobar
+
+    - name: add a line
+      lineinfile:
+        path: /tmp/foobar
+        line: 'fifth line'
+        state: present
+
+    - name: add a line before regex
+      lineinfile:
+        path: /tmp/foobar
+        line: '# /tmp/foobar'
+        insertbefore: '^first'
+        state: present
+
+    - name: complex regex
+      replace:
+        path: /tmp/foobar
+        regexp: '^(.+) (.+) (.+) (.+)$'
+        replace: '\1 \3 \4 \2'
