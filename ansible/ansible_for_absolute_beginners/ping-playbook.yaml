@@ -533,12 +533,7 @@
     - name: wipe all label
       command: "wipefs -a {{ item }}"
       loop: [ /dev/sdb, /dev/sdc ]
--
-  name: latest
-  hosts: all
-  become: true
-  tags: latest
-  tasks:
+
     - name: create file
       file:
         path: /tmp/foobar
@@ -572,3 +567,18 @@
         path: /tmp/foobar
         regexp: '^(.+) (.+) (.+) (.+)$'
         replace: '\1 \3 \4 \2'
+
+-
+  name: latest
+  hosts: all
+  become: true
+  tags: latest
+  tasks:
+    - name: templating
+      template:
+        src: template.j2
+        dest: host.info
+        owner: ansible
+        group: ansible
+        mode: 0640
+
