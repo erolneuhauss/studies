@@ -18,4 +18,9 @@ vagrant status
 vagrant global-status
 ```
 
+## how to access alternativly
+```
+ssh vagrant@localhost -p $SOME_PORT -i ~/.vagrant.d/insecure_private_key
+```
+
 ## Plugins
