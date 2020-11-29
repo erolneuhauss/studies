@@ -482,6 +482,7 @@
         path: /var/www
         src: /dev/vg01/var_www
         state: present
+        backup: true
 
     - name: mount log
       mount:
@@ -489,6 +490,7 @@
         path: /var/log
         src: /dev/vg01/var_log
         state: present
+        backup: true
 
     - name: unmount www
       mount:
@@ -568,17 +570,108 @@
         regexp: '^(.+) (.+) (.+) (.+)$'
         replace: '\1 \3 \4 \2'
 
+    - debug: var=ansible_all_ipv4_addresses
+    - debug: var=ansible_default_ipv4.address
+
+    - name: templating
+      template:
+        src: template.j2
+        dest: /home/vagrant/host.info
+        owner: vagrant
+        group: vagrant
+        mode: 0640
+      ignore_errors: true
+
+    - name: tmpfile
+      copy:
+        src: /usr/lib/tmpfiles.d/tmp.conf
+        dest: /etc/tmpfiles.d/
+        remote_src: true
+
+    - name: archiving
+      archive:
+        path:
+          - /etc/*
+        exclude_path:
+          - /etc/httpd
+        format: gz
+        dest: /root/etc.tgz
+
+    - name: create dir
+      file: path=/tmp/etc state=directory
+
+    - name: unarchiving
+      unarchive:
+        remote_src: true
+        src: /root/etc.tgz
+        dest: /tmp/etc
+
+    - name: schedule via cron
+      cron:
+        name: whoami
+        minute: "*"
+        hour: "*"
+        month: "*"
+        weekday: "*"
+        user: vagrant
+        state: present
+        job: "whoami >> whoami.out" 
+        cron_file: whoami_vagrant
+
+    - name: install at
+      yum: name=at state=present
+
+    - name: start/enable atd service
+      service: name=atd enabled=true state=started
+
+    - name: schedule via at
+      at:
+        command: 'uptime >> /home/vagrant/uptime.out'
+        count: 1
+        units: minutes
+        state: present
 -
   name: latest
   hosts: all
   become: true
   tags: latest
   tasks:
-    - name: templating
-      template:
-        src: template.j2
-        dest: host.info
-        owner: ansible
-        group: ansible
-        mode: 0640
+    - name: install libsemanage
+      yum:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - libsemanage
+        - python3-libsemanage
+        - policycoreutils-python-utils
 
+    - name: selinux mode permissive
+      selinux: policy=targeted state=permissive
+
+    - name: selinux mode enforcing
+      selinux: policy=targeted state=enforcing
+
+    - name: enable httpd
+      seboolean:
+        name: httpd_use_nfs
+        state: true
+        persistent: true
+
+    - name: create new httpd dir
+      file:
+        path: /htcontent
+        state: directory
+        owner: apache
+        group: apache
+        mode: 0750
+
+    - name: fcontext module
+      sefcontext:
+        ftype: a
+        reload: true
+        target: '/htcontent(/.*)?'
+        setype: httpd_sys_content_t
+        state: present
+    
+    - name: apply selinux fcontext
+      command: restorecon -vFR /htcontent

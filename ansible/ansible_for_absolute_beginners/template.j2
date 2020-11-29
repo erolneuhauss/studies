@@ -1,7 +1,7 @@
 Hostname = {{ ansible_hostname }}
 OS = {{ ansible_distribution }} {{ ansible_distribution_version }}
-ipv4 address = {{ ansible_default_ipv4.address }}
-ipv6 address = {{ ansible_default_ipv6.address }}
+ipv4 all addresses = {{ ansible_all_ipv4_addresses|join(', ') }}
+ipv4 default address = {{ ansible_default_ipv4.address }}
 interfaces = {{ ansible_interfaces|join(', ') }}
 blk devices = {{ ansible_devices|join(', ') }}
 
