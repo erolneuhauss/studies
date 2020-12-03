@@ -1,11 +1,22 @@
 version: '3'
 services:
-  pdflatex:
+  latex2020basic:
     build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: latex_minion
-    image: eneuhauss/latex_minion:latest
+      context: ./
+      dockerfile: Dockerfile2020-basic 
+    container_name: latex_minion_basic
+    image: eneuhauss/latex_minion:2020-basic
+    volumes:
+      - ./texcode:/texcode
+    entrypoint:
+      - pdflatex
+      - some-tex-file
+  latex2020full:
+    build:
+      context: ./
+      dockerfile: Dockerfile2020-full 
+    container_name: latex_minion_full
+    image: eneuhauss/latex_minion:2020-full
     volumes:
       - ./texcode:/texcode
     entrypoint:
