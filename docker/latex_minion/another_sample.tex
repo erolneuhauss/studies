@@ -1,0 +1,148 @@
+\documentclass[]{scrbook}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage[]{ucs}
+\usepackage[T1]{fontenc}
+\usepackage[german=guillemets]{csquotes}
+\usepackage[ngerman]{babel}
+\usepackage{textcomp}
+\usepackage{lmodern}
+\usepackage[official]{eurosym}
+\usepackage{Myriad}
+\usepackage[minionint,mathlf]{MinionPro}
+\usepackage{MnSymbol}
+%\renewcommand{\familydefault}{\sfdefault}
+\renewcommand{\sfdefault}{Myriad-LF}
+\usepackage[spacing,kerning,tracking,babel]{microtype}
+\usepackage{url}
+\usepackage{xcolor}
+\usepackage{paralist}
+\usepackage{blindtext}
+\usepackage{bookmark}
+\definecolor{myblue}{rgb}{0,.1,.6}
+
+
+\usepackage{hyperref}
+\hypersetup{%
+ pdftitle={Erol Neuhauß \textendash{} Testing LaTeX Full Installation},
+ pdfsubject={LaTeX},
+ pdfauthor={Erol Neuhauß},
+ pdfdisplaydoctitle,
+ pdfpagemode=UseNone,
+ bookmarksopen=false,
+ pdfstartview=FitH,
+ colorlinks=true,
+ linkcolor=red, %red
+ urlcolor=myblue,
+}
+
+\begin{document}
+\titlehead{This is me. Me and my little experience with {\LaTeX}. This is fun. Lets keep going right?}
+\subject{What is that for?}
+\title{Test If {\LaTeX} Operates In a Manner We Anticipate}
+\subtitle{Let's look at Cologne}
+\author{Erol Neuhauß}
+\date{04. Dezember 2020}
+\publishers{InHouse publishers}
+\uppertitleback{Das habe ich am MacBook produziert. Es ist mit Hile von {\KOMAScript} und {\LaTeX} gesetzt.}
+\lowertitleback{ Selbstverlag \par 
+  1. Auflage, einziges Examplar}
+\dedication{Meinem Schnuckelchen\\
+  in ewiger Liebe\\
+  von Deinem Hasenboppelchen.}
+
+\maketitle
+
+\tableofcontents
+\frontmatter
+\chapter{Vorwort}
+\Blindtext
+\Blindtext
+\Blindtext
+
+\mainmatter
+\part{Vorzeit}
+\chapter{It is the year 2019}
+How about german \enquote{Umlaute: \enquote{ÄÖßüö} \textendash ey, brohter?}
+and again, hello world!
+
+Greetings from Germany. My Address is with \href{http://www.google.de}{Google}
+\begin{itemize}
+  \item Austin Powers
+  \item Steve Powers
+  \begin{itemize}
+    \item Austin Powers
+    \item Steve Powers
+    \begin{itemize}
+      \item Austin Powers
+      \item Steve Powers
+      \begin{itemize}
+        \item Austin Powers
+        \item Steve Powers
+      \end{itemize}
+    \end{itemize}
+  \end{itemize}
+\end{itemize}
+
+\begin{enumerate}
+  \item Austin Powers
+  \item Steve Powers
+  \begin{enumerate}
+    \item Austin Powers
+    \item Steve Powers
+    \begin{enumerate}
+      \item Austin Powers
+      \item Steve Powers
+      \begin{enumerate}
+        \item Austin Powers
+        \item Steve Powers
+      \end{enumerate}
+    \end{enumerate}
+  \end{enumerate}
+\end{enumerate}
+
+
+\begin{minipage}{0.3\textwidth}
+  \begin{flushright}
+  \includegraphics[width=0.75\textwidth]{octocat.png}
+  \end{flushright}
+\end{minipage}
+
+\begin{compactitem}
+  \item Here
+  \item there
+\end{compactitem}
+
+\section{Some section it is}
+\Blindtext
+\section{Zustände in Köln}
+\subsection{Porz}
+\subsubsection{Eil}
+\Blindtext
+\subsection{Zollstock}
+\Blindtext
+\chapter{Konrete Vorboten}
+\section{Karussell}
+\Blindtext
+\subsection{Zuckerwatte}
+\subsubsection{Bobbycars}
+\Blindtext
+\part{Live action}
+\chapter{The year 2020}
+\section{Ganz frisch}
+\Blindtext
+\section{Zustände in Köln}
+\subsection{Porz}
+\Blindtext
+\subsection{Zollstock}
+\Blindtext
+\chapter{Konrete Vorboten}
+\section{Kitchen}
+\Blindtext
+\subsection{Cologne}
+\subsubsection{Nippes}
+\Blindtext
+
+\end{document}
