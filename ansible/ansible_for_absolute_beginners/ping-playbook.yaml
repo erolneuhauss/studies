@@ -540,13 +540,13 @@
       file:
         path: /tmp/foobar
         state: touch
-    
+
     - name: add content
       copy:
         content: |
           first line
           second line
-          becky tom huck jim 
+          becky tom huck jim
           third line
           fourth line
         dest: /tmp/foobar
@@ -615,7 +615,7 @@
         weekday: "*"
         user: vagrant
         state: present
-        job: "whoami >> whoami.out" 
+        job: "whoami >> whoami.out"
         cron_file: whoami_vagrant
 
     - name: install at
@@ -630,12 +630,7 @@
         count: 1
         units: minutes
         state: present
--
-  name: latest
-  hosts: all
-  become: true
-  tags: latest
-  tasks:
+
     - name: install libsemanage
       yum:
         name: "{{ item }}"
@@ -672,6 +667,50 @@
         target: '/htcontent(/.*)?'
         setype: httpd_sys_content_t
         state: present
-    
+
     - name: apply selinux fcontext
       command: restorecon -vFR /htcontent
+
+    - name: add a web page
+      copy:
+        content: 'Hi, this is a web page'
+        dest: /htcontent/index.html
+        group: apache
+        owner: apache
+        mode: 0640
+-
+  name: latest
+  hosts: all
+  become: true
+  tags: latest
+  tasks:
+    - name: remove rich firewall rules
+      firewalld:
+        rich_rule: rule family=ipv4 forward-port port=443 protocol=tcp to-port=8443
+        zone: public
+        permanent: true
+        immediate: true
+        state: disabled
+    - name: remove port rule
+      firewalld:
+        port: 8080-8084/tcp
+        permanent: true
+        immediate: true
+        state: disabled
+    - name: remove forwared ports
+      command: firewall-cmd --permanent --remove-forward-port=port=443:proto=tcp:toport=8443
+    - name: reload firewall
+      command: firewall-cmd --reload
+    - name: remove https service
+      firewalld:
+        service: https
+        permanent: true
+        immediate: true
+        state: disabled
+    - name: add postgresl service
+      firewalld:
+        service: postgresql
+        permanent: true
+        immediate: true
+        state: enabled
+
