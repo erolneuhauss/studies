@@ -1,0 +1,6 @@
+"This is a webserver on host {{ ansible_hostname }}"
+
+- The ipv4 address is {{ ansible_default_ipv4['address'] }}
+- The current memory usage is {{ ansible_memory_mb['real']['used'] }}mb out of {{ansible_memory_mb['real']['total'] }}mb
+- The {{ ansible_devices| first }} block device has the following partitions"
+- {{ ansible_devices['sda']['partitions']|join('\n- ') }}

@@ -1,0 +1,55 @@
+---
+# tasks file for apache
+#
+- name: create dir
+  file:
+    path: "{{ apache_content_dir }}"
+    state: directory
+    owner: apache
+    group: apache
+    setype: httpd_sys_content_t 
+    mode: 0755
+
+- name: push index.html template
+  template:
+    src: index.html.j2
+    dest: "{{ apache_content_dir }}/index.html"
+    setype: httpd_sys_content_t 
+
+- name: fcontext module
+  sefcontext:
+    ftype: a
+    reload: true
+    target: '{{ apache_content_dir }}(/.*)?'
+    setype: httpd_sys_content_t
+    state: present
+
+- name: apply selinux fcontext
+  command: restorecon -ivFR
+
+- name: Allow Apache to listen on tcp port 8080
+  seport:
+    ports: 8080
+    proto: tcp
+    setype: http_port_t
+    state: present
+
+- name: push config template
+  template:
+    src: httpd.conf.j2
+    dest: /etc/httpd/conf/httpd.conf
+    backup: true
+  notify: "restart apache"
+
+- name: add port rule
+  firewalld:
+    port: 8080/tcp
+    permanent: true
+    immediate: true
+    state: enabled
+
+- name: install httpd
+  yum: name=httpd state=present
+
+- name: enable and start service
+  service: name=httpd enabled=true state=started

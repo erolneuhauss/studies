@@ -1,0 +1,32 @@
+# This is the main Apache HTTP server configurtion file.
+#
+# {{ ansible_managed }}
+
+ServerRoot "/etc/httpd"
+
+Listen {{ apache_http_port }}
+
+Include conf.modules.d/*.conf
+
+User apache
+Group apache
+
+ServerAdmin {{ apache_admin }}@{{ ansible_hostname }}
+
+<Directory />
+    AllowOverride none
+    Require all denied
+</Directory>
+
+DocumentRoot "{{ apache_content_dir }}"
+
+<Directory "{{ apache_content_dir }}">
+    AllowOverride None
+    Require all granted
+</Directory>
+
+<Directory "{{ apache_content_dir }}">
+    Options Indexes FollowSymLinks
+    AllowOverride None
+    Require all granted
+</Directory>

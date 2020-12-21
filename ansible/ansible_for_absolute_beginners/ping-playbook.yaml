@@ -818,4 +818,8 @@
   hosts: all
   become: true
   tags: latest
-
+  roles:
+    - role: apache
+      vars:
+        apache_http_port: 80
+ 

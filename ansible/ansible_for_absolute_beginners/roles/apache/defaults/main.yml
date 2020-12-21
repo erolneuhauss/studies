@@ -1,0 +1,5 @@
+---
+# defaults file for apache
+apache_content_dir: /webcontent
+apache_http_port: 8080
+apache_admin: cloud_user
