@@ -4,6 +4,7 @@
   hosts: all
   gather_facts: false
   vars_files:
+    - vars/users.yml
     - vars/"{{ansible_hostname}}.yaml"
     - vars/packages.yaml
   tasks:
@@ -132,6 +133,23 @@
         - name: james
           uid: 2003
 
+    - name: create users
+      user:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - "{{ students }}"
+        - "{{ faculty }}"
+
+    - name: delete users
+      user:
+        name: "{{ item }}"
+        state: absent
+        remove: true
+        force: true
+      loop: "{{ [students,faculty]|flatten(1) }}"
+
+
     - name: find index.htmls
       find:
         paths: /home
@@ -173,6 +191,10 @@
   hosts: controller
   become: true
   gather_facts: true
+  vars:
+    content_dir: /webcontent
+    http_port: 8080
+    admin: cloud_user
   tasks:
     - name: using register
       file: path=/tmp/mytest.file state=touch
@@ -217,10 +239,56 @@
         - rudolf
         - hermann
         - klaus
+
+    - name: create dir
+      file:
+        path: /webcontent
+        state: directory
+        owner: apache
+        group: apache
+        mode: 0750
+
+    - name: fcontext module
+      sefcontext:
+        ftype: a
+        reload: true
+        target: '/webcontent(/.*)?'
+        setype: httpd_sys_content_t
+        state: present
+
+    - name: apply selinux fcontext
+      command: restorecon -vFR /webcontent
+
+    - name: Allow Apache to listen on tcp port 8080
+      seport:
+        ports: 8080
+        proto: tcp
+        setype: http_port_t
+        state: present
+
+    - name: push config template
+      template:
+        src: templates/httpd.conf.j2
+        dest: /etc/httpd/conf/httpd.conf
+        backup: true
+      notify: "restart apache"
+    - name: push index.html template
+      template:
+        src: templates/index.html.j2
+        dest: /webcontent/index.html
+    - name: add port rule
+      firewalld:
+        port: 8080/tcp
+        permanent: true
+        immediate: true
+        state: enabled
+
   handlers:
-    - name: "restart apache"
-      service: name=httpd state=restarted
-      listen: "restart httpd service"
+    - name: restart web servers
+      service:
+        name: httpd
+        state: restarted
+      listen: "restart apache"
 
     - name: copy file on conditions
       copy: src=./ping-playbook.yaml dest=/tmp/
@@ -253,7 +321,7 @@
 
     - name: use template to create index.html
       template:
-        src: templates/index.j2
+        src: templates/index.html.j2
         dest: /var/www/html/index.html
         owner: apache
         group: apache
@@ -618,7 +686,8 @@
         job: "whoami >> whoami.out"
         cron_file: whoami_vagrant
 
-    - cron:
+    - name: yum update
+      cron:
          name: yum update
          special_time: weekly
          user: root
@@ -626,7 +695,8 @@
          cron_file: ansible_update_weekly
          state: present
 
-     - cron:
+    - name: status at reboot
+      cron:
          name: status at reboot
          special_time: reboot
          user: root
@@ -634,7 +704,8 @@
          cron_file: ansible_status_after_reboot
          state: present
 
-     - cron:
+    - name: report
+      cron:
          name: report excessive login attempts
          minute: '30'
          hour: '7'
@@ -711,12 +782,7 @@
         return_content: true
       register: result
     - debug: var=result.content
--
-  name: latest
-  hosts: all
-  become: true
-  tags: latest
-  tasks:
+
     - name: remove rich firewall rules
       firewalld:
         rich_rule: rule family=ipv4 forward-port port=443 protocol=tcp to-port=8443
@@ -746,4 +812,10 @@
         permanent: true
         immediate: true
         state: enabled
+
+-
+  name: latest
+  hosts: all
+  become: true
+  tags: latest
 
