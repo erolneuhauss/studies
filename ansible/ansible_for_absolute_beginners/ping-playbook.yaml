@@ -618,6 +618,32 @@
         job: "whoami >> whoami.out"
         cron_file: whoami_vagrant
 
+    - cron:
+         name: yum update
+         special_time: weekly
+         user: root
+         job: yum update -y
+         cron_file: ansible_update_weekly
+         state: present
+
+     - cron:
+         name: status at reboot
+         special_time: reboot
+         user: root
+         job: /usr/bin/status
+         cron_file: ansible_status_after_reboot
+         state: present
+
+     - cron:
+         name: report excessive login attempts
+         minute: '30'
+         hour: '7'
+         weekday: '1,3,5'
+         user: root
+         job: /usr/bin/faillock_report
+         cron_file: ansible_report_faillock
+         state: present
+
     - name: install at
       yum: name=at state=present
 
@@ -678,6 +704,13 @@
         group: apache
         owner: apache
         mode: 0640
+
+    - name: curl webserver1
+      uri:
+        url: http://webserver1
+        return_content: true
+      register: result
+    - debug: var=result.content
 -
   name: latest
   hosts: all

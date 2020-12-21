@@ -8,9 +8,10 @@ RUN yum update -y && 	\
     yum install -y --setopt=tsflags=nodocs \
         dnf-plugins-core \
         git \
+        make \
         wget && \
     yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm && \
-    yum config-manager --set-enabled PowerTools && \
+    yum config-manager --set-enabled powertools && \
     yum update -y && \
     yum install -y --setopt=tsflags=nodocs perl-Tk perl-Digest-MD5 && \
     yum -y clean all
