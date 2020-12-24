@@ -3,7 +3,15 @@ students:
   - zach
   - kelly
   - herbert
+  - lizy
 faculty:
   - history
   - biology
   - chemistry
+admins:
+  - rob
+  - david
+  - joy
+developers:
+  - tim
+  - ray

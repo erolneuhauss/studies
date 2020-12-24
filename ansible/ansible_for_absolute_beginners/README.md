@@ -62,3 +62,36 @@ ansible localhost --become -m lineinfile -a "path=/var/www/html/index.php regex=
         - devs
         - admins
 ```
+
+## use Vault to encrypt password to be used in user module
+```
+ansible-vault encrypt_string --vault-password-file secrets/vault.txt 'waytosecrect' --name 'developers
+```
+### user module using vault
+```
+---
+- name: create users with vault encrypted passwords  
+  hosts: all
+  become: true
+  vars_files:
+    - vars/users.yml
+    - vars/passwords.yml
+  tasks:
+    - name: add admins
+      user:
+        name: "{{ item }}"
+        state: present
+        password: "{{ admin_pass | string | password_hash('sha512') }}"
+        group: wheel
+      with_items:
+        - "{{ admins }}"
+    - name: add developers
+      user:
+        name: "{{ item }}"
+        home: /var/www
+        state: present
+        password: "{{ devel_pass | string | password_hash('sha512') }}"
+      with_items:
+        - "{{ developers }}"
+```
+

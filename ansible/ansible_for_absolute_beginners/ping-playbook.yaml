@@ -7,6 +7,7 @@
     - vars/users.yml
     - vars/"{{ansible_hostname}}.yaml"
     - vars/packages.yaml
+    - data/passwords.yml
   tasks:
     - name: ping test
       ping:
@@ -149,6 +150,22 @@
         force: true
       loop: "{{ [students,faculty]|flatten(1) }}"
 
+    - name: add admins
+      user:
+        name: "{{ item }}"
+        state: present
+        password: "{{ admin_pass | string | password_hash('sha512') }}"
+        group: wheel
+      with_items:
+        - "{{ admins }}"
+    - name: add developers
+      user:
+        name: "{{ item }}"
+        home: /var/www
+        state: present
+        password: "{{ devel_pass | string | password_hash('sha512') }}"
+      with_items:
+        - "{{ developers }}"
 
     - name: find index.htmls
       find:
@@ -186,6 +203,16 @@
   roles:
     - geerlingguy.apache
     - marcelnijenhof.firewalld
+    - role: apache
+      vars:
+        # RfTvehTqOU
+        apache_http_port: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          66343031613838393661366538386533323333336662393965336631383232623137373635633234
+          3434613566613730306166666562306635653537336436340a636636633761376639616364623635
+          31316266623666356563366338626136323562383434316139623830643164616134616530343362
+          6233336366393665390a356136646162323639316365393663326237653733643063316330363639
+          6263
 
 - name: learn via cloud guru
   hosts: controller
@@ -193,9 +220,25 @@
   gather_facts: true
   vars:
     content_dir: /webcontent
-    http_port: 8080
+    http_port: 80
     admin: cloud_user
+    pgpass: !vault |
+      $ANSIBLE_VAULT;1.1;AES256
+      61313966633430643933353633346138333030366138633836393763633562346332383161643664
+      3839643731343761393335643664343333626339346230380a336265623533643966613935333339
+      31653033643763633263393333336663633339353863386664623737323862356136613236653636
+      3762313565343639300a336332396131303739373135393732663363643238646635666462326430
+      6462
   tasks:
+    - lineinfile:
+        line: "{{ pgpass }}"
+        create: true
+        dest: /home/dba/.pgpass
+        owner: dba
+        group: dba
+        mode: 0600
+        state: present
+
     - name: using register
       file: path=/tmp/mytest.file state=touch
       register: myvar
@@ -814,12 +857,27 @@
         state: enabled
 
 -
-  name: latest
-  hosts: all
+  name: deploy and validate ssh_config
+  hosts: controller
   become: true
+  vars:
+    PA: "yes"
+    X11: "yes"
+  tasks:
+    - template:
+        dest: /etc/ssh/ssh_config
+        src: ssh.tmpl
+        backup: true
+        owner: root
+        group: root
+        mode: 0644
+        validate: /sbin/sshd -t -f %s
+    - service:
+        name: sshd
+        state: restarted
+-
+  name: latest
+  hosts: controller
   tags: latest
-  roles:
-    - role: apache
-      vars:
-        apache_http_port: 80
- 
+  become: true
+  tasks:
