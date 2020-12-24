@@ -43,7 +43,7 @@
     - debug: var=out.stdout_lines
 
     - name: install httpd
-      yum: name=httpd state=present
+      package: name=httpd state=present
 
     - name: start web service
       service: name=httpd state=started
@@ -260,7 +260,7 @@
       debug: var=filecontent.stdout_lines
 
     - name: install httpd
-      yum: name=httpd state=present
+      package: name=httpd state=present
 
     - name: enable and start service
       service: name=httpd enabled=true state=started
@@ -352,7 +352,7 @@
       ignore_errors: true
 
     - name: install apache
-      yum: name=httpd state=latest
+      package: name=httpd state=latest
 
     - name: create user and add them to the apache group
       user:
@@ -374,7 +374,7 @@
       service: name=httpd state=started enabled=true
 
     - name: install git
-      yum: name=git state=present
+      package: name=git state=present
 
     - name: use git
       git:
@@ -409,7 +409,7 @@
       ignore_errors: true
 
     - name: install postgresql
-      yum:
+      package:
         name: postgresql-server
         state: latest
 
@@ -449,7 +449,7 @@
       service: name=httpd state=started enabled=true
 
     - name: add a repository
-      yum_repository:
+      package_repository:
         name: epel_via_ansible
         description: Epel Repo via ansible
         baseurl: https://download.fedoraproject.org/pub/epel/$releasever/Everything
@@ -457,7 +457,7 @@
         state: present
 
     - name: remove a repository
-      yum_repository:
+      package_repository:
         name: epel_via_ansible
         description: Epel Repo via ansible
         baseurl: https://download.fedoraproject.org/pub/epel/$releasever/Everything
@@ -465,7 +465,7 @@
         state: absent
 
     - name: add a repository
-      yum_repository:
+      package_repository:
         name: epel_via_ansible
         description: Epel Repo via ansible
         baseurl: https://download.fedoraproject.org/pub/epel/$releasever/Everything
@@ -729,12 +729,12 @@
         job: "whoami >> whoami.out"
         cron_file: whoami_vagrant
 
-    - name: yum update
+    - name: package update
       cron:
-         name: yum update
+         name: package update
          special_time: weekly
          user: root
-         job: yum update -y
+         job: package update -y
          cron_file: ansible_update_weekly
          state: present
 
@@ -759,7 +759,7 @@
          state: present
 
     - name: install at
-      yum: name=at state=present
+      package: name=at state=present
 
     - name: start/enable atd service
       service: name=atd enabled=true state=started
@@ -772,7 +772,7 @@
         state: present
 
     - name: install libsemanage
-      yum:
+      package:
         name: "{{ item }}"
         state: present
       loop:
