@@ -1,0 +1,85 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - package:
+        name:
+          - libselinux-python
+          - libsemanage-python
+          - firewalld
+        state: present
+
+- hosts: db_servers
+  become: true
+  tasks:
+    - package:
+        name:
+          - mariadb-server
+          - MySQL-python
+    - copy:
+        src: files/my.cnf
+        dest: /etc/my.cnf
+    - service:
+        name: "{{ item }}"
+        state: started
+        enabled: true
+      loop:
+        - mariadb
+        - firewalld
+  - firewalld:
+        port: 3306/tcp
+        zone: public
+        permanent: true
+        immediate: true
+        state: enabled
+
+    - mysql_user:
+        name: "{{ dbuser }}"
+        host: 172.20.1.100
+        password: "{{ dbpassword }}"
+        priv: "*.*:ALL"
+
+    - mysql_db:
+        name: "{{ dbname }}"
+        state: present
+
+    - mysql_db:
+        name: all
+        state: import
+        target: /tmp/db-load-script.sql
+
+- hosts: web_servers
+  become: true
+  tasks:
+    - package:
+        name:
+          - httpd
+          - php
+          - php-mysql
+          - git
+        state: present
+   - service:
+        name: firewalld
+        state: started
+        enabled: true
+    - firewalld:
+        port: 80/tcp
+        zone: public
+        permanent: true
+        immediate: true
+        state: enabled
+    - lineinfile:
+        path: /etc/httpd/conf/httpd.conf
+        regexp: 'DirectoryIndex index.html'
+        line: 'DirectoryIndex index.php'
+    - service: name=httpd state=started enabled=true
+
+- hosts: web_servers
+  become: true
+  tasks:
+    - git:
+        repo: "{{ repository }}"
+        dest: /var/www/html
+    - copy:
+        src: files/index.php
+        dest: /var/www/html/index.php
