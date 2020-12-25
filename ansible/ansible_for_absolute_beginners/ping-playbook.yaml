@@ -45,6 +45,12 @@
     - name: install httpd
       package: name=httpd state=present
 
+    - name: downgrade package
+      yum:
+        name: unzip-5.52
+        allow_downgrade: true
+        state: present
+
     - name: start web service
       service: name=httpd state=started
 
@@ -167,6 +173,11 @@
       with_items:
         - "{{ developers }}"
 
+    - name: last day of work 2023-12-31 23:59:59
+      user:
+        name: some_dude
+        expires: 1704067199 # date --date='2024-01-01 -1 seconds' '+%s'
+
     - name: find index.htmls
       find:
         paths: /home
@@ -270,7 +281,8 @@
         path: /etc/httpd/conf/httpd.conf
         regexp: '^ServerAdmin.*$'
         replace: 'ServerAdmin hostmaster@example.com'
-        backup: yes
+        backup: true
+        validate: /usr/sbin/httpd -t %s
       notify: "restart httpd service"
 
     - name: create a bunch of users
@@ -404,7 +416,7 @@
       lineinfile:
         path: /root/addresses
         line: "{{ ansible_facts['all_ipv4_addresses'] }}"
-        create: yes
+        create: true
       when: ansible_facts['os_family'] == 'RedHat'
       ignore_errors: true
 
