@@ -1,0 +1,20 @@
+boxes = [
+    {
+        :name => "chefdk",
+        :ip   => "172.28.128.20",
+    },
+#    {
+#        :name => "target1",
+#        :ip   => "172.28.128.7",
+#    },
+]
+
+Vagrant.configure("2") do |config|
+  boxes.each do |box|
+    config.vm.define box[:name] do |chef|
+      chef.vm.box = "ubuntu/focal64"
+      chef.vm.hostname = box[:name]
+      chef.vm.network "private_network", ip: box[:ip]
+    end # config.vm
+  end # boxes.each.loop
+end

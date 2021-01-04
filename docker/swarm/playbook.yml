@@ -1,0 +1,19 @@
+---
+- name: set up for docker swarm
+  hosts: all
+  become: true
+  tasks:
+    - name: update apt
+      apt:
+        update_cache: yes
+    - name: install docker
+      apt: name=docker.io state=present
+    - name: start service
+      service: name=docker enabled=true state=started
+
+- name: set up swarm nodes
+  hosts: swarm-node-01,swarm-node-02
+  become: true
+  tasks:
+    - name: join master
+      command: docker swarm join --token SWMTKN-1-43z4wjamquy3hsalhaylw3702o9yi8ugetcokvpeg6ljjc09rs-33rgbvay3n9w5d7kcvuia85mf 172.28.128.20:2377
