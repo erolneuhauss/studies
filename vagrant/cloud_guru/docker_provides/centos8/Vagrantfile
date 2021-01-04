@@ -1,0 +1,10 @@
+# neither sleep nor tail worked
+# build a working docker provided centos8
+# following example
+# https://dev.to/mattdark/using-docker-as-provider-for-vagrant-10me
+Vagrant.configure("2") do |config|
+  config.vm.provider "docker" do |d|
+    d.image   = "roboxes/centos8"
+    d.cmd     = ["/usr/bin/tail","-f","/dev/null"]
+  end
+end
