@@ -1,0 +1,19 @@
+---
+- hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '{{ item.FROM }}'
+        line: '{{ item.TO }}'
+        validate: /sbin/sshd -tf %s
+        backup: true
+      loop:
+        - { FROM: '^maxauthtries.*',  TO: 'MaxAuthTries 3' }
+        - { FROM: '^X11Forwarding.*', TO: 'X11Forwarding no' }
+        - { FROM: '^Banner .*',       TO: 'Banner /etc/motd' }
+
+    - systemd:
+        name: sshd
+        daemon_reload: true
