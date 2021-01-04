@@ -1,0 +1,15 @@
+---
+- hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - template:
+        src: templates/etc_motd.j2
+        dest: /etc/motd
+        owner: root
+        group: root
+        mode: 0644
+    - shell: cat /etc/motd
+      register: motd
+    - debug:
+        var: motd.stdout_lines

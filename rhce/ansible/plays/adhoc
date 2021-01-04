@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+ansible webservers,database -b -m user -a 'name=automation state=present'
+ansible webservers,database -b -m file -a 'path=/home/automation/.ssh state=directory owner=automation group=automation mode=0700'
+ansible webservers,database -b -m copy -a 'src=files/control_rsa.pub dest=/home/automation/.ssh/authorized_keys owner=automation group=automation mode=0644'
+ansible webservers,database -b -m lineinfile -a 'path=/etc/sudoers.d/automation line="automation ALL=(ALL) NOPASSWD: ALL" create=true state=present validate="/usr/sbin/visudo -cf %s"'

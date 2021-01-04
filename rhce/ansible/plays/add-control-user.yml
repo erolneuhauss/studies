@@ -1,0 +1,10 @@
+---
+- hosts: control.example.com
+  gather_facts: false
+  become: true
+  tasks:
+    - user:
+        name: automation
+        state: present
+        generate_ssh_key: true
+        password: "{{ automation | string | password_hash('sha512') }}"
