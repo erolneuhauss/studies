@@ -893,3 +893,9 @@
   tags: latest
   become: true
   tasks:
+    - command: cat /etc/hosts
+      register: result
+    - debug:
+        msg: "target1 found"
+      when: result.stdout.find('target1') !=-1
+

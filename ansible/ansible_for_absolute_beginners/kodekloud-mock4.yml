@@ -1,0 +1,10 @@
+---
+- hosts: all
+  tasks:
+    - user:
+        name: deploy
+        state: present
+    - authorized_key:
+        user: deploy
+        key: "{{ lookup('file', 'devops.pub') }}"
+        state: present

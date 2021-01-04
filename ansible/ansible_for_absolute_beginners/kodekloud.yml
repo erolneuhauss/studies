@@ -1,0 +1,33 @@
+---
+-
+  name: latest
+  hosts: controller
+  tags: latest
+  become: true
+  tasks:
+    - name: check hosts
+      command: cat /etc/hosts
+      register: out
+    - debug: var=out.stdout_lines
+    - name: stat module help to find the file info
+      stat:
+        path: /var/run
+      register: your_variable
+    - debug: var=your_variable.stat.lnk_target
+
+    # your code goes here...
+    - shell: echo "{{ your_variable.stat.lnk_target }}" > /tmp/by_ansible
+
+    - setup:
+        filter: ansible_distribution
+      register: facts
+    - debug:
+        var: facts.ansible_facts.ansible_distribution
+    - debug:
+        msg: "{{ ansible_version }}"
+
+    - debug: msg="{{ hostvars['node01.host'].dns_server }}"
+    - shell: echo "{{ hostvars['node01.host'].dns_server }}" > /tmp/variable.txt
+    - command: cat /tmp/variable.txt
+      register: out
+    - debug: var=out.stdout

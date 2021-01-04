@@ -1,0 +1,146 @@
+---
+-
+  name: conditonals and register
+  hosts: controller
+  become: true
+  gather_facts: true
+  vars:
+    MYHOST: contoller
+    copy_report: true
+    remote_dest: /usr/local/bin/report_status.sh
+    log_message: 'File report_status.sh is not executable, making it executable...'
+  vars_files:
+    - vars/packages.yaml
+  tasks:
+    - debug:
+        msg: Install "{{ item.name }}"
+      loop: "{{ packages }}"
+      when: item.required | bool and ansible_os_family == "RedHat"
+
+    - name: just an exercise. This is not the preferred way to update /etc/hosts
+      command: cat /etc/hosts
+      register: result
+    - debug:
+        var: result.stdout_lines
+      # Python sting.find method returns -1, when it can NOT find the requested
+      # substring. Otherwise it returns the index, where the string was found.
+      when: result.stdout.find(MYHOST) !=-1
+      # so this means: string WAS found, when the find return code NOT EQUAL -1
+
+    - lineinfile:
+        path: /etc/hosts
+        line: '127.0.1.1 controller controller'
+      when: result.stdout.find(MYHOST) !=-1
+
+    - name: just an exercise. This is not the preferred way to install/start/stop service
+      yum:
+        list: httpd
+      register: result
+    - debug:
+        msg: httpd is "{{ result.results[0].yumstate }}"
+    - yum:
+        name: nginx
+        state: absent
+      when: result.results[0].yumstate !='available'
+
+    - name: is the service running?
+      command: systemctl is-active httpd
+      ignore_errors: true
+      register: result
+    - debug:
+        var: result
+    - service:
+        name: httpd
+        state: started
+      when: result.stdout == 'inactive'
+
+    - name: see result via status
+      command: systemctl status httpd
+      ignore_errors: true
+      register: result
+    - debug:
+        var: result
+    - name: stop the service
+      service:
+        name: httpd
+        state: stopped
+      when: result.stdout.find('active') != -1
+
+    - shell: rpm -ql git
+      register: check_if_git_installed
+      ignore_errors: true
+
+    - debug: var=check_if_git_installed.stdout
+      ignore_errors: true
+      when: check_if_git_installed.rc is defined
+
+    - lineinfile:
+        path: /tmp/is_git_installed.txt
+        line: 'Oops, git is missing'
+        create: true
+      when: check_if_git_installed.rc != '0'
+
+    - command: cat /tmp/is_git_installed.txt
+      register: out
+    - debug: var=out.stdout_lines
+
+    - name: check git version
+      shell: git version
+      register: out
+      ignore_errors: true
+      changed_when: false
+
+    - debug:
+        var: out
+
+    - name: print installed version
+      shell: git version > /tmp/is_git_installed.txt
+      when: out is succeeded
+
+    - name: print missing message
+      shell: echo "{{ missing_message }}" > /tmp/is_git_installed.txt
+      when: out is failed
+
+    - name: cat /tmp/is_git_installed.txt
+      shell: cat /tmp/is_git_installed.txt
+      register: content
+
+    - debug:
+        var: content.stdout
+    - copy:
+        src: files/report_status.sh
+        dest: "{{ remote_dest }}"
+      when: copy_report is defined and copy_report | bool
+    - debug: var=copy_report
+
+    - name: check for x
+      stat:
+        path: "{{ remote_dest }}"
+      register: f
+
+    - debug:
+        var: f.stat.executable
+
+    - name: log message
+      shell: echo "{{ log_message }}" > /tmp/change.log
+      register: l
+      when: not f.stat.executable | bool
+
+    - name: log message
+      file:
+        path: "{{ remote_dest }}"
+        mode: a+x
+      when: not f.stat.executable | bool
+
+    - name: exec report
+      shell: "{{ remote_dest }}"
+      register: o
+      changed_when: false
+
+    - debug:
+       var: o
+
+    - package:
+        name: bash
+        state: latest
+      when: not o.stdout.find('not vulnerable') !=-1

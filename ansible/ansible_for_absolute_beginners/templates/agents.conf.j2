@@ -1,0 +1,4 @@
+hostname, ipaddress, monitor_port, type, protocol
+{% for node in groups['lamp_app'] %}
+{{ hostvars[node]['inventory_hostname_short'] }}, {{ hostvars[node]['ansible_host'] }}, {{ hostvars[node]['monitor_port'] }}, {{ hostvars[node]['protocol'] }}
+{% endfor %}

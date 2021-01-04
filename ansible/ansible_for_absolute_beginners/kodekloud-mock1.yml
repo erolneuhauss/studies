@@ -1,0 +1,29 @@
+---
+- hosts: node00
+  gather_facts: false
+  vars_files:
+    - data/users.yml
+    - secrets/devel_pass.yml
+    - secrets/admin_pass.yml
+  tasks:
+    - group:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - developers
+        - admins
+
+    - user:
+        name: "{{ item }}"
+        groups: developers
+        home: /var/www
+        password: "{{ devel_pass | string | password_hash('sha512') }}"
+        state: present
+      with_items: "{{ developers | list }}"
+
+    - user:
+        name: "{{ item }}"
+        groups: admins,wheel
+        password: "{{ admin_pass | string | password_hash('sha512') }}"
+        state: present
+      with_items: "{{ admins | list }}"

@@ -1,0 +1,27 @@
+- hosts: dns_server_america
+  vars:
+    GROUP_NAME: america
+  tasks:
+    - template:
+        src: templates/hosts.j2
+        dest: /tmp/hosts.txt
+
+- hosts: dns_server_asia
+  vars:
+    GROUP_NAME: asia
+  tasks:
+    - template:
+        src: templates/hosts.j2
+        dest: /tmp/hosts.txt
+
+- hosts: dns_server_america
+  tasks:
+    - command: cat /tmp/hosts.txt
+      register: out
+    - debug: var=out.stdout_lines
+
+- hosts: dns_server_asia
+  tasks:
+    - command: cat /tmp/hosts.txt
+      register: out
+    - debug: var=out.stdout_lines
