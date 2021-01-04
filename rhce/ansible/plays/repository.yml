@@ -1,0 +1,10 @@
+---
+- hosts: database
+  become: true
+  gather_facts: false
+  tasks:
+    - yum_repository:
+        name: mysql56-community
+        description: "MySQL 5.6 YUM Repo"
+        baseurl: http://repo.example.com/rpms
+        state: present
