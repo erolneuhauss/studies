@@ -1,0 +1,30 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+boxes = [
+    {
+      :name => "control.example.com",
+      :ip =>  "172.28.128.100",
+    },
+    {
+      :name => "node1.example.com",
+      :ip =>  "172.28.128.101",
+    },
+    {
+      :name => "node2.example.com",
+      :ip =>  "172.28.128.102",
+    },
+    {
+      :name => "node3.example.com",
+      :ip =>  "172.28.128.103",
+    }
+]
+
+Vagrant.configure("2") do |create|
+  boxes.each do |box|
+    create.vm.define box[:name] do |config|
+      config.vm.box = "generic/centos8"
+      config.vm.network :private_network, ip: box[:ip]
+    end # config.vm
+  end # boxes.each.loop
+end # Vagrant

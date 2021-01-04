@@ -1,0 +1,10 @@
+[proxy]
+control.example.com
+
+[webservers]
+node1.example.com
+node2.example.com
+node3.example.com
+
+[database]
+node3.example.com

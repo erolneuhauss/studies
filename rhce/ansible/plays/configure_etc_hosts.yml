@@ -1,0 +1,15 @@
+---
+- hosts: all
+  become: true
+  gather_facts: true
+  tasks:
+    - template:
+        src: templates/etc_hosts.j2
+        dest: /etc/hosts
+        owner: root
+        group: root
+        mode: 0644
+    - shell: cat /etc/hosts
+      register: hosts
+    - debug:
+        var: hosts.stdout_lines
