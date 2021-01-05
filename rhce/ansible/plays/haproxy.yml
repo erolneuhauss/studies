@@ -1,15 +1,20 @@
 ---
+- hosts: webservers
+  become: true
+  tasks:
+    - setup:
+
 - hosts: proxy
   become: true
   gather_facts: true
   vars:
     haproxy_backend_balance_method: 'roundrobin'
     haproxy_backend_mode: 'http'
-    haproxy_backend_server:
+    haproxy_backend_servers:
       - name: node1
-        address: "{{ hostvars['node1.example.com']['ansible_facts']['ansible_all_ipv4_addresses'][0]:80 }}"
+        address: "{{ hostvars['node1.example.com']['ansible_all_ipv4_addresses'][0] }}:80"
       - name: node2
-        address: "{{ hostvars['node2.example.com']['ansible_facts']['ansible_all_ipv4_addresses'][0]:80 }}"
+        address: "{{ hostvars['node2.example.com']['ansible_all_ipv4_addresses'][0] }}:80"
   roles:
     - geerlingguy.haproxy
   tasks:
@@ -19,4 +24,3 @@
         state: enabled
         permanent: true
         immediate: true
-
