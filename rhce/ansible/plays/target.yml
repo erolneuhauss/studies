@@ -1,0 +1,9 @@
+---
+- hosts: node3.example.com
+  become: true
+  gather_facts: false
+  tasks:
+    - file:
+        src: /usr/lib/systemd/system/multi-user.target
+        dest: /etc/systemd/system/default.target
+        state: link
