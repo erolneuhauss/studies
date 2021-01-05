@@ -1,6 +1,8 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+require 'config'
+
 boxes = [
     {
       :name => "control.example.com",
@@ -23,9 +25,13 @@ boxes = [
 Vagrant.configure("2") do |create|
   boxes.each do |box|
     create.vm.define box[:name] do |config|
+      config.ssh.insert_key = false
+      config.vm.provider :virtualbox do |vb|
+        vb.name = box[:name]
+        vb.customize ["modifyvm", :id, "--vram", "8"] # ubuntu defaults to 256 MB which is a waste of precious RAM
+      end
       config.vm.box = "generic/centos8"
       config.vm.network :private_network, ip: box[:ip]
-      config.customize ["modifyvm", :id, "--vram", "4"] # ubuntu defaults to 256 MB which is a waste of precious RAM
     end # config.vm
   end # boxes.each.loop
 end # Vagrant

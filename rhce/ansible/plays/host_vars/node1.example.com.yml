@@ -1,2 +1,1 @@
 ansible_host: '172.28.128.101'
-ansible_ssh_private_key_file: '.vagrant/machines/node1.example.com/virtualbox/private_key'
