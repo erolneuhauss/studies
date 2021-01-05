@@ -1,0 +1,27 @@
+---
+# tasks file for sample-apache
+- yum:
+    name:
+      - httpd
+      - mod_ssl
+      - php
+    state: present
+
+- service:
+    name: httpd
+    state: started
+    enabled: true
+
+- firewalld:
+    service: "{{ item }}"
+    state: enabled
+    permanent: true
+    immediate: true
+  loop:
+    - http
+    - https
+
+- template:
+    src: index.html.j2
+    dest: /var/www/html/index.html
+  notify: restart httpd
