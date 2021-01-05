@@ -1,1 +1,2 @@
 ansible_user: 'vagrant'
+ansible_ssh_args: '-C -o ControlMaster=auto -o ControlPersist=60s IdentitiesOnly=yes'
