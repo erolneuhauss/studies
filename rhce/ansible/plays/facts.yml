@@ -1,0 +1,20 @@
+---
+- hosts: database
+  become: true
+  gather_facts: true
+  tasks:
+    - file:
+        path: /etc/ansible/facts.d
+        state: directory
+        recurse: true
+
+#    - file:
+#        path: /etc/ansible/facts.d
+#        state: absent
+    - copy:
+        src: ./facts.d/custom.fact
+        dest: /etc/ansible/facts.d
+
+    - setup:
+        filter: ansible_local
+
