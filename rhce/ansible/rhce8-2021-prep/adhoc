@@ -1,6 +1,33 @@
 #!/usr/bin/env bash
+MYUSER='automation'
+MYCMD='ansible webservers,dbservers -b -m'
 
-ansible webservers,database -b -m user -a 'name=automation state=present'
-ansible webservers,database -b -m file -a 'path=/home/automation/.ssh state=directory owner=automation group=automation mode=0700'
-ansible webservers,database -b -m copy -a 'src=files/control_rsa.pub dest=/home/automation/.ssh/authorized_keys owner=automation group=automation mode=0644'
-ansible webservers,database -b -m lineinfile -a 'path=/etc/sudoers.d/automation line="automation ALL=(ALL) NOPASSWD: ALL" create=true state=present validate="/usr/sbin/visudo -cf %s"'
+${MYCMD} user -a \
+  "name=${MYUSER} \
+  state=present"
+
+${MYCMD} file -a \
+  "path=~${MYUSER}/.ssh \
+  state=directory \
+  owner=${MYUSER} \
+  group=${MYUSER} \
+  mode=0700"
+
+${MYCMD} copy -a \
+  "src=~/.vagrant.d/insecure_private_key \
+  dest=~${MYUSER}/.ssh/id_rsa \
+  owner=${MYUSER} \
+  group=${MYUSER} \
+  mode=0644"
+
+${MYCMD} authorized_key -a \
+  "user=${MYUSER} \
+  key=\"{{ lookup('file', './files/control_rsa.pub') }}\" \
+  state=present \
+  path=~${MYUSER}/.ssh/id_rsa.pub"
+
+${MYCMD} lineinfile -a \
+  "path=/etc/sudoers.d/${MYUSER} \
+  line=\"${MYUSER} ALL=(ALL) NOPASSWD: ALL\" \
+  create=true \
+  validate='/usr/sbin/visudo -cf %s'"
