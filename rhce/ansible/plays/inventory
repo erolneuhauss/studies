@@ -7,3 +7,7 @@ node2.example.com
 
 [database]
 node3.example.com
+
+[targets:children]
+webservers
+database
