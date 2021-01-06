@@ -1,0 +1,28 @@
+yum install -y bash-completion yum-utils && bash
+nmcli
+nmcli help
+nmcli con help
+nmcli con show
+nmcli dev status
+nmcli dev show
+nmcli con mod help
+nmcli con mod 'System ens3' +ipv4.dns 1.1.1.1
+nmcli networking off; nmcli networking on
+nmtui
+172.25.9.11
+172.25.9.10
+172.17.0.254
+172.17.0.20
+nmcli con show
+nmcli con add con-name my-connection type ethernet ifname eth2 ip4 172.28.128.11/24 gw4 172.28.128.1 ipv4.dns 172.28.128.1
+nmcli con up eth2
+ping 172.28.128.11
+nmcli con mod eth2 ipv4.addresses "172.28.128.12"
+cat /etc/sysconfig/network-scripts/ifcfg-eth2
+nmcli con up eth2
+nmcli general hostname myserver.domain.com
+nmcli con show my-connection
+nmcli con mod my-connection connection.autoconnect no
+nmcli con mod my-connection connection.permissions stella
+nmcli con mod my-connection connection.permissions user:stella,john
+getent hosts
