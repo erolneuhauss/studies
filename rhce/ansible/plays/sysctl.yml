@@ -9,8 +9,8 @@
         reload: true
         sysctl_set: true
         state: enabled
-      when: hostvars[inventory_hostname]['ansible_memory_mb']['real']['total'] | int > 2048
+      when: "'ansible_memory_mb' | int > 2048"
 
     - debug:
         msg: "Server memory less than 2048MB"
-      when: hostvars[inventory_hostname]['ansible_memory_mb']['real']['total'] | int < 2048
+      when: "'ansible_memory_mb' | int < 2048"
