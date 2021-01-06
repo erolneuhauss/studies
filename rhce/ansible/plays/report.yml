@@ -1,0 +1,24 @@
+---
+- hosts: all
+  gather_facts: true
+  tasks:
+    - copy:
+        src: report.txt
+        dest: /tmp/report.txt
+
+    - replace:
+        path: /tmp/report.txt
+        regexp: "{{ item.FROM }}"
+        replace: "{{ item.TO }}"
+      loop:
+        - { FROM: "HOST.*" , TO: "HOST={{ inventory_hostname }}" }
+        - { FROM: "MEMORY.*" , TO: "MEMORY={{ ansible_memtotal_mb }}" }
+        - { FROM: "BIOS.*" , TO: "BIOS={{ ansible_bios_version }}" }
+        - { FROM: "SDA_DISK_SIZE.*" , TO: "SDA_DISK_SIZE={% if ansible_devices['sda'] is defined %}{{ ansible_devices['sda']['size'] }}{% else %}NONE{% endif %}" }
+        - { FROM: "SDB_DISK_SIZE.*" , TO: "SDB_DISK_SIZE={% if ansible_devices['sdb'] is defined %}{{ ansible_devices['sdb']['size'] }}{% else %}NONE{% endif %}" }
+
+    - shell: cat /tmp/report.txt
+      register: report
+      changed_when: false
+    - debug:
+        var: report.stdout_lines
