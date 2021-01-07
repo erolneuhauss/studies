@@ -7,27 +7,27 @@
     - user_list.yml
   tasks:
     - block:
-        - user:
-            name: '{{ item.username }}'
-            uid: '{{ item.uid }}'
-            groups: wheel
-            shell: /bin/bash
-            password: "{{ user_password | string | password_hash('sha512') }}"
-            state: present
-            update_password: on_create
-          loop: "{{ users }}"
+      - user:
+          name: "{{ item.username }}"
+          uid: "{{ item.uid }}"
+          groups: wheel
+          shell: /bin/bash
+          password: "{{ user_password | string | password_hash('sha512') }}"
+          state: present
+        changed_when: false
+        loop: "{{ users }}"
 
-        - authorized_key:
-            user: "{{ item.username }}"
-            key: "{{ lookup('file', './files/control_rsa.pub') }}"
-            state: present
-          loop: "{{ users }}"
+      - authorized_key:
+          user: "{{ item.username }}"
+          key: "{{ lookup('file', 'id_rsa.pub') }}"
+          state: present
+        loop: "{{ users }}"
 
-        - copy:
-            src: secrets/id_rsa
-            dest: "/home/{{ item.username }}/.ssh/id_rsa"
-            owner: '{{ item.username }}'
-            group: '{{ item.username }}'
-            mode: 0600
-          loop: "{{ users }}"
-      when: (inventory_hostname in groups['webservers'] and (item.uid | string)[0] == '1') or (inventory_hostname in groups['database'] and (item.uid | string)[0] == '2')
+      - copy:
+          src: ~/.vagrant.d/insecure_private_key
+          dest: "{{ item.username }}"
+          owner: "{{ item.username }}"
+          group: "{{ item.username }}"
+          mode: 0600
+        loop: "{{ users }}"
+      when: ('webservers' in group_names and (item.uid | string | first) == '1') or ('database' in group_names and (item.uid | string | first) == '2')
