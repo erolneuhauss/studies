@@ -1,32 +1,67 @@
 #!/usr/bin/env bash
-MYUSER='automation'
-MYCMD='ansible webservers,dbservers -b -m'
+# Solve Task 2 (easy way by using already existing keys from vagrant)
+# this would not work in the exam!
+#
+# define in group_vars/all.yml
+#
+# ansible_remote_user: automation
+# ansible_private_key_file: ~/.vagrant.d/insecure_private_key
+#
+# IMPORTANT: it is ansible_REMOTE_user!!!
+# and run this script. It creates the user 'automation'
+# copies keys from ANSIBLE_REMOTE_USER to MYUSER
+# and this user becomes the privileged user.
 
-${MYCMD} user -a \
+export ANSIBLE_REMOTE_USER="vagrant"
+export ANSIBLE_PRIVATE_KEY_FILE="~/.vagrant.d/insecure_private_key"
+ANSIBLE_CMD_ALL="ansible -b all -m"
+MYUSER='automation'
+
+#${ANSIBLE_CMD_ALL} user -a \
+#  "name=${MYUSER} \
+#  force=true \
+#  remove=true \
+#  state=absent"
+#
+#${ANSIBLE_CMD_ALL} file -a \
+#  "path=/etc/sudoers.d/${MYUSER} \
+#  state=absent"
+
+${ANSIBLE_CMD_ALL} user -a \
   "name=${MYUSER} \
   state=present"
 
-${MYCMD} file -a \
+${ANSIBLE_CMD_ALL} file -a \
   "path=~${MYUSER}/.ssh \
   state=directory \
   owner=${MYUSER} \
   group=${MYUSER} \
   mode=0700"
 
-${MYCMD} copy -a \
-  "src=~/.vagrant.d/insecure_private_key \
+${ANSIBLE_CMD_ALL} copy -a \
+  "src=~${ANSIBLE_REMOTE_USER}/.ssh/authorized_keys \
+  dest=~${MYUSER}/.ssh/authorized_keys \
+  owner=${MYUSER} \
+  group=${MYUSER} \
+  mode=0600 \
+  remote_src=true"
+
+${ANSIBLE_CMD_ALL} copy -a \
+  "src=~${ANSIBLE_REMOTE_USER}/.ssh/authorized_keys \
+  dest=~${MYUSER}/.ssh/id_rsa.pub \
+  owner=${MYUSER} \
+  group=${MYUSER} \
+  mode=0644 \
+  remote_src=true"
+
+${ANSIBLE_CMD_ALL} copy -a \
+  "src=${ANSIBLE_PRIVATE_KEY_FILE} \
   dest=~${MYUSER}/.ssh/id_rsa \
   owner=${MYUSER} \
   group=${MYUSER} \
-  mode=0644"
+  mode=0600"
 
-${MYCMD} authorized_key -a \
-  "user=${MYUSER} \
-  key=\"{{ lookup('file', './files/control_rsa.pub') }}\" \
-  state=present \
-  path=~${MYUSER}/.ssh/id_rsa.pub"
-
-${MYCMD} lineinfile -a \
+${ANSIBLE_CMD_ALL} lineinfile -a \
   "path=/etc/sudoers.d/${MYUSER} \
   line=\"${MYUSER} ALL=(ALL) NOPASSWD: ALL\" \
   create=true \
