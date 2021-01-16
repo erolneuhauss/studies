@@ -1,0 +1,5 @@
+---
+- hosts: control.example.local
+  gather_facts: false
+  tasks:
+    - command: whoami

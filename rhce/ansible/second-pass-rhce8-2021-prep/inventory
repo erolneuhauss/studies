@@ -1,0 +1,9 @@
+[proxy]
+control.example.local
+
+[webservers]
+node1.example.local
+node2.example.local
+
+[database]
+node3.example.local

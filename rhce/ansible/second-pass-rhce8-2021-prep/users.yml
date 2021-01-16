@@ -1,0 +1,33 @@
+---
+- hosts: webservers,database
+  become: true
+  gather_facts: false
+  vars_files:
+    - secret.yml
+    - user_list.yml
+  tasks:
+    - block:
+      - user:
+          name: "{{ item.username }}"
+          uid: "{{ item.uid }}"
+          groups: wheel
+          shell: /bin/bash
+          password: "{{ user_password | string | password_hash('sha512') }}"
+          state: present
+        changed_when: false
+        loop: "{{ users }}"
+
+      - authorized_key:
+          user: "{{ item.username }}"
+          key: "{{ lookup('file', 'id_rsa.pub') }}"
+          state: present
+        loop: "{{ users }}"
+
+      - copy:
+          src: ~/.vagrant.d/insecure_private_key
+          dest: "{{ item.username }}"
+          owner: "{{ item.username }}"
+          group: "{{ item.username }}"
+          mode: 0600
+        loop: "{{ users }}"
+      when: ('webservers' in group_names and (item.uid | string | first) == '1') or ('database' in group_names and (item.uid | string | first) == '2')

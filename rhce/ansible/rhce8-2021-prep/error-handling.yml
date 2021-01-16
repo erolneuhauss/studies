@@ -1,0 +1,22 @@
+---
+- hosts: node3.example.local
+  become: true
+  gather_facts: false
+  tasks:
+    - block:
+      - user:
+          name: astrid
+          group: non-existant-group
+          state: present
+      rescue:
+        - debug:
+            msg: 'Whoa! This caught me by surprise'
+
+    - block:
+      - filesystem:
+          dev: /dev/mapper/my-non-existant-lv
+          fstype: xfs
+      rescue:
+        - debug:
+            msg: 'Double Trouble'
+

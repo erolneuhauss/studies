@@ -18,3 +18,9 @@
           - mailx
         state: present
       when: "'database' in group_names"
+
+    - name: update
+      yum:
+        name: "*"
+        state: latest
+      when: "'webservers' in group_names"

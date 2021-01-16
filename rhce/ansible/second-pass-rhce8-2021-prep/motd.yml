@@ -1,0 +1,14 @@
+---
+- hosts: all
+  gather_facts: false
+  become: true
+  tasks:
+    - template:
+        src: motd.j2
+        dest: /etc/motd
+    - shell: cat /etc/motd
+      register: motd
+      changed_when: false
+    - debug:
+        var: motd.stdout_lines
+

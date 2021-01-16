@@ -1,0 +1,68 @@
+---
+- hosts: node2.example.local
+  become: true
+  gather_facts: false
+  tasks:
+    - yum:
+        name:
+          - httpd
+          - policycoreutils-python-utils
+          - libsemanage
+        state: present
+
+    - service:
+        name: httpd
+        state: started
+        enabled: true
+
+    - group:
+        name: wordpress
+        state: present
+
+    - name: cleanup
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /var/www/html/webcontent
+        - /webcontent
+
+    - shell: semanage fcontext --extract /webcontext
+      register: out
+    - shell: "semanage fcontext --delete -t httpd_sys_content '/webcontent(/.*)?'"
+      when: out.stdout.find('httpd_sys_content_t') !=-1
+    - shell: restorecon -irv /webcontent
+      when: not out.stdout.find('httpd_sys_content_t') !=-1
+
+    - name: this works
+      file:
+        path: /webcontent
+        owner: root
+        group: wordpress
+        mode: u=rwx,g=rwx,o=rx,g+s # or 02775
+        state: directory
+
+    - shell: semanage fcontext --extract /webcontext
+      register: out
+
+    - shell: "semanage fcontext -a -t httpd_sys_content_t '/webcontent(/.*)?'"
+      when: not out.stdout.find('httpd_sys_content_t') !=-1
+    - shell: restorecon -irv /webcontent
+      when: out.stdout.find('httpd_sys_content_t') !=-1
+
+    - debug:
+        var: out.stdout
+
+    - file:
+        src: /webcontent
+        dest: /var/www/html/webcontent
+        state: link
+
+    - lineinfile:
+        path: /webcontent/index.html
+        line: 'You nailed it'
+        create: true
+
+    - get_url:
+        url: "http://{{ inventory_hostname }}/webcontent/index.html"
+        dest: /tmp

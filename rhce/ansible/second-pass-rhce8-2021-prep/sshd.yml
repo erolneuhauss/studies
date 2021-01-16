@@ -1,0 +1,31 @@
+- hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - replace:
+        path: /etc/ssh/sshd_config
+        regexp: "{{ item.FROM }}"
+        replace: "{{ item.TO }}"
+        validate: /sbin/sshd -t -f %s
+      notify: reload sshd
+      loop:
+        - { FROM: "^Banner.*", TO: "Banner /etc/motd" }
+        - { FROM: "^X11Forwarding.*", TO: "X11Forwarding no" }
+        - { FROM: "^MaxAuthTries.*", TO: "MaxAuthTries 10" }
+      when: "('webservers' in group_names) or ('database' in group_names)"
+    - replace:
+        path: /etc/ssh/sshd_config
+        regexp: "{{ item.FROM }}"
+        replace: "{{ item.TO }}"
+        validate: /sbin/sshd -t -f %s
+      notify: reload sshd
+      loop:
+        - { FROM: "^Banner.*", TO: "Banner /etc/motd" }
+        - { FROM: "^X11Forwarding.*", TO: "X11Forwarding yes" }
+        - { FROM: "^MaxAuthTries.*", TO: "MaxAuthTries 6" }
+      when: "'proxy' in group_names"
+  handlers:
+    - service:
+        name: sshd
+        state: reloaded
+      listen: reload sshd

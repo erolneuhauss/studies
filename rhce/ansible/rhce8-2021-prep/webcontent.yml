@@ -1,0 +1,55 @@
+---
+- hosts: node3.example.local
+  become: true
+  gather_facts: false
+  tasks:
+    - yum:
+        name:
+          - httpd
+        state: present
+
+    - service:
+        name: httpd
+        state: started
+        enabled: true
+
+    - group:
+        name: wordpress
+        state: present
+
+    - name: cleanup
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /var/www/html/webcontent
+        - /webcontent
+
+    - file:
+        path: /webcontent
+        owner: root
+        group: wordpress
+        mode: u=rwx,g=rwx,o=rx,g+s # or 02775
+        setype: httpd_sys_content_t
+        state: directory
+
+    - file:
+        src: /webcontent
+        dest: /var/www/html/webcontent
+        state: link
+
+    - lineinfile:
+        path: /var/www/html/webcontent/index.html
+        line: 'You nailed it'
+        setype: httpd_sys_content_t
+        create: true
+
+    - get_url:
+        url: "http://{{ inventory_hostname }}/webcontent/index.html"
+        dest: /tmp
+
+    - firewalld:
+        service: http
+        permanent: true
+        immediate: true
+        state: enabled
