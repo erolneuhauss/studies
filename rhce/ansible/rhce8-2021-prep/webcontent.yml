@@ -6,12 +6,16 @@
     - yum:
         name:
           - httpd
+          - firewalld
         state: present
 
     - service:
-        name: httpd
+        name: "{{ item }}"
         state: started
         enabled: true
+      loop:
+        - httpd
+        - firewalld
 
     - group:
         name: wordpress
@@ -24,6 +28,13 @@
       loop:
         - /var/www/html/webcontent
         - /webcontent
+
+    - sefcontext:
+        target: '/webcontent(/.*)?'
+        setype: httpd_sys_content_t
+        state: present
+
+    - command: restorecon -irv /webcontent
 
     - file:
         path: /webcontent
@@ -38,11 +49,9 @@
         dest: /var/www/html/webcontent
         state: link
 
-    - lineinfile:
-        path: /var/www/html/webcontent/index.html
-        line: 'You nailed it'
-        setype: httpd_sys_content_t
-        create: true
+    - template:
+        dest: /webcontent/index.html
+        src: index.html.j2
 
     - get_url:
         url: "http://{{ inventory_hostname }}/webcontent/index.html"
