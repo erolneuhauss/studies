@@ -20,9 +20,6 @@ dbserver1 ansible_host=$dbserver1
 
 [admin]
 adminserver1 ansible_host=$adminserver1
-
-[all:vars]
-ansible_become_pass="${password}" ansible_remote_user="${username}"
 EOF
 
 cat <<EOF >ansible.cfg
@@ -33,10 +30,20 @@ deprecation_warnings = false
 interpreter_python = /usr/bin/python
 EOF
 
+cat <<EOF >group_vars/all.yml
+ansible_become_pass: $password
+ansible_remote_user: $username
+EOF
+
 for host in $proxyserver1 $webserver1 $dbserver1 $adminserver1; do
   sshpass -p $password ssh-copy-id -o StrictHostKeyChecking=no $username@$host
 done
 
-echo "Running tests: ping and facts"
+echo "Running test: ping"
 ansible all -m ping
+
+echo "Running test: facts"
 ansible all -m setup -a 'filter=ansible_hostname'
+
+echo "Running test: hostnamectl as sudo user"
+ansible all -m shell -a 'hostnamectl' --become
