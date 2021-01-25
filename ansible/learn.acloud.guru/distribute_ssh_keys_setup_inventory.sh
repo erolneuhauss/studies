@@ -28,6 +28,7 @@ inventory = inventory
 host_key_checking = false
 deprecation_warnings = false
 interpreter_python = /usr/bin/python
+roles_path = roles
 EOF
 
 cat <<EOF >group_vars/all.yml
