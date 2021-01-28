@@ -1,0 +1,12 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: stop containers
+      loop: "{{ groups['ansible'] }}"
+      lxd_container:
+        name: "{{ item }}"
+        state: stopped
+        url: "{{ lxd_server_url }}"
+        trust_password: "lxd_server_trust_password_url }}"

@@ -1,0 +1,16 @@
+---
+- hosts: localhost
+  connection: local
+  tasks:
+    - name: start containers
+      loop: "{{ groups['k8s'] }}"
+      lxd_container:
+        name: "{{ item }}"
+        state: started
+        url: "{{ lxd_server_url }}"
+        trust_password: "lxd_server_trust_password_url }}"
+        source:
+          type: image
+          mode: pull
+          server: https://images.linuxcontainers.org
+          alias: centos/8/amd64

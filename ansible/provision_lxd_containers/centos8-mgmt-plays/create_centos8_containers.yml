@@ -1,0 +1,38 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: create ansible target containers
+      loop: "{{ groups['ansible'] }}"
+      lxd_container:
+        name: "{{ item }}"
+        state: started
+        source:
+          type: image
+          mode: pull
+          server: https://images.linuxcontainers.org
+          alias: centos/8/amd64
+        url: "{{ lxd_server_url }}"
+        trust_password: "lxd_server_trust_password_url }}"
+        wait_for_ipv4_addresses: true
+        timeout: 600
+
+- hosts: ansible
+  gather_facts: false
+  tasks:
+    - name: Check python is installed in container
+      raw: yum list python3
+      register: python_install_check
+      failed_when: python_install_check.rc > 1
+      changed_when: python_install_check.rc == 1
+
+#    - name: Install EPEL in container
+#      raw: yum install -y epel-release
+#      loop: "{{ groups['ansible'] }}"
+#      when: python_install_check.rc == 1
+
+    - name: Install python in container
+      raw: yum install -y python3
+      loop: "{{ groups['ansible'] }}"
+      when: python_install_check.rc == 1
