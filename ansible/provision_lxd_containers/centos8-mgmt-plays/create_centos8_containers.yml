@@ -26,12 +26,6 @@
       register: python_install_check
       failed_when: python_install_check.rc > 1
       changed_when: python_install_check.rc == 1
-
-#    - name: Install EPEL in container
-#      raw: yum install -y epel-release
-#      loop: "{{ groups['ansible'] }}"
-#      when: python_install_check.rc == 1
-
     - name: Install python in container
       raw: yum install -y python3
       loop: "{{ groups['ansible'] }}"
