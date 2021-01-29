@@ -22,10 +22,10 @@
   gather_facts: false
   tasks:
     - name: Check python is installed in container
-      raw: yum list python3
+      raw: rpmquery -s python3
       register: python_install_check
-      failed_when: python_install_check.rc > 1
-      changed_when: python_install_check.rc == 1
+      failed_when: python_install_check.rc not in [0, 1]
+      changed_when: false
 
     - name: Install python in container
       raw: yum install -y python3
