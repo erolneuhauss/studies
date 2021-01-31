@@ -57,7 +57,7 @@
     - name: remove lines from resolv.conf
       lineinfile:
         path: /etc/resolv.conf
-        regex: '^options.*'
+        regexp: '^options.*'
         state: absent
 
     - name: add DNS server to resolv.conf
