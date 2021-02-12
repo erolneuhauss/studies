@@ -1,0 +1,5 @@
+ansible_user: ubuntu
+ansible_become: true
+#ansible_user: root
+#ansible_python_interpreter: /usr/bin/python3
+#ansible_pkg_mgr: dnf

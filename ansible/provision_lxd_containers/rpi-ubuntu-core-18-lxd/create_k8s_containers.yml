@@ -1,0 +1,32 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Create a started container
+      lxd_container:
+        name: "{{ item }}"
+        state: started
+        source:
+          type: image
+          mode: pull
+          server: https://images.linuxcontainers.org
+          alias: ubuntu/focal/arm64
+        url: "{{ lxd_server_url }}"
+        trust_password: "lxd_server_trust_password_url }}"
+        wait_for_ipv4_addresses: true
+        timeout: 600
+      loop: "{{ groups['rpi_containers'] }}"
+
+- hosts: rpi_containers
+  gather_facts: false
+  tasks:
+    - name: Check python is installed in container
+      raw: dpkg-query -W python3
+      register: python_install_check
+      failed_when: python_install_check.rc > 1
+      changed_when: python_install_check.rc == 1
+
+    - name: Install python in container
+      raw: apt-get install -y python3
+      when: python_install_check.rc == 1

@@ -1,0 +1,36 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  become: false
+  vars:
+    - ns: monitoring
+  collections:
+    - community.kubernetes
+
+  tasks:
+    - name: get list of pods in "{{ ns }}"
+      k8s_info:
+        namespace: "{{ ns }}"
+        kind: pod
+        label_selectors:
+          - app = grafana
+      register: pod_list
+
+    - name: print grafana pod name
+      debug:
+        msg: "{{ pod_list | json_query('resources[0].metadata.name') }}"
+
+    - set_fact:
+        pod_name: "{{ pod_list | json_query('resources[0].metadata.name') }}"
+
+    - name: exec in grafana container
+      k8s_exec:
+        namespace: "{{ ns }}"
+        pod: "{{ pod_name }}"
+        command: pwd
+      register: pod_pwd
+
+    - name: print pod_pwd variable 
+      debug:
+        var: pod_pwd

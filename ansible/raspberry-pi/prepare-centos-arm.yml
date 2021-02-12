@@ -1,0 +1,43 @@
+- hosts: all
+  become: true
+  tasks:
+
+    - name: deploy and validate sshd_config
+      copy:
+        dest: /etc/ssh/sshd_config
+        src: sshd_config
+        backup: true
+        owner: root
+        group: root
+        mode: 0600
+        validate: /sbin/sshd -t -f %s
+
+    - name: restart ssdh
+      service:
+        name: sshd
+        state: restarted
+
+    - name: update all
+      yum:
+        name: "*"
+        state: latest
+
+#    - name: enable epel for arm
+#      yum_repository:
+#        name: epel
+#        description: Epel rebuild for armhfp
+#        baseurl: https://armv7.dev.centos.org/repodir/epel-pass-1
+#        enabled: yes
+#        gpgcheck: no
+#        state: present
+#
+#    - name: install epel-release
+#      yum:
+#        name: epel-release
+#        state: present
+#
+#    - name: update all a second time
+#      yum:
+#        name: "*"
+#        state: latest
+#

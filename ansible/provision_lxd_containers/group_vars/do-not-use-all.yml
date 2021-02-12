@@ -1,0 +1,5 @@
+---
+lxd_server_url: https://100.115.92.193:8443 
+lxd_server_trust_password: "{{ vault_core_trust_password }}"
+ansible_connection: lxd
+ansible_python_interpreter: /usr/bin/python3

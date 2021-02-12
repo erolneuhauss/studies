@@ -1,0 +1,12 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: delete rpi_containers containers
+      lxd_container:
+        name: "{{ item }}"
+        state: absent
+        url: "{{ lxd_server_url }}"
+        trust_password: "lxd_server_trust_password_url }}"
+      loop: "{{ groups['rpi_containers'] }}"

@@ -1,0 +1,31 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  creationTimestamp: "2021-02-09T15:46:54Z"
+  generation: 1
+  managedFields:
+  - apiVersion: networking.k8s.io/v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:spec:
+        f:rules: {}
+    manager: OpenAPI-Generator
+    operation: Update
+    time: "2021-02-09T15:46:54Z"
+  name: drupal-ingress
+  namespace: drupal
+  resourceVersion: "1038"
+  selfLink: /apis/extensions/v1beta1/namespaces/drupal/ingresses/drupal-ingress
+  uid: a6c532a5-63a4-4a60-9041-648f24dddbd6
+spec:
+  rules:
+  - host: cluster.fritz.box
+    http:
+      paths:
+      - backend:
+          serviceName: drupal
+          servicePort: 80
+        path: /
+        pathType: Prefix
+status:
+  loadBalancer: {}

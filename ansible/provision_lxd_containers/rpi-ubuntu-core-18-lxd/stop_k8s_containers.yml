@@ -1,0 +1,11 @@
+---
+- hosts: localhost
+  connection: local
+  tasks:
+    - name: stop containers
+      loop: "{{ groups['rpi_containers'] }}"
+      lxd_container:
+        name: "{{ item }}"
+        state: stopped
+        url: "{{ lxd_server_url }}"
+        trust_password: "lxd_server_trust_password_url }}"

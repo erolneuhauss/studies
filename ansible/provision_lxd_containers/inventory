@@ -12,6 +12,9 @@ k8sworker3
 k8s-masters
 k8s-workers
 
+[rpi_containers:children]
+k8s
+
 [proxy]
 ansible1
 

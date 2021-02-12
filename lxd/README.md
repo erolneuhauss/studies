@@ -12,4 +12,13 @@ sudo snap install --stable hello-world
 sudo snap install core
 sudo snap install snapd
 sudo snap install lxd --channel=4.0/stable
+sudo ls -lh /snap/lxd
+sudo ln -r -s /snap/lxd/[...]/bin/lxc /usr/local/bin/lxc 
+sudo usermod -aG lxd myself
+bash
+lxc --version
+4.0.5
+lxc launch images:ubuntu/20.04 u20
 ```
+
+read: https://www.realjenius.com/2020/01/12/kde-neon-snap-apps-missing/
