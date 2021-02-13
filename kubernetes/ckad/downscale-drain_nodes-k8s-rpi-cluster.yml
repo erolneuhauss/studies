@@ -1,0 +1,53 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  become: false
+  collections:
+    - community.kubernetes
+  vars:
+    namespace:
+      - name: registry
+        deployment: docker-registry
+      - name: drupal
+        deployment: drupal
+      - name: drupal
+        deployment: mysql
+      - name: drupal
+        deployment: nginx
+      - name: default
+        deployment: nfs-client-provisioner
+      - name: default
+        deployment: nginx
+      - name: monitoring
+        deployment: grafana
+      - name: monitoring
+        deployment: prometheus-operator
+      - name: monitoring
+        deployment: prometheus-adapter
+      - name: monitoring
+        deployment: kube-state-metrics
+      - name: kube-system
+        deployment: metrics-server
+
+  tasks:
+    - name: scale down deployments
+      command: >
+        kubectl
+        --namespace "{{ item.name }}"
+        scale deployment "{{ item.deployment }}"
+        --replicas 0
+      loop: "{{ namespace }}"
+
+    - name: drain nodes 
+      command: >
+        kubectl
+        drain
+        --ignore-daemonsets
+        --delete-emptydir-data
+        --force
+        "{{ item }}"
+      loop:
+        - k8s-worker03.fritz.box
+        - k8s-worker02.fritz.box
+        - k8s-worker01.fritz.box

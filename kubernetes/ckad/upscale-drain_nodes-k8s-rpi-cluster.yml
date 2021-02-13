@@ -1,0 +1,46 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  become: false
+  collections:
+    - community.kubernetes
+  vars:
+    namespace:
+      - name: kube-system
+        deployment: metrics-server
+      - name: monitoring
+        deployment: kube-state-metrics
+      - name: monitoring
+        deployment: prometheus-adapter
+      - name: monitoring
+        deployment: prometheus-operator
+      - name: monitoring
+        deployment: grafana
+      - name: default
+        deployment: nfs-client-provisioner
+      - name: drupal
+        deployment: mysql
+      - name: drupal
+        deployment: drupal
+      - name: registry
+        deployment: docker-registry
+
+  tasks:
+    - name: uncordon nodes 
+      command: >
+        kubectl
+        uncordon
+        "{{ item }}"
+      loop:
+        - k8s-worker01.fritz.box
+        - k8s-worker02.fritz.box
+        - k8s-worker03.fritz.box
+
+    - name: scale up deployments
+      command: >
+        kubectl
+        --namespace "{{ item.name }}"
+        scale deployment "{{ item.deployment }}"
+        --replicas 1
+      loop: "{{ namespace }}"
