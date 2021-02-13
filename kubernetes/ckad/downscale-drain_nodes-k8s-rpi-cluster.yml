@@ -1,5 +1,6 @@
 ---
-- hosts: localhost
+- name: downscale with method instead of using "all"
+  hosts: localhost
   connection: local
   gather_facts: false
   become: false
@@ -37,7 +38,21 @@
         --namespace "{{ item.name }}"
         scale deployment "{{ item.deployment }}"
         --replicas 0
+        --timeout 30s
       loop: "{{ namespace }}"
+
+    - name: look for running pods
+      command: >
+        kubectl
+        --namespace "{{ item.name }}"
+        get deployment "{{ item.deployment }}"
+        -o custom-columns=REPLICAS:.status.availableReplicas
+      register: availableReplicas
+      loop: "{{ namespace }}"
+
+    - name:
+      debug:
+        msg: "{{ availableReplicas | json_query('results[*].stdout_lines') | to_nice_json }}"
 
     - name: drain nodes 
       command: >
