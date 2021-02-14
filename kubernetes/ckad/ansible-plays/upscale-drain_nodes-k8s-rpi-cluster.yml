@@ -44,3 +44,18 @@
         scale deployment "{{ item.deployment }}"
         --replicas 1
       loop: "{{ namespace }}"
+
+    - name: look for running pods
+      command: >
+        kubectl
+        --namespace "{{ item.name }}"
+        get deployment "{{ item.deployment }}"
+        -o custom-columns=REPLICAS:.status.availableReplicas
+      register: availableReplicas
+      loop: "{{ namespace }}"
+
+    - name:
+      debug:
+        msg: "{{ availableReplicas | json_query('results[*].stdout_lines') | to_nice_json }}"
+
+

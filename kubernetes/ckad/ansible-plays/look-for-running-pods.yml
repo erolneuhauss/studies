@@ -1,0 +1,51 @@
+---
+- name: downscale with method instead of using "all"
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  become: false
+  collections:
+    - community.kubernetes
+  vars:
+    namespace:
+      - name: registry
+        deployment: docker-registry
+
+  tasks:
+    - name: look for running pods
+      command: >
+        kubectl
+        --namespace "{{ item.name }}"
+        get deployment "{{ item.deployment }}"
+        -o custom-columns=REPLICAS:.status.availableReplicas
+      register: availableReplicas
+      loop: "{{ namespace }}"
+
+    - name:
+      debug:
+        msg: "{{ availableReplicas | json_query('results[*].stdout_lines') | to_nice_json }}"
+
+
+
+#      - name: drupal
+#        deployment: drupal
+#      - name: drupal
+#        deployment: mysql
+#      - name: drupal
+#        deployment: nginx
+#      - name: default
+#        deployment: nfs-client-provisioner
+#      - name: default
+#        deployment: nginx
+#      - name: monitoring
+#        deployment: grafana
+#      - name: monitoring
+#        deployment: prometheus-operator
+#      - name: monitoring
+#        deployment: prometheus-adapter
+#      - name: monitoring
+#        deployment: kube-state-metrics
+#      - name: kube-system
+#        deployment: metrics-server
+
+

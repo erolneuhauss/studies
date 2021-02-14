@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: mynginx
+  labels:
+    app: mynginx
+    type: frontend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      type: frontend
+  template:
+    metadata:
+      name: mynginx
+      labels:
+        app: mynginx
+        type: frontend
+    spec:
+      containers:
+        - name: mynginx
+          image: registry.fritz.box/my/arm64v8/nginx
+
