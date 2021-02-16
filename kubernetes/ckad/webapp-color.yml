@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webapp-color
+  labels:
+    app: webapp-color
+spec:
+  containers:
+    - name: webapp-color
+      image: registry.fritz.box/my/arm64/python:3.6-alpine
