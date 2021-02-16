@@ -12,8 +12,8 @@ deploy_target=pi
 kubernetes_apiserver_advertise_address=192.168.178.51
 
 [other]
-raspberrypi ansible_host=192.168.178.95 
-#ubuntu ansible_host=192.168.178.19 ansible_ssh_user=ubuntu ansible_user=ubuntu
+#raspberrypi ansible_host=192.168.178.95
+ubuntu ansible_host=192.168.178.19 ansible_ssh_user=ubuntu ansible_user=ubuntu
 
 [other:vars]
 ansible_ssh_user=pi
