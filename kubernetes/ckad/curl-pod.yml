@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: mycurl
+  name: mycurl
+spec:
+  containers:
+  - image: registry.fritz.box/my/arm64v8/ubuntu-slim-curl-head-verbose:0.1
+    name: mycurl
+    command:
+      - "sleep"
+    args:
+      - "10"
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never
+status: {}
