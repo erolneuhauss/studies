@@ -51,6 +51,7 @@
         -o custom-columns=REPLICAS:.status.availableReplicas
       register: availableReplicas
       loop: "{{ namespace }}"
+      ignore_errors: true
 
     - name:
       debug:
