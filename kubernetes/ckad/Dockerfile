@@ -3,4 +3,4 @@ RUN apt update && apt install -y curl
 
 #CMD ["curl","-vI","cluster.fritz.box"]
 ENTRYPOINT ["curl"]
-CMD ["-vI","registry.fritz.box"]
+CMD ["-vI","cluster.fritz.box"]

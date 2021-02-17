@@ -1,3 +1,4 @@
+#!~/.local/bin/ansible-playbook
 ---
 - name: downscale with method instead of using "all"
   hosts: localhost
@@ -40,6 +41,7 @@
         --replicas 0
         --timeout 30s
       loop: "{{ namespace }}"
+      ignore_errors: true
 
     - name: look for running pods
       command: >
