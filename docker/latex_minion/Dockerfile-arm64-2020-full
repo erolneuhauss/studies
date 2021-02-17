@@ -23,34 +23,10 @@ RUN mkdir -p /usr/local/src &&  \
         https://raw.githubusercontent.com/erolneuhauss/studies/master/docker/latex_minion/minionpro.tgz \
         https://raw.githubusercontent.com/erolneuhauss/studies/master/docker/latex_minion/myriadpro.tgz \
         https://raw.githubusercontent.com/erolneuhauss/studies/master/docker/latex_minion/octocat.png \
-        https://raw.githubusercontent.com/erolneuhauss/studies/master/docker/latex_minion/texlive2020-arm64-basic.profile && \
+        https://raw.githubusercontent.com/erolneuhauss/studies/master/docker/latex_minion/texlive2020-arm64-full.profile && \
     tar xzf /usr/local/src/install-tl-unx.tar.gz -C /usr/local/bin &&   \
     perl /usr/local/bin/install-tl-*/install-tl \
-        -profile /usr/local/src/texlive2020-arm64-basic.profile
-RUN tlmgr option docfiles 0 && \
-    tlmgr option srcfiles 0 && \
-    tlmgr install \
-        babel-german \
-        collection-fontutils \
-        csquotes \
-        currvita \
-        enumitem \
-        etoolbox \
-        fltpoint \
-        fontaxes \
-        hyphen-german \
-        koma-script \
-        letltxmacro \
-        mdsymbol \
-        microtype \
-        mnsymbol \
-        paralist \
-        pdfescape \
-        pdfpages \
-        tools \
-        ucs \
-        xcolor \
-        xkeyval
+        -profile /usr/local/src/texlive2020-arm64-full.profile
 RUN tar xzf /usr/local/src/minionpro.tgz -C /usr/local/texlive/texmf-local && \
     tar xzf /usr/local/src/myriadpro.tgz -C /usr/local/texlive/texmf-local && \
     mktexlsr /usr/local/texlive/texmf-local && \
