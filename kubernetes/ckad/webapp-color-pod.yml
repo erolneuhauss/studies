@@ -6,7 +6,7 @@ metadata:
   name: webapp-color
 spec:
   containers:
-  - image: registry.fritz.box/my/arm64/python:3.6-alpine
+  - image: registry.fritz.box/my/arm64v8/simple-webapp-color
     name: webapp-color
     ports:
       - containerPort: 8080
