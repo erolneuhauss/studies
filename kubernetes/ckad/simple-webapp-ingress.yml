@@ -4,6 +4,8 @@ metadata:
   name: simple-webapp-ingress
   namespace: default
   annotations:
+    # explained here:
+    # https://doc.traefik.io/traefik/v1.7/basics/#path-matcher-usage-guidelines
     traefik.frontend.rule.type: PathPrefixStrip
 spec:
   rules:
