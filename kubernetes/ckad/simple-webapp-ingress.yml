@@ -11,17 +11,14 @@ spec:
     http:
       paths:
       - path: /color
-        pathType: Prefix
+        pathType: Exact
         backend:
           service:
             name: webapp-color
             port:
               number: 80
-              # this did not work. No image at http://webapp.fritz.box/mysql
-              # /static/img/success.jpg 404
-              #      - path: /mysql
-      - path: /
-        pathType: Prefix
+      - path: /mysql
+        pathType: Exact
         backend:
           service:
             name: webapp-mysql
