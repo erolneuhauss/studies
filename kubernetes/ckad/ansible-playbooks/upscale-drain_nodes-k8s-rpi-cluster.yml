@@ -28,7 +28,7 @@
         deployment: docker-registry
 
   tasks:
-    - name: uncordon nodes 
+    - name: uncordon nodes
       command: >
         kubectl
         uncordon
