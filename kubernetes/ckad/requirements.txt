@@ -35,7 +35,7 @@ openshift==0.11.2
 packaging==20.9
 pipenv==2020.11.15
 powerline-status==2.7
-psutil==5.5.1
+psutil==5.6.6
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pycairo==1.16.2
