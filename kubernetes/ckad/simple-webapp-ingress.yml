@@ -1,8 +1,10 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: webapp-ingress
+  name: simple-webapp-ingress
   namespace: default
+  annotations:
+    traefik.frontend.rule.type: PathPrefixStrip
 spec:
   rules:
   - host: webapp.fritz.box
@@ -11,14 +13,17 @@ spec:
       - path: /color
         pathType: Prefix
         backend:
-          service: 
+          service:
             name: webapp-color
             port:
               number: 80
-      - path: /mysql
+              # this did not work. No image at http://webapp.fritz.box/mysql
+              # /static/img/success.jpg 404
+              #      - path: /mysql
+      - path: /
         pathType: Prefix
         backend:
-          service: 
+          service:
             name: webapp-mysql
             port:
               number: 80
