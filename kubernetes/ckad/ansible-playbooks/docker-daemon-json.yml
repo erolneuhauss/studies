@@ -1,6 +1,6 @@
 ---
 - name: configure daemon.json
-  hosts: dramble
+  hosts: all
   gather_facts: false
   tasks:
     - name: copy daemon.json to /etc/docker
