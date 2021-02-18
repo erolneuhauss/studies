@@ -1,19 +1,24 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: webapp-color-ingress
+  name: webapp-ingress
   namespace: default
 spec:
   rules:
-  - host: webapp-color.fritz.box
+  - host: webapp.fritz.box
     http:
       paths:
-      - path: /
+      - path: /color
         pathType: Prefix
         backend:
           service: 
             name: webapp-color
             port:
               number: 80
-status:
-  loadBalancer: {}
+      - path: /mysql
+        pathType: Prefix
+        backend:
+          service: 
+            name: webapp-mysql
+            port:
+              number: 80
