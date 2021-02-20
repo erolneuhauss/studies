@@ -3,33 +3,22 @@ kind: Ingress
 metadata:
   name: simple-webapp-ingress
   namespace: default
-  annotations:
-    # explained here:
-    # https://doc.traefik.io/traefik/v1.7/basics/#path-matcher-usage-guidelines
-    traefik.frontend.rule.type: PathPrefixStrip
 spec:
   rules:
   - host: webapp.fritz.box
     http:
       paths:
       - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: webapp-color
-            port:
-              number: 80
-      - path: /color
-        pathType: Exact
-        backend:
-          service:
-            name: webapp-color
-            port:
-              number: 80
-      - path: /mysql
-        pathType: Exact
+        pathType: ImplementationSpecific
         backend:
           service:
             name: webapp-mysql
+            port:
+              number: 80
+      - path: /color
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: webapp-color
             port:
               number: 80
