@@ -8,6 +8,44 @@
     - community.kubernetes
   vars:
     namespace:
+      - name: rook-ceph
+        deployment: csi-cephfsplugin-provisioner
+      - name: rook-ceph
+        deployment: csi-rbdplugin-provisioner
+      - name: rook-ceph
+        deployment: rook-ceph-crashcollector-k8s-worker01.fritz.box
+      - name: rook-ceph
+        deployment: rook-ceph-crashcollector-k8s-worker02.fritz.box
+      - name: rook-ceph
+        deployment: rook-ceph-crashcollector-k8s-worker03.fritz.box
+      - name: rook-ceph
+        deployment: rook-ceph-mds-myfs-a
+      - name: rook-ceph
+        deployment: rook-ceph-mds-myfs-b
+      - name: rook-ceph
+        deployment: rook-ceph-mgr-a
+      - name: rook-ceph
+        deployment: rook-ceph-mon-a
+      - name: rook-ceph
+        deployment: rook-ceph-mon-b
+      - name: rook-ceph
+        deployment: rook-ceph-mon-c
+      - name: rook-ceph
+        deployment: rook-ceph-operator
+      - name: rook-ceph
+        deployment: rook-ceph-osd-0
+      - name: rook-ceph
+        deployment: rook-ceph-osd-1
+      - name: rook-ceph
+        deployment: rook-ceph-osd-2
+      - name: rook-ceph
+        deployment: rook-ceph-osd-3
+      - name: rook-ceph
+        deployment: rook-ceph-osd-4
+      - name: rook-ceph
+        deployment: rook-ceph-osd-5
+      - name: rook-ceph
+        deployment: rook-ceph-tools
       - name: kube-system
         deployment: metrics-server
       - name: monitoring
@@ -58,5 +96,4 @@
     - name:
       debug:
         msg: "{{ availableReplicas | json_query('results[*].stdout_lines') | to_nice_json }}"
-
 

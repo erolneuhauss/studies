@@ -1,0 +1,18 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: math-batch-job
+spec:
+  completions: 4
+  parallelism: 2
+  template:
+    spec:
+      containers:
+        - image: registry.fritz.box/arm64v8/ubuntu
+          name: ubuntu
+          command:
+            - 'expr'
+            - '3'
+            - '+'
+            - '2'
+      restartPolicy: Never

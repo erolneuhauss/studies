@@ -11,4 +11,4 @@ spec:
       image: registry.fritz.box/my/centos:8
       command:
         - 'sleep'
-        - '600'
+        - '6000'
