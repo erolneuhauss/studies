@@ -16,8 +16,6 @@
         deployment: drupal
       - name: drupal
         deployment: mysql
-      - name: drupal
-        deployment: nginx
       - name: default
         deployment: nfs-client-provisioner
       - name: default
