@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: webapp
+  name: webapp-mysql-web
+  labels:
+    app: webapp-mysql-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webapp-mysql-web
+  template:
+    metadata:
+      labels:
+        app: webapp-mysql-web
+    spec:
+      containers:
+      - name: webapp-mysql-web
+        image: registry.fritz.box/my/arm64v8/simple-webapp-mysql
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: app-secret-volumes
+          mountPath: "/opt/app-secret-volumes"
+          readOnly: true
+        envFrom:
+        - secretRef:
+            name: webapp-mysql-web-secret
+      volumes:
+        - name: app-secret-volumes
+          secret:
+            secretName: webapp-mysql-web-secret

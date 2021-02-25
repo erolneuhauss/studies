@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: webapp
+  name: webapp-mysql-static-traefik-ingress
+  annotations:
+spec:
+  rules:
+  - host: webapp.fritz.box
+    http:
+      paths:
+      - path: /static
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: webapp-mysql-static-service
+            port:
+              number: 8080

@@ -1,10 +1,14 @@
 kind: Service
 apiVersion: v1
 metadata:
+  namespace: webapp
   name: mysql
+  labels:
+    app: webapp-mysql-db
 spec:
   selector:
-    name: mysql
+    app: webapp-mysql-db
+  type: ClusterIP
   ports:
   - port: 3306
     targetPort: 3306

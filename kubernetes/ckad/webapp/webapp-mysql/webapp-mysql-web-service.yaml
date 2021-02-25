@@ -1,0 +1,14 @@
+kind: Service
+apiVersion: v1
+metadata:
+  namespace: webapp
+  name: webapp-mysql-web-service
+  labels:
+    app: webapp-mysql-web
+spec:
+  selector:
+    app: webapp-mysql-web
+  type: ClusterIP
+  ports:
+  - port: 8080
+    targetPort: 8080

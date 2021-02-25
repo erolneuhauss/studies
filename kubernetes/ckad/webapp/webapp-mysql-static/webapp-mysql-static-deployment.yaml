@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: webapp
+  name: webapp-mysql-static
+  labels:
+    app: webapp-mysql-static
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webapp-mysql-static
+  template:
+    metadata:
+      labels:
+        app: webapp-mysql-static
+    spec:
+      containers:
+      - image: registry.fritz.box/my/arm64v8/simple-webapp-mysql-static
+        name: webapp-mysql-static
+        ports:
+        - containerPort: 8080

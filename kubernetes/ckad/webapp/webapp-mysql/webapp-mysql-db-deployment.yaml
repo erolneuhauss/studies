@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: webapp
+  name: webapp-mysql-db
+  labels:
+    app: webapp-mysql-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webapp-mysql-db
+  template:
+    metadata:
+      labels:
+        app: webapp-mysql-db
+    spec:
+      containers:
+      - image: registry.fritz.box/arm64v8/mariadb
+        name: mariadb
+        ports:
+        - containerPort: 3306
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            value: paswrd
