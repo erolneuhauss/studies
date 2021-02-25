@@ -21,13 +21,14 @@ spec:
     spec:
       containers:
       - args:
-        - --api
-        - --kubernetes
-        - --logLevel=INFO
-        - --defaultentrypoints=http,https
-        - --entrypoints=Name:https Address::443 TLS
-        - --entrypoints=Name:http Address::80
-        image: traefik:1.7
+        - --api.insecure
+        - --api.dashboard=true
+        - --providers.kubernetesingress
+        - --log=true
+        - --log.level=INFO
+        - --entryPoints.web.address=:80
+        - --entryPoints.websecure.address=:443
+        image: traefik:v2.4.5
         imagePullPolicy: IfNotPresent
         name: traefik-ingress-lb
         ports:
