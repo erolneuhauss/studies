@@ -10,6 +10,16 @@
     - community.kubernetes
   vars:
     namespace:
+      - name: webapp
+        deployment: webapp-color
+      - name: webapp
+        deployment: webapp-mysql-db
+      - name: webapp
+        deployment: webapp-mysql-static
+      - name: webapp
+        deployment: webapp-mysql-web
+      - name: webapp
+        deployment: webapp-wear
       - name: registry
         deployment: docker-registry
       - name: drupal
@@ -68,7 +78,6 @@
         deployment: rook-ceph-osd-5
       - name: rook-ceph
         deployment: rook-ceph-tools
-
   tasks:
     - name: scale down deployments
       command: >
