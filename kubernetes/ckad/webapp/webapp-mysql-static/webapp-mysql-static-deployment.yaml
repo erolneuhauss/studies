@@ -17,6 +17,6 @@ spec:
     spec:
       containers:
       - image: registry.fritz.box/my/arm64v8/simple-webapp-mysql-static
-        name: webapp-mysql-static
+        name: nginx
         ports:
-        - containerPort: 8080
+        - containerPort: 80
