@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: webapp
+  name: webapp-wear
+  labels:
+    app: webapp-wear
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webapp-wear
+  template:
+    metadata:
+      labels:
+        app: webapp-wear
+    spec:
+      containers:
+      - image: registry.fritz.box/my/arm64v8/ecommerce:apparels
+        name: ecommerce
+        ports:
+        - containerPort: 8080

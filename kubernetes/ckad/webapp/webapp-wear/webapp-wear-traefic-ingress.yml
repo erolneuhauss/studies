@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: webapp
+  annotations:
+    traefik.ingress.kubernetes.io/rule-type: PathPrefixStrip
+  name: webapp-wear-traefik-ingress
+spec:
+  rules:
+  - host: webapp.fritz.box
+    http:
+      paths:
+      - path: /wear
+        pathType: Prefix
+        backend:
+          service:
+            name: webapp-wear-service
+            port:
+              number: 8080
+
+
