@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: webapp
+  name: webapp-default-http-backend
+  labels:
+    app: webapp-default-http-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webapp-default-http-backend
+  template:
+    metadata:
+      labels:
+        app: webapp-default-http-backend
+    spec:
+      containers:
+      - image: registry.fritz.box/my/arm64v8/ecommerce:404
+        name: ecommerce
+        ports:
+        - containerPort: 8080
