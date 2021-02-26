@@ -4,6 +4,7 @@ metadata:
   namespace: webapp
   name: webapp-mysql-static-traefik-ingress
   annotations:
+    kubernetes.io/ingress.class: traefik
 spec:
   rules:
   - host: webapp.fritz.box

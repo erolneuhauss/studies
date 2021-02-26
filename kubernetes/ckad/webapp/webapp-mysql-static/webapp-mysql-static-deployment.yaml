@@ -18,5 +18,6 @@ spec:
       containers:
       - image: registry.fritz.box/my/arm64v8/simple-webapp-mysql-static
         name: nginx
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80

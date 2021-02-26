@@ -18,6 +18,7 @@ spec:
       containers:
       - image: registry.fritz.box/arm64v8/mariadb
         name: mariadb
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3306
         env:

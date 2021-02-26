@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: traefik
+  name: docker-registry
+  namespace: registry
+spec:
+  rules:
+  - host: registry.fritz.box
+    http:
+      paths:
+      - backend:
+          serviceName: docker-registry
+          servicePort: 5000
+        path: /
+        pathType: Prefix
+  tls:
+  - secretName: registry-tls-cert
+status:
+  loadBalancer: {}

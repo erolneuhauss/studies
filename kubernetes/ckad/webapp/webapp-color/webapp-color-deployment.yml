@@ -18,6 +18,7 @@ spec:
       containers:
       - image: registry.fritz.box/my/arm64v8/simple-webapp-color
         name: webapp-color
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
         envFrom:

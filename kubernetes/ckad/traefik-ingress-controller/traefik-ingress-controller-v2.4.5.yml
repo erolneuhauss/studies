@@ -23,6 +23,8 @@ spec:
       - args:
         - --api.insecure
         - --api.dashboard=true
+        - --accesslog
+        - --providers.kubernetescrd=true
         - --providers.kubernetesingress
         - --log=true
         - --log.level=INFO

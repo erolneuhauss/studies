@@ -1,0 +1,24 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: webapp-color-traefik-strip
+spec:
+  stripPrefix:
+    prefixes:
+      - "/color"
+    forceSlash: false
+
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  namespace: webapp
+  name: webapp-color-traefik-ingress
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`webapp.fritz.box`) && PathPrefix(`/color`)
+    kind: Rule
+    services:
+    - name: webapp-color-service
+      port: 8080

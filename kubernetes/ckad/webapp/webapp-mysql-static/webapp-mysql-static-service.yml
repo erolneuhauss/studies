@@ -1,13 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: webapp
-  name: webapp-mysql-static-service
   labels:
     app: webapp-mysql-static
+  name: webapp-mysql-static-service
+  namespace: webapp
 spec:
   ports:
   - port: 8080
+    protocol: TCP
     targetPort: 80
   selector:
     app: webapp-mysql-static

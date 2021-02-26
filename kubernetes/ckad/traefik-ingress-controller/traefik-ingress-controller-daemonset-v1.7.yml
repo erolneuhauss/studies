@@ -1,3 +1,10 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: traefik-ingress-controller
+  namespace: kube-system
+---
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -39,6 +46,9 @@ spec:
           hostPort: 443
           name: https
           protocol: TCP
+        - containerPort: 8080
+          name: admin
+          hostPort: 8080
         resources: {}
         securityContext:
           capabilities:
@@ -67,3 +77,19 @@ spec:
     rollingUpdate:
       maxUnavailable: 1
     type: RollingUpdate
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: traefik-ingress-service
+  namespace: kube-system
+spec:
+  selector:
+    k8s-app: traefik-ingress-lb
+  ports:
+    - protocol: TCP
+      port: 80
+      name: web
+    - protocol: TCP
+      port: 8080
+      name: admin

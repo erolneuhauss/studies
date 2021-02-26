@@ -1,0 +1,27 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  namespace: registry
+  name: docker-registry
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`registry.fritz.box`) && PathPrefix(`/v2`)
+      kind: Rule
+      services:
+      - name: docker-registry
+        port: 5000
+      #    middlewares:
+      #     - name: push-pull
+#
+#apiVersion: traefik.containo.us/v1alpha1
+#kind: Middleware
+#metadata:
+#  name: push-pull
+#spec:
+#  stripPrefix:
+#    prefixes:
+#      - "/color"
+#    forceSlash: false

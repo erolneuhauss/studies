@@ -18,5 +18,6 @@ spec:
       containers:
       - image: registry.fritz.box/my/arm64v8/ecommerce:apparels
         name: ecommerce
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
