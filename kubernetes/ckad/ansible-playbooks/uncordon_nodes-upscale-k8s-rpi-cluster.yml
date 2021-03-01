@@ -25,13 +25,11 @@
       - name: rook-ceph
         deployment: rook-ceph-mgr-a
       - name: rook-ceph
-        deployment: rook-ceph-mon-a
+        deployment: rook-ceph-mon-d
       - name: rook-ceph
         deployment: rook-ceph-mon-b
       - name: rook-ceph
         deployment: rook-ceph-mon-c
-      - name: rook-ceph
-        deployment: rook-ceph-operator
       - name: rook-ceph
         deployment: rook-ceph-osd-0
       - name: rook-ceph
@@ -44,6 +42,8 @@
         deployment: rook-ceph-osd-4
       - name: rook-ceph
         deployment: rook-ceph-osd-5
+      - name: rook-ceph
+        deployment: rook-ceph-operator
       - name: rook-ceph
         deployment: rook-ceph-tools
       - name: kube-system
@@ -58,12 +58,16 @@
         deployment: grafana
       - name: default
         deployment: nfs-client-provisioner
-      - name: drupal
-        deployment: mysql
-      - name: drupal
-        deployment: drupal
+#      - name: drupal
+#        deployment: mysql
+#      - name: drupal
+#        deployment: drupal
       - name: registry
         deployment: docker-registry
+      - name: kanboard
+        deployment: db
+      - name: kanboard
+        deployment: kanboard
 
   tasks:
     - name: uncordon nodes

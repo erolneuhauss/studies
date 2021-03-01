@@ -10,6 +10,10 @@
     - community.kubernetes
   vars:
     namespace:
+      - name: kanboard
+        deployment: kanboard
+      - name: kanboard
+        deployment: db
       - name: webapp
         deployment: webapp-color
       - name: webapp
@@ -41,6 +45,8 @@
       - name: kube-system
         deployment: metrics-server
       - name: rook-ceph
+        deployment: rook-ceph-operator
+      - name: rook-ceph
         deployment: csi-cephfsplugin-provisioner
       - name: rook-ceph
         deployment: csi-rbdplugin-provisioner
@@ -57,13 +63,11 @@
       - name: rook-ceph
         deployment: rook-ceph-mgr-a
       - name: rook-ceph
-        deployment: rook-ceph-mon-a
+        deployment: rook-ceph-mon-d
       - name: rook-ceph
         deployment: rook-ceph-mon-b
       - name: rook-ceph
         deployment: rook-ceph-mon-c
-      - name: rook-ceph
-        deployment: rook-ceph-operator
       - name: rook-ceph
         deployment: rook-ceph-osd-0
       - name: rook-ceph
@@ -79,6 +83,8 @@
       - name: rook-ceph
         deployment: rook-ceph-tools
   tasks:
+    - import_playbook: mysqldump-kanboard-db.yml
+
     - name: scale down deployments
       command: >
         kubectl

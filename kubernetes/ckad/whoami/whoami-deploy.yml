@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: whoami
+  name: whoami
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: whoami
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: whoami
+    spec:
+      containers:
+      - image: containous/whoami
+        name: whoami
+        resources: {}
+status: {}
