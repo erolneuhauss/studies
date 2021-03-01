@@ -89,7 +89,7 @@
         kind: Deployment
         name: kanboard
         namespace: kanboard
-        replicas: 1
+        replicas: 0
         wait_timeout: 60
 
     - name: produce mysql backup
