@@ -13,6 +13,8 @@
       - name: rook-ceph
         deployment: csi-rbdplugin-provisioner
       - name: rook-ceph
+        deployment: rook-ceph-crashcollector-k8s-master01.fritz.box
+      - name: rook-ceph
         deployment: rook-ceph-crashcollector-k8s-worker01.fritz.box
       - name: rook-ceph
         deployment: rook-ceph-crashcollector-k8s-worker02.fritz.box
@@ -42,6 +44,10 @@
         deployment: rook-ceph-osd-4
       - name: rook-ceph
         deployment: rook-ceph-osd-5
+      - name: rook-ceph
+        deployment: rook-ceph-osd-6
+      - name: rook-ceph
+        deployment: rook-ceph-osd-7
       - name: rook-ceph
         deployment: rook-ceph-operator
       - name: rook-ceph
