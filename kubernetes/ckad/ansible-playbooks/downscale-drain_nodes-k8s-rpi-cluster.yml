@@ -83,7 +83,45 @@
       - name: rook-ceph
         deployment: rook-ceph-tools
   tasks:
-    - import_playbook: mysqldump-kanboard-db.yml
+    - name: scale down kanboard deployment
+      k8s_scale:
+        api_version: v1
+        kind: Deployment
+        name: kanboard
+        namespace: kanboard
+        replicas: 1
+        wait_timeout: 60
+
+    - name: produce mysql backup
+      command: >
+        kubectl --namespace kanboard --stdin --tty exec deploy/db --
+        /bin/bash -c 'mysqldump --user="kanboard" --password="kanboard-secret" kanboard > /tmp/kanboard.sql'
+
+    - name: get pod name
+      k8s_info:
+        namespace: kanboard
+        kind: pod
+        label_selectors:
+          - app = db
+      register: pod_list
+
+    - set_fact:
+        pod_name: "{{ pod_list | json_query('resources[0].metadata.name') }}"
+
+    - name: copy file from pod to localhost
+      command: >
+        kubectl cp kanboard/{{ pod_name }}:/tmp/kanboard.sql ../backup/kanboard.sql
+
+    - name: produce date
+      shell: 'date +"%F"'
+      register: today
+
+    - name: archive old file
+      archive:
+        path: ../backup/kanboard.sql
+        dest: ../backup/{{ today.stdout }}-kanboard.sql.gz
+        format: gz
+        force_archive: true
 
     - name: scale down deployments
       command: >
