@@ -36,18 +36,24 @@ RUN tlmgr option docfiles 0 && \
         currvita \
         enumitem \
         etoolbox \
+        everysel \
         fltpoint \
+        fontawesome \
         fontaxes \
         hyphen-german \
+        ifmtarg \
         koma-script \
-        letltxmacro \
+        marvosym \
         mdsymbol \
         microtype \
         mnsymbol \
         paralist \
-        pdfescape \
+        parskip \
+        pdflscape \
         pdfpages \
-        tools \
+        pgf \
+        ragged2e \
+        textpos \
         ucs \
         xcolor \
         xkeyval
