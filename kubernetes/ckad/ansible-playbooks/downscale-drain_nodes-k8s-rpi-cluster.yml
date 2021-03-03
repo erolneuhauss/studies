@@ -10,6 +10,8 @@
     - community.kubernetes
   vars:
     namespace:
+      - name: default
+        deployment: whoami
       - name: kanboard
         deployment: kanboard
       - name: kanboard
@@ -32,8 +34,6 @@
         deployment: mysql
       - name: default
         deployment: nfs-client-provisioner
-      - name: default
-        deployment: nginx
       - name: monitoring
         deployment: grafana
       - name: monitoring

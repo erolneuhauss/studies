@@ -74,6 +74,8 @@
         deployment: db
       - name: kanboard
         deployment: kanboard
+      - name: default
+        deployment: whoami
 
   tasks:
     - name: uncordon nodes
@@ -106,4 +108,3 @@
     - name:
       debug:
         msg: "{{ availableReplicas | json_query('results[*].stdout_lines') | to_nice_json }}"
-
