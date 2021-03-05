@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: drupal-mysql
+  name: drupal-mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: drupal-mysql
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: drupal-mysql
+    spec:
+      volumes:
+        - name: drupal-mysql-pvc
+          persistentVolumeClaim:
+            claimName: drupal-mysql-pvc
+      containers:
+      - image: mysql:5.7
+        name: mysql
+        volumeMounts:
+          - mountPath: /var/lib/mysql
+            subPath: dbdata
+            name: drupal-mysql-pvc
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: drupal-mysql-secret
+                key: MYSQL_ROOT_PASSWORD
+          - name: MYSQL_DATABASE
+            valueFrom:
+              secretKeyRef:
+                name: drupal-mysql-secret
+                key: MYSQL_DATABASE
+          - name: MYSQL_USER
+            valueFrom:
+              secretKeyRef:
+                name: drupal-mysql-secret
+                key: MYSQL_USER

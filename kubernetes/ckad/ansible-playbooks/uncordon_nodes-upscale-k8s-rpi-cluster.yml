@@ -9,21 +9,7 @@
   vars:
     namespace:
       - name: rook-ceph
-        deployment: csi-cephfsplugin-provisioner
-      - name: rook-ceph
-        deployment: csi-rbdplugin-provisioner
-      - name: rook-ceph
-        deployment: rook-ceph-crashcollector-k8s-master01.fritz.box
-      - name: rook-ceph
-        deployment: rook-ceph-crashcollector-k8s-worker01.fritz.box
-      - name: rook-ceph
-        deployment: rook-ceph-crashcollector-k8s-worker02.fritz.box
-      - name: rook-ceph
-        deployment: rook-ceph-crashcollector-k8s-worker03.fritz.box
-      - name: rook-ceph
-        deployment: rook-ceph-mds-myfs-a
-      - name: rook-ceph
-        deployment: rook-ceph-mds-myfs-b
+        deployment: rook-ceph-operator
       - name: rook-ceph
         deployment: rook-ceph-mgr-a
       - name: rook-ceph
@@ -43,7 +29,19 @@
       - name: rook-ceph
         deployment: rook-ceph-osd-7
       - name: rook-ceph
-        deployment: rook-ceph-operator
+        deployment: rook-ceph-crashcollector-k8s-master01.fritz.box
+      - name: rook-ceph
+        deployment: rook-ceph-crashcollector-k8s-worker01.fritz.box
+      - name: rook-ceph
+        deployment: rook-ceph-crashcollector-k8s-worker02.fritz.box
+      - name: rook-ceph
+        deployment: rook-ceph-crashcollector-k8s-worker03.fritz.box
+      - name: rook-ceph
+        deployment: rook-ceph-mds-myfs-a
+      - name: rook-ceph
+        deployment: rook-ceph-mds-myfs-b
+      - name: rook-ceph
+        deployment: csi-cephfsplugin-provisioner
       - name: rook-ceph
         deployment: rook-ceph-tools
       - name: kube-system

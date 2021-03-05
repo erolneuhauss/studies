@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: drupal
+  name: drupal-service
+spec:
+  ports:
+  - nodePort: 30095
+    protocol: TCP
+    targetPort: 80
+    port: 80
+  selector:
+    app: drupal
+  type: NodePort
