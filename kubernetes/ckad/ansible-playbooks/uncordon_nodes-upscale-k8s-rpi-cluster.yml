@@ -27,12 +27,6 @@
       - name: rook-ceph
         deployment: rook-ceph-mgr-a
       - name: rook-ceph
-        deployment: rook-ceph-mon-d
-      - name: rook-ceph
-        deployment: rook-ceph-mon-b
-      - name: rook-ceph
-        deployment: rook-ceph-mon-c
-      - name: rook-ceph
         deployment: rook-ceph-osd-0
       - name: rook-ceph
         deployment: rook-ceph-osd-1
