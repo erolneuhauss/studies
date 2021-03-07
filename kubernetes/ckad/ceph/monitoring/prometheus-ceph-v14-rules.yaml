@@ -5,7 +5,7 @@ metadata:
     prometheus: rook-prometheus
     role: alert-rules
   name: prometheus-ceph-rules
-  namespace: rook-ceph
+  namespace: monitoring
 spec:
   groups:
   - name: ceph.rules
