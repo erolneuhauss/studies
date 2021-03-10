@@ -21,6 +21,17 @@ k run --labels=name=internal --rm --restart Never -it busybox --image=busybox \
 -- nc -z -v -w1 db-service 3306
 ```
 
+## checkout aliases
+```
+zprezto-contrib/kubectl/alias.zsh
+```
+
+## custom aliases
+```
+kcnc is an alias for kubectl run --rm --restart Never --stdin --tty busybox --image arm64v8/busybox -- nc -z -v -w1 
+kcwget is an alias for kubectl run --rm --restart Never --stdin --tty busybox --image arm64v8/busybox -- wget --spider --timeout=1
+```
+
 ### side note to https://www.udemy.com/course/certified-kubernetes-administrator-with-practice-tests
 In order to open an connectivity window start the webcolor deployment and use the web browser on exposed NodePort e.g. 30082 add +1 to the subdomain
 when quiz: https://2886795279-8080-kitek06h.environments.katacoda.com/#!/viewExam
