@@ -43,6 +43,15 @@
       shell: 'date +"%F"'
       register: today
 
+    - name: add a git commmit message
+      command: >
+        git -C ~/git/private/raspberry-pi/raspberry-pi-dramble/kanboard/backup
+        commit --message "kanboard db-backup of {{ today.stdout }}" kanboard.sql
+
+    - name: git push
+      command: >
+        git -C ~/git/private/raspberry-pi/raspberry-pi-dramble/kanboard/backup push
+
     - name: archive old file
       archive:
         path: ../backup/kanboard.sql
