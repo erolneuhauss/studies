@@ -95,7 +95,7 @@
       - name: produce mysql backup
         command: >
           kubectl --namespace kanboard --stdin --tty exec deploy/db --
-          /bin/bash -c 'mysqldump --user="kanboard" --password="kanboard-secret" kanboard > /tmp/kanboard.sql'
+          /bin/bash -c 'mysqldump --user="$MYSQL_USER" --password="$MYSQL_PASSWORD" kanboard > /tmp/kanboard.sql'
 
       - name: get pod name
         k8s_info:
