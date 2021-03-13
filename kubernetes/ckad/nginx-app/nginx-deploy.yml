@@ -14,9 +14,18 @@ spec:
       labels:
         app: nginx
     spec:
+      volumes:
+      - name: nginx-confd-default-volume
+        configMap:
+          name: nginx-confd-default-dist
+          #          name: nginx-confd-default
       containers:
       - image: registry.fritz.box/arm64v8/nginx
         name: nginx
         ports:
           - containerPort: 80
             name: http
+        volumeMounts:
+          - name: nginx-confd-default-volume
+            mountPath: /etc/nginx/conf.d/default.conf
+            subPath: default.conf
