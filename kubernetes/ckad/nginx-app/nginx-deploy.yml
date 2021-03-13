@@ -14,6 +14,8 @@ spec:
     metadata:
       labels:
         app: nginx
+      annotations:
+        configHash: ""
     spec:
       volumes:
       - name: nginx-confd-default-volume
