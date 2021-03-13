@@ -53,3 +53,4 @@ kind: ConfigMap
 metadata:
   creationTimestamp: null
   name: nginx-confd-default-dist
+  namespace: nginx

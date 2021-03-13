@@ -4,6 +4,7 @@ metadata:
   labels:
     app: nginx
   name: nginx
+  namespace: nginx
 spec:
   replicas: 1
   selector:
@@ -17,8 +18,7 @@ spec:
       volumes:
       - name: nginx-confd-default-volume
         configMap:
-          name: nginx-confd-default-dist
-          #          name: nginx-confd-default
+          name: nginx-confd-default
       containers:
       - image: registry.fritz.box/arm64v8/nginx
         name: nginx

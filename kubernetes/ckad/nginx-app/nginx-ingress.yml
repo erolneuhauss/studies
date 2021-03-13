@@ -3,7 +3,7 @@ kind: Ingress
 metadata:
   annotations:
   name: nginx
-  namespace: default
+  namespace: nginx
 spec:
   rules:
   - host: nginx.fritz.box
