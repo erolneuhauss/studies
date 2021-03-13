@@ -1,17 +1,9 @@
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: traefik-ingress-controller
-  namespace: kube-system
----
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   annotations:
   labels:
     k8s-app: traefik-ingress-lb
-  managedFields:
   name: traefik-ingress-controller
   namespace: kube-system
 spec:
@@ -34,6 +26,7 @@ spec:
         - --defaultentrypoints=http,https
         - --entrypoints=Name:https Address::443 TLS
         - --entrypoints=Name:http Address::80
+        - --insecureskipverify
         image: traefik:1.7
         imagePullPolicy: IfNotPresent
         name: traefik-ingress-lb
@@ -47,8 +40,9 @@ spec:
           name: https
           protocol: TCP
         - containerPort: 8080
-          name: admin
           hostPort: 8080
+          name: admin
+          protocol: TCP
         resources: {}
         securityContext:
           capabilities:
@@ -56,40 +50,4 @@ spec:
             - NET_BIND_SERVICE
             drop:
             - ALL
-      dnsPolicy: ClusterFirst
       hostNetwork: true
-      restartPolicy: Always
-      schedulerName: default-scheduler
-      securityContext: {}
-      serviceAccount: traefik-ingress-controller
-      serviceAccountName: traefik-ingress-controller
-      terminationGracePeriodSeconds: 60
-      tolerations:
-      - effect: NoExecute
-        key: node.kubernetes.io/not-ready
-        operator: Exists
-        tolerationSeconds: 300
-      - effect: NoExecute
-        key: node.kubernetes.io/unreachable
-        operator: Exists
-        tolerationSeconds: 300
-  updateStrategy:
-    rollingUpdate:
-      maxUnavailable: 1
-    type: RollingUpdate
----
-kind: Service
-apiVersion: v1
-metadata:
-  name: traefik-ingress-service
-  namespace: kube-system
-spec:
-  selector:
-    k8s-app: traefik-ingress-lb
-  ports:
-    - protocol: TCP
-      port: 80
-      name: web
-    - protocol: TCP
-      port: 8080
-      name: admin
