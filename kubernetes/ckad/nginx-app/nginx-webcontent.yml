@@ -24,7 +24,7 @@ data:
     </html>
   404.html: |
     <h1>404 - Not Found</h1>
-    Sorry, I could not finde the page you have request :-(
+    Sorry, I could not find the page you have request :-(
   admin.html: |
     <h1>Access to restriced area granted!</h1>
     Welcome to the dark net :-)
