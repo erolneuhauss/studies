@@ -18,6 +18,9 @@ spec:
         configHash: ""
     spec:
       volumes:
+      - name: htpasswd-secret-volume
+        secret:
+          secretName: htpasswd-secret
       - name: webcontent-example
         emptyDir: {}
       - name: nginx-config-volume
@@ -32,6 +35,27 @@ spec:
               path: default.conf
             - key: example.com.conf
               path: example.com.conf
+      containers:
+      - image: registry.fritz.box/arm64v8/nginx
+        name: nginx
+        ports:
+          - containerPort: 80
+            name: http
+        volumeMounts:
+          - name: htpasswd-secret-volume
+            mountPath: /etc/nginx/.htpasswd
+            subPath: /etc/nginx/.htpasswd
+          - name: nginx-config-volume
+            mountPath: /etc/nginx
+            readOnly: false
+          - name: webcontent-example
+            mountPath: /example.com
+        livenessProbe:
+          httpGet:
+            path: /
+            port: http
+          initialDelaySeconds: 3
+          periodSeconds: 60
       initContainers:
       - image: registry.fritz.box/arm64v8/busybox
         name: webcontent
@@ -54,21 +78,4 @@ spec:
             readOnly: false
           - name: webcontent-example
             mountPath: /example.com
-      containers:
-      - image: registry.fritz.box/arm64v8/nginx
-        name: nginx
-        ports:
-          - containerPort: 80
-            name: http
-        volumeMounts:
-          - name: nginx-config-volume
-            mountPath: /etc/nginx
-            readOnly: false
-          - name: webcontent-example
-            mountPath: /example.com
-        livenessProbe:
-          httpGet:
-            path: /
-            port: http
-          initialDelaySeconds: 3
-          periodSeconds: 60
+
