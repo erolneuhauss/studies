@@ -1,0 +1,802 @@
+apiVersion: v1
+data:
+  main.conf: |-
+    SecAuditLogFormat JSON
+    Include /etc/nginx/modsecurity/modsecurity.conf
+    Include /etc/nginx/modsecurity/ruleset.conf
+    SecRule ARGS:testparam "@contains test" "id:1234,deny,log,status:403"
+  modsecurity.conf: "# -- Rule engine initialization ----------------------------------------------\n\n#
+    Enable ModSecurity, attaching it to every transaction. Use detection\n# only to
+    start with, because that minimises the chances of post-installation\n# disruption.\n#\nSecRuleEngine
+    On\n\n\n# -- Request body handling ---------------------------------------------------\n\n#
+    Allow ModSecurity to access request bodies. If you don't, ModSecurity\n# won't
+    be able to see any POST parameters, which opens a large security\n# hole for attackers
+    to exploit.\n#\nSecRequestBodyAccess On\n\n\n# Enable XML request body parser.\n#
+    Initiate XML Processor in case of xml content-type\n#\nSecRule REQUEST_HEADERS:Content-Type
+    \"(?:application(?:/soap\\+|/)|text/)xml\" \\\n     \"id:'200000',phase:1,t:none,t:lowercase,pass,nolog,ctl:requestBodyProcessor=XML\"\n\n#
+    Enable JSON request body parser.\n# Initiate JSON Processor in case of JSON content-type;
+    change accordingly\n# if your application does not use 'application/json'\n#\nSecRule
+    REQUEST_HEADERS:Content-Type \"application/json\" \\\n     \"id:'200001',phase:1,t:none,t:lowercase,pass,nolog,ctl:requestBodyProcessor=JSON\"\n\n#
+    Maximum request body size we will accept for buffering. If you support\n# file
+    uploads then the value given on the first line has to be as large\n# as the largest
+    file you are willing to accept. The second value refers\n# to the size of data,
+    with files excluded. You want to keep that value as\n# low as practical.\n#\nSecRequestBodyLimit
+    13107200\nSecRequestBodyNoFilesLimit 131072\n\n# What to do if the request body
+    size is above our configured limit.\n# Keep in mind that this setting will automatically
+    be set to ProcessPartial\n# when SecRuleEngine is set to DetectionOnly mode in
+    order to minimize\n# disruptions when initially deploying ModSecurity.\n#\nSecRequestBodyLimitAction
+    Reject\n\n# Verify that we've correctly processed the request body.\n# As a rule
+    of thumb, when failing to process a request body\n# you should reject the request
+    (when deployed in blocking mode)\n# or log a high-severity alert (when deployed
+    in detection-only mode).\n#\nSecRule REQBODY_ERROR \"!@eq 0\" \\\n\"id:'200002',
+    phase:2,t:none,log,deny,status:400,msg:'Failed to parse request body.',logdata:'%{reqbody_error_msg}',severity:2\"\n\n#
+    By default be strict with what we accept in the multipart/form-data\n# request
+    body. If the rule below proves to be too strict for your\n# environment consider
+    changing it to detection-only. You are encouraged\n# _not_ to remove it altogether.\n#\nSecRule
+    MULTIPART_STRICT_ERROR \"!@eq 0\" \\\n\"id:'200003',phase:2,t:none,log,deny,status:400,
+    \\\nmsg:'Multipart request body failed strict validation: \\\nPE %{REQBODY_PROCESSOR_ERROR},
+    \\\nBQ %{MULTIPART_BOUNDARY_QUOTED}, \\\nBW %{MULTIPART_BOUNDARY_WHITESPACE},
+    \\\nDB %{MULTIPART_DATA_BEFORE}, \\\nDA %{MULTIPART_DATA_AFTER}, \\\nHF %{MULTIPART_HEADER_FOLDING},
+    \\\nLF %{MULTIPART_LF_LINE}, \\\nSM %{MULTIPART_MISSING_SEMICOLON}, \\\nIQ %{MULTIPART_INVALID_QUOTING},
+    \\\nIP %{MULTIPART_INVALID_PART}, \\\nIH %{MULTIPART_INVALID_HEADER_FOLDING},
+    \\\nFL %{MULTIPART_FILE_LIMIT_EXCEEDED}'\"\n\n# Did we see anything that might
+    be a boundary?\n#\n# Here is a short description about the ModSecurity Multipart
+    parser: the\n# parser returns with value 0, if all \"boundary-like\" line matches
+    with\n# the boundary string which given in MIME header. In any other cases it
+    returns\n# with different value, eg. 1 or 2.\n#\n# The RFC 1341 descript the multipart
+    content-type and its syntax must contains\n# only three mandatory lines (above
+    the content):\n# * Content-Type: multipart/mixed; boundary=BOUNDARY_STRING\n#
+    * --BOUNDARY_STRING\n# * --BOUNDARY_STRING--\n#\n# First line indicates, that
+    this is a multipart content, second shows that\n# here starts a part of the multipart
+    content, third shows the end of content.\n#\n# If there are any other lines, which
+    starts with \"--\", then it should be\n# another boundary id - or not.\n#\n# After
+    3.0.3, there are two kinds of types of boundary errors: strict and permissive.\n#\n#
+    If multipart content contains the three necessary lines with correct order, but\n#
+    there are one or more lines with \"--\", then parser returns with value 2 (non-zero).\n#\n#
+    If some of the necessary lines (usually the start or end) misses, or the order\n#
+    is wrong, then parser returns with value 1 (also a non-zero).\n#\n# You can choose,
+    which one is what you need. The example below contains the\n# 'strict' mode, which
+    means if there are any lines with start of \"--\", then\n# ModSecurity blocked
+    the content. But the next, commented example contains\n# the 'permissive' mode,
+    then you check only if the necessary lines exists in\n# correct order. Whit this,
+    you can enable to upload PEM files (eg \"----BEGIN..\"),\n# or other text files,
+    which contains eg. HTTP headers.\n#\n# The difference is only the operator - in
+    strict mode (first) the content blocked\n# in case of any non-zero value. In permissive
+    mode (second, commented) the\n# content blocked only if the value is explicit
+    1. If it 0 or 2, the content will\n# allowed.\n#\n\n#\n# See #1747 and #1924 for
+    further information on the possible values for\n# MULTIPART_UNMATCHED_BOUNDARY.\n#\nSecRule
+    MULTIPART_UNMATCHED_BOUNDARY \"@eq 1\" \\\n    \"id:'200004',phase:2,t:none,log,deny,msg:'Multipart
+    parser detected a possible unmatched boundary.'\"\n\n\n# PCRE Tuning\n# We want
+    to avoid a potential RegEx DoS condition\n#\nSecPcreMatchLimit 1000\nSecPcreMatchLimitRecursion
+    1000\n\n# Some internal errors will set flags in TX and we will need to look for
+    these.\n# All of these are prefixed with \"MSC_\".  The following flags currently
+    exist:\n#\n# MSC_PCRE_LIMITS_EXCEEDED: PCRE match limits were exceeded.\n#\nSecRule
+    TX:/^MSC_/ \"!@streq 0\" \\\n        \"id:'200005',phase:2,t:none,deny,msg:'ModSecurity
+    internal error flagged: %{MATCHED_VAR_NAME}'\"\n\n\n# -- Response body handling
+    --------------------------------------------------\n\n# Allow ModSecurity to access
+    response bodies. \n# You should have this directive enabled in order to identify
+    errors\n# and data leakage issues.\n# \n# Do keep in mind that enabling this directive
+    does increases both\n# memory consumption and response latency.\n#\nSecResponseBodyAccess
+    On\n\n# Which response MIME types do you want to inspect? You should adjust the\n#
+    configuration below to catch documents but avoid static files\n# (e.g., images
+    and archives).\n#\nSecResponseBodyMimeType text/plain text/html text/xml\n\n#
+    Buffer response bodies of up to 512 KB in length.\nSecResponseBodyLimit 524288\n\n#
+    What happens when we encounter a response body larger than the configured\n# limit?
+    By default, we process what we have and let the rest through.\n# That's somewhat
+    less secure, but does not break any legitimate pages.\n#\nSecResponseBodyLimitAction
+    ProcessPartial\n\n\n# -- Filesystem configuration ------------------------------------------------\n\n#
+    The location where ModSecurity stores temporary files (for example, when\n# it
+    needs to handle a file upload that is larger than the configured limit).\n# \n#
+    This default setting is chosen due to all systems have /tmp available however,
+    \n# this is less than ideal. It is recommended that you specify a location that's
+    private.\n#\nSecTmpDir /tmp/\n\n# The location where ModSecurity will keep its
+    persistent data.  This default setting \n# is chosen due to all systems have /tmp
+    available however, it\n# too should be updated to a place that other users can't
+    access.\n#\nSecDataDir /tmp/\n\n\n# -- File uploads handling configuration -------------------------------------\n\n#
+    The location where ModSecurity stores intercepted uploaded files. This\n# location
+    must be private to ModSecurity. You don't want other users on\n# the server to
+    access the files, do you?\n#\n#SecUploadDir /opt/modsecurity/var/upload/\n\n#
+    By default, only keep the files that were determined to be unusual\n# in some
+    way (by an external inspection script). For this to work you\n# will also need
+    at least one file inspection rule.\n#\n#SecUploadKeepFiles RelevantOnly\n\n# Uploaded
+    files are by default created with permissions that do not allow\n# any other user
+    to access them. You may need to relax that if you want to\n# interface ModSecurity
+    to an external program (e.g., an anti-virus).\n#\n#SecUploadFileMode 0600\n\n\n#
+    -- Debug log configuration -------------------------------------------------\n\n#
+    The default debug log configuration is to duplicate the error, warning\n# and
+    notice messages from the error log.\n#\n#SecDebugLog /opt/modsecurity/var/log/debug.log\n#SecDebugLogLevel
+    3\n\n\n# -- Audit log configuration -------------------------------------------------\n\n#
+    Log the transactions that are marked by a rule, as well as those that\n# trigger
+    a server error (determined by a 5xx or 4xx, excluding 404,  \n# level response
+    status codes).\n#\nSecAuditEngine RelevantOnly\nSecAuditLogRelevantStatus \"^(?:5|4(?!04))\"\n\n#
+    Log everything we know about a transaction.\nSecAuditLogParts ABIJDEFHZ\n\n# Use
+    a single file for logging. This is much easier to look at, but\n# assumes that
+    you will use the audit log only ocassionally.\n#\nSecAuditLogType Serial\nSecAuditLog
+    /var/log/modsec_audit.log\n\n# Specify the path for concurrent audit logging.\n#SecAuditLogStorageDir
+    /opt/modsecurity/var/audit/\n\n\n# -- Miscellaneous -----------------------------------------------------------\n\n#
+    Use the most commonly used application/x-www-form-urlencoded parameter\n# separator.
+    There's probably only one application somewhere that uses\n# something else so
+    don't expect to change this value.\n#\nSecArgumentSeparator &\n\n# Settle on version
+    0 (zero) cookies, as that is what most applications\n# use. Using an incorrect
+    cookie version may open your installation to\n# evasion attacks (against the rules
+    that examine named cookies).\n#\nSecCookieFormat 0\n\n# Specify your Unicode Code
+    Point.\n# This mapping is used by the t:urlDecodeUni transformation function\n#
+    to properly map encoded data to your language. Properly setting\n# these directives
+    helps to reduce false positives and negatives.\n#\nSecUnicodeMapFile unicode.mapping
+    20127\n\n# Improve the quality of ModSecurity by sharing information about your\n#
+    current ModSecurity version and dependencies versions.\n# The following information
+    will be shared: ModSecurity version,\n# Web Server version, APR version, PCRE
+    version, Lua version, Libxml2\n# version, Anonymous unique id for host.\nSecStatusEngine
+    On\n\n"
+  ruleset.conf: "# OWASP CRS v3ルールの組み込み\nInclude /usr/local/coreruleset/crs-setup.conf\nInclude
+    /usr/local/coreruleset/rules/*.conf\n       "
+  unicode.mapping: "(MAC - Roman)\r\n\r\n\r\n(MAC - Icelandic)\r\n\r\n\r\n1250  (ANSI
+    - Central Europe)\r\n00a1:21 00a2:63 00a3:4c 00a5:59 00aa:61 00b2:32 00b3:33 00b9:31
+    00ba:6f 00bc:31 00bd:31 00be:33 00c0:41 00c3:41 00c5:41 00c6:41 00c8:45 00ca:45
+    00cc:49 00cf:49 00d1:4e 00d2:4f 00d5:4f 00d8:4f 00d9:55 00db:55 00e0:61 00e3:61
+    00e5:61 00e6:61 00e8:65 00ea:65 00ec:69 00ef:69 00f1:6e 00f2:6f 00f5:6f 00f8:6f
+    00f9:75 00fb:75 00ff:79 0100:41 0101:61 0108:43 0109:63 010a:43 010b:63 0112:45
+    0113:65 0114:45 0115:65 0116:45 0117:65 011c:47 011d:67 011e:47 011f:67 0120:47
+    0121:67 0122:47 0123:67 0124:48 0125:68 0126:48 0127:68 0128:49 0129:69 012a:49
+    012b:69 012c:49 012d:69 012e:49 012f:69 0130:49 0131:69 0134:4a 0135:6a 0136:4b
+    0137:6b 013b:4c 013c:6c 0145:4e 0146:6e 014c:4f 014d:6f 014e:4f 014f:6f 0152:4f
+    0153:6f 0156:52 0157:72 015c:53 015d:73 0166:54 0167:74 0168:55 0169:75 016a:55
+    016b:75 016c:55 016d:75 0172:55 0173:75 0174:57 0175:77 0176:59 0177:79 0178:59
+    0180:62 0191:46 0192:66 0197:49 019a:6c 019f:4f 01a0:4f 01a1:6f 01ab:74 01ae:54
+    01af:55 01b0:75 01b6:7a 01c0:7c 01c3:21 01cd:41 01ce:61 01cf:49 01d0:69 01d1:4f
+    01d2:6f 01d3:55 01d4:75 01d5:55 01d6:75 01d7:55 01d8:75 01d9:55 01da:75 01db:55
+    01dc:75 01de:41 01df:61 01e4:47 01e5:67 01e6:47 01e7:67 01e8:4b 01e9:6b 01ea:4f
+    01eb:6f 01ec:4f 01ed:6f 01f0:6a 0261:67 02b9:27 02ba:22 02bc:27 02c4:5e 02c6:5e
+    02c8:27 02cb:60 02cd:5f 02dc:7e 0300:60 0302:5e 0303:7e 030e:22 0331:5f 0332:5f
+    037e:3b 04bb:68 0589:3a 066a:25 2000:20 2001:20 2002:20 2003:20 2004:20 2005:20
+    2006:20 2010:2d 2011:2d 2032:27 2035:60 203c:21 2044:2f 2074:34 2075:35 2076:36
+    2077:37 2078:38 2080:30 2081:31 2082:32 2083:33 2084:34 2085:35 2086:36 2087:37
+    2088:38 2089:39 2102:43 2107:45 210a:67 210b:48 210c:48 210d:48 210e:68 2110:49
+    2111:49 2112:4c 2113:6c 2115:4e 2118:50 2119:50 211a:51 211b:52 211c:52 211d:52
+    2124:5a 2128:5a 212a:4b 212c:42 212d:43 212e:65 212f:65 2130:45 2131:46 2133:4d
+    2134:6f 2191:5e 2194:2d 2195:7c 21a8:7c 2212:2d 2215:2f 2216:5c 2217:2a 221f:4c
+    2223:7c 2236:3a 223c:7e 2303:5e 2329:3c 232a:3e 2502:2d 250c:2d 2514:4c 2518:2d
+    251c:2b 2524:2b 252c:54 2534:2b 253c:2b 2550:3d 2554:2d 255a:4c 255d:2d 2566:54
+    256c:2b 2580:2d 2584:2d 2588:2d 2591:2d 2592:2d 2593:2d 25ac:2d 25b2:5e 25ba:3e
+    25c4:3c 25cb:30 25d9:30 263c:30 2640:2b 2642:3e 266a:64 266b:64 2758:7c 3000:20
+    3008:3c 3009:3e 301a:5b 301b:5d ff01:21 ff02:22 ff03:23 ff04:24 ff05:25 ff06:26
+    ff07:27 ff08:28 ff09:29 ff0a:2a ff0b:2b ff0c:2c ff0d:2d ff0e:2e ff0f:2f ff10:30
+    ff11:31 ff12:32 ff13:33 ff14:34 ff15:35 ff16:36 ff17:37 ff18:38 ff19:39 ff1a:3a
+    ff1b:3b ff1c:3c ff1d:3d ff1e:3e ff20:40 ff21:41 ff22:42 ff23:43 ff24:44 ff25:45
+    ff26:46 ff27:47 ff28:48 ff29:49 ff2a:4a ff2b:4b ff2c:4c ff2d:4d ff2e:4e ff2f:4f
+    ff30:50 ff31:51 ff32:52 ff33:53 ff34:54 ff35:55 ff36:56 ff37:57 ff38:58 ff39:59
+    ff3a:5a ff3b:5b ff3c:5c ff3d:5d ff3e:5e ff3f:5f ff40:60 ff41:61 ff42:62 ff43:63
+    ff44:64 ff45:65 ff46:66 ff47:67 ff48:68 ff49:69 ff4a:6a ff4b:6b ff4c:6c ff4d:6d
+    ff4e:6e ff4f:6f ff50:70 ff51:71 ff52:72 ff53:73 ff54:74 ff55:75 ff56:76 ff57:77
+    ff58:78 ff59:79 ff5a:7a ff5b:7b ff5c:7c ff5d:7d ff5e:7e \r\n\r\n1251  (ANSI -
+    Cyrillic)\r\n00c0:41 00c1:41 00c2:41 00c3:41 00c4:41 00c5:41 00c7:43 00c8:45 00c9:45
+    00ca:45 00cb:45 00cc:49 00cd:49 00ce:49 00cf:49 00d1:4e 00d2:4f 00d3:4f 00d4:4f
+    00d5:4f 00d6:4f 00d8:4f 00d9:55 00da:55 00db:55 00dc:55 00dd:59 00e0:61 00e1:61
+    00e2:61 00e3:61 00e4:61 00e5:61 00e7:63 00e8:65 00e9:65 00ea:65 00eb:65 00ec:69
+    00ed:69 00ee:69 00ef:69 00f1:6e 00f2:6f 00f3:6f 00f4:6f 00f5:6f 00f6:6f 00f8:6f
+    00f9:75 00fa:75 00fb:75 00fc:75 00fd:79 00ff:79 0100:41 0101:61 0102:41 0103:61
+    0104:41 0105:61 0106:43 0107:63 0108:43 0109:63 010a:43 010b:63 010c:43 010d:63
+    010e:44 010f:64 0110:44 0111:64 0112:45 0113:65 0114:45 0115:65 0116:45 0117:65
+    0118:45 0119:65 011a:45 011b:65 011c:47 011d:67 011e:47 011f:67 0120:47 0121:67
+    0122:47 0123:67 0124:48 0125:68 0126:48 0127:68 0128:49 0129:69 012a:49 012b:69
+    012c:49 012d:69 012e:49 012f:69 0130:49 0134:4a 0135:6a 0136:4b 0137:6b 0139:4c
+    013a:6c 013b:4c 013c:6c 013d:4c 013e:6c 0141:4c 0142:6c 0143:4e 0144:6e 0145:4e
+    0146:6e 0147:4e 0148:6e 014c:4f 014d:6f 014e:4f 014f:6f 0150:4f 0151:6f 0154:52
+    0155:72 0156:52 0157:72 0158:52 0159:72 015a:53 015b:73 015c:53 015d:73 015e:53
+    015f:73 0160:53 0161:73 0162:54 0163:74 0164:54 0165:74 0166:54 0167:74 0168:55
+    0169:75 016a:55 016b:75 016c:55 016d:75 016e:55 016f:75 0170:55 0171:75 0172:55
+    0173:75 0174:57 0175:77 0176:59 0177:79 0178:59 0179:5a 017b:5a 017c:7a 017d:5a
+    017e:7a 0180:62 0197:49 019a:6c 019f:4f 01a0:4f 01a1:6f 01ab:74 01ae:54 01af:55
+    01b0:75 01cd:41 01ce:61 01cf:49 01d0:69 01d1:4f 01d2:6f 01d3:55 01d4:75 01d5:55
+    01d6:75 01d7:55 01d8:75 01d9:55 01da:75 01db:55 01dc:75 01de:41 01df:61 01e4:47
+    01e5:67 01e6:47 01e7:67 01e8:4b 01e9:6b 01ea:4f 01eb:6f 01ec:4f 01ed:6f 01f0:6a
+    203c:21 2190:3c 2191:5e 2192:3e 2193:76 2194:2d 221a:76 221f:4c 2500:2d 250c:2d
+    2514:4c 2518:2d 251c:2b 2524:2b 252c:54 2534:2b 253c:2b 2550:3d 2552:2d 2558:4c
+    2559:4c 255a:4c 255b:2d 255c:2d 255d:2d 2564:54 2565:54 2566:54 256a:2b 256b:2b
+    256c:2b 2580:2d 2584:2d 2588:2d 2591:2d 2592:2d 2593:2d 25ac:2d 25b2:5e 25ba:3e
+    25c4:3c 25cb:30 25d9:30 263a:4f 263b:4f 263c:30 2640:2b 2642:3e 266a:64 266b:64
+    ff01:21 ff02:22 ff03:23 ff04:24 ff05:25 ff06:26 ff07:27 ff08:28 ff09:29 ff0a:2a
+    ff0b:2b ff0c:2c ff0d:2d ff0e:2e ff0f:2f ff10:30 ff11:31 ff12:32 ff13:33 ff14:34
+    ff15:35 ff16:36 ff17:37 ff18:38 ff19:39 ff1a:3a ff1b:3b ff1c:3c ff1d:3d ff1e:3e
+    ff20:40 ff21:41 ff22:42 ff23:43 ff24:44 ff25:45 ff26:46 ff27:47 ff28:48 ff29:49
+    ff2a:4a ff2b:4b ff2c:4c ff2d:4d ff2e:4e ff2f:4f ff30:50 ff31:51 ff32:52 ff33:53
+    ff34:54 ff35:55 ff36:56 ff37:57 ff38:58 ff39:59 ff3a:5a ff3b:5b ff3c:5c ff3d:5d
+    ff3e:5e ff3f:5f ff40:60 ff41:61 ff42:62 ff43:63 ff44:64 ff45:65 ff46:66 ff47:67
+    ff48:68 ff49:69 ff4a:6a ff4b:6b ff4c:6c ff4d:6d ff4e:6e ff4f:6f ff50:70 ff51:71
+    ff52:72 ff53:73 ff54:74 ff55:75 ff56:76 ff57:77 ff58:78 ff59:79 ff5a:7a ff5b:7b
+    ff5c:7c ff5d:7d ff5e:7e \r\n\r\n1252  (ANSI - Latin I)\r\n0100:41 0101:61 0102:41
+    0103:61 0104:41 0105:61 0106:43 0107:63 0108:43 0109:63 010a:43 010b:63 010c:43
+    010d:63 010e:44 010f:64 0111:64 0112:45 0113:65 0114:45 0115:65 0116:45 0117:65
+    0118:45 0119:65 011a:45 011b:65 011c:47 011d:67 011e:47 011f:67 0120:47 0121:67
+    0122:47 0123:67 0124:48 0125:68 0126:48 0127:68 0128:49 0129:69 012a:49 012b:69
+    012c:49 012d:69 012e:49 012f:69 0130:49 0131:69 0134:4a 0135:6a 0136:4b 0137:6b
+    0139:4c 013a:6c 013b:4c 013c:6c 013d:4c 013e:6c 0141:4c 0142:6c 0143:4e 0144:6e
+    0145:4e 0146:6e 0147:4e 0148:6e 014c:4f 014d:6f 014e:4f 014f:6f 0150:4f 0151:6f
+    0154:52 0155:72 0156:52 0157:72 0158:52 0159:72 015a:53 015b:73 015c:53 015d:73
+    015e:53 015f:73 0162:54 0163:74 0164:54 0165:74 0166:54 0167:74 0168:55 0169:75
+    016a:55 016b:75 016c:55 016d:75 016e:55 016f:75 0170:55 0171:75 0172:55 0173:75
+    0174:57 0175:77 0176:59 0177:79 0179:5a 017b:5a 017c:7a 0180:62 0197:49 019a:6c
+    019f:4f 01a0:4f 01a1:6f 01ab:74 01ae:54 01af:55 01b0:75 01b6:7a 01c0:7c 01c3:21
+    01cd:41 01ce:61 01cf:49 01d0:69 01d1:4f 01d2:6f 01d3:55 01d4:75 01d5:55 01d6:75
+    01d7:55 01d8:75 01d9:55 01da:75 01db:55 01dc:75 01de:41 01df:61 01e4:47 01e5:67
+    01e6:47 01e7:67 01e8:4b 01e9:6b 01ea:4f 01eb:6f 01ec:4f 01ed:6f 01f0:6a 0261:67
+    02b9:27 02ba:22 02bc:27 02c4:5e 02c8:27 02cb:60 02cd:5f 0300:60 0302:5e 0303:7e
+    030e:22 0331:5f 0332:5f 037e:3b 0393:47 0398:54 03a3:53 03a6:46 03a9:4f 03b1:61
+    03b4:64 03b5:65 03c0:70 03c3:73 03c4:74 03c6:66 04bb:68 0589:3a 066a:25 2000:20
+    2001:20 2002:20 2003:20 2004:20 2005:20 2006:20 2010:2d 2011:2d 2017:3d 2032:27
+    2035:60 2044:2f 2074:34 2075:35 2076:36 2077:37 2078:38 207f:6e 2080:30 2081:31
+    2082:32 2083:33 2084:34 2085:35 2086:36 2087:37 2088:38 2089:39 20a7:50 2102:43
+    2107:45 210a:67 210b:48 210c:48 210d:48 210e:68 2110:49 2111:49 2112:4c 2113:6c
+    2115:4e 2118:50 2119:50 211a:51 211b:52 211c:52 211d:52 2124:5a 2128:5a 212a:4b
+    212c:42 212d:43 212e:65 212f:65 2130:45 2131:46 2133:4d 2134:6f 2212:2d 2215:2f
+    2216:5c 2217:2a 221a:76 221e:38 2223:7c 2229:6e 2236:3a 223c:7e 2261:3d 2264:3d
+    2265:3d 2303:5e 2320:28 2321:29 2329:3c 232a:3e 2500:2d 250c:2b 2510:2b 2514:2b
+    2518:2b 251c:2b 252c:2d 2534:2d 253c:2b 2550:2d 2552:2b 2553:2b 2554:2b 2555:2b
+    2556:2b 2557:2b 2558:2b 2559:2b 255a:2b 255b:2b 255c:2b 255d:2b 2564:2d 2565:2d
+    2566:2d 2567:2d 2568:2d 2569:2d 256a:2b 256b:2b 256c:2b 2584:5f 2758:7c 3000:20
+    3008:3c 3009:3e 301a:5b 301b:5d ff01:21 ff02:22 ff03:23 ff04:24 ff05:25 ff06:26
+    ff07:27 ff08:28 ff09:29 ff0a:2a ff0b:2b ff0c:2c ff0d:2d ff0e:2e ff0f:2f ff10:30
+    ff11:31 ff12:32 ff13:33 ff14:34 ff15:35 ff16:36 ff17:37 ff18:38 ff19:39 ff1a:3a
+    ff1b:3b ff1c:3c ff1d:3d ff1e:3e ff20:40 ff21:41 ff22:42 ff23:43 ff24:44 ff25:45
+    ff26:46 ff27:47 ff28:48 ff29:49 ff2a:4a ff2b:4b ff2c:4c ff2d:4d ff2e:4e ff2f:4f
+    ff30:50 ff31:51 ff32:52 ff33:53 ff34:54 ff35:55 ff36:56 ff37:57 ff38:58 ff39:59
+    ff3a:5a ff3b:5b ff3c:5c ff3d:5d ff3e:5e ff3f:5f ff40:60 ff41:61 ff42:62 ff43:63
+    ff44:64 ff45:65 ff46:66 ff47:67 ff48:68 ff49:69 ff4a:6a ff4b:6b ff4c:6c ff4d:6d
+    ff4e:6e ff4f:6f ff50:70 ff51:71 ff52:72 ff53:73 ff54:74 ff55:75 ff56:76 ff57:77
+    ff58:78 ff59:79 ff5a:7a ff5b:7b ff5c:7c ff5d:7d ff5e:7e \r\n\r\n1253  (ANSI -
+    Greek)\r\n00b4:2f 00c0:41 00c1:41 00c2:41 00c3:41 00c4:41 00c5:41 00c7:43 00c8:45
+    00c9:45 00ca:45 00cb:45 00cc:49 00cd:49 00ce:49 00cf:49 00d1:4e 00d2:4f 00d3:4f
+    00d4:4f 00d5:4f 00d6:4f 00d8:4f 00d9:55 00da:55 00db:55 00dc:55 00dd:59 00e0:61
+    00e1:61 00e2:61 00e3:61 00e4:61 00e5:61 00e7:63 00e8:65 00e9:65 00ea:65 00eb:65
+    00ec:69 00ed:69 00ee:69 00ef:69 00f1:6e 00f2:6f 00f3:6f 00f4:6f 00f5:6f 00f6:6f
+    00f8:6f 00f9:75 00fa:75 00fb:75 00fc:75 00fd:79 00ff:79 0100:41 0101:61 0102:41
+    0103:61 0104:41 0105:61 0106:43 0107:63 0108:43 0109:63 010a:43 010b:63 010c:43
+    010d:63 010e:44 010f:64 0110:44 0111:64 0112:45 0113:65 0114:45 0115:65 0116:45
+    0117:65 0118:45 0119:65 011a:45 011b:65 011c:47 011d:67 011e:47 011f:67 0120:47
+    0121:67 0122:47 0123:67 0124:48 0125:68 0126:48 0127:68 0128:49 0129:69 012a:49
+    012b:69 012c:49 012d:69 012e:49 012f:69 0130:49 0134:4a 0135:6a 0136:4b 0137:6b
+    0139:4c 013a:6c 013b:4c 013c:6c 013d:4c 013e:6c 0141:4c 0142:6c 0143:4e 0144:6e
+    0145:4e 0146:6e 0147:4e 0148:6e 014c:4f 014d:6f 014e:4f 014f:6f 0150:4f 0151:6f
+    0154:52 0155:72 0156:52 0157:72 0158:52 0159:72 015a:53 015b:73 015c:53 015d:73
+    015e:53 015f:73 0160:53 0161:73 0162:54 0163:74 0164:54 0165:74 0166:54 0167:74
+    0168:55 0169:75 016a:55 016b:75 016c:55 016d:75 016e:55 016f:75 0170:55 0171:75
+    0172:55 0173:75 0174:57 0175:77 0176:59 0177:79 0178:59 0179:5a 017b:5a 017c:7a
+    017d:5a 017e:7a 0180:62 0197:49 019a:6c 019f:4f 01a0:4f 01a1:6f 01ab:74 01ae:54
+    01af:55 01b0:75 01cd:41 01ce:61 01cf:49 01d0:69 01d1:4f 01d2:6f 01d3:55 01d4:75
+    01d5:55 01d6:75 01d7:55 01d8:75 01d9:55 01da:75 01db:55 01dc:75 01de:41 01df:61
+    01e4:47 01e5:67 01e6:47 01e7:67 01e8:4b 01e9:6b 01ea:4f 01eb:6f 01ec:4f 01ed:6f
+    01f0:6a 037e:3b 203c:21 2190:3c 2191:5e 2192:3e 2193:76 2194:2d 221f:4c 2500:2d
+    250c:2d 2514:4c 2518:2d 251c:2b 2524:2b 252c:54 2534:2b 253c:2b 2550:3d 2554:2d
+    255a:4c 255d:2d 2566:54 256c:2b 2580:2d 2584:2d 2588:2d 2591:2d 2592:2d 2593:2d
+    25ac:2d 25b2:5e 25ba:3e 25c4:3c 25cb:30 25d9:30 263a:4f 263b:4f 263c:30 2640:2b
+    2642:3e 266a:64 266b:64 ff01:21 ff02:22 ff03:23 ff04:24 ff05:25 ff06:26 ff07:27
+    ff08:28 ff09:29 ff0a:2a ff0b:2b ff0c:2c ff0d:2d ff0e:2e ff0f:2f ff10:30 ff11:31
+    ff12:32 ff13:33 ff14:34 ff15:35 ff16:36 ff17:37 ff18:38 ff19:39 ff1a:3a ff1b:3b
+    ff1c:3c ff1d:3d ff1e:3e ff20:40 ff21:41 ff22:42 ff23:43 ff24:44 ff25:45 ff26:46
+    ff27:47 ff28:48 ff29:49 ff2a:4a ff2b:4b ff2c:4c ff2d:4d ff2e:4e ff2f:4f ff30:50
+    ff31:51 ff32:52 ff33:53 ff34:54 ff35:55 ff36:56 ff37:57 ff38:58 ff39:59 ff3a:5a
+    ff3b:5b ff3c:5c ff3d:5d ff3e:5e ff3f:5f ff40:60 ff41:61 ff42:62 ff43:63 ff44:64
+    ff45:65 ff46:66 ff47:67 ff48:68 ff49:69 ff4a:6a ff4b:6b ff4c:6c ff4d:6d ff4e:6e
+    ff4f:6f ff50:70 ff51:71 ff52:72 ff53:73 ff54:74 ff55:75 ff56:76 ff57:77 ff58:78
+    ff59:79 ff5a:7a ff5b:7b ff5c:7c ff5d:7d ff5e:7e \r\n\r\n1254  (ANSI - Turkish)\r\n00dd:59
+    00fd:79 0100:41 0101:61 0102:41 0103:61 0104:41 0105:61 0106:43 0107:63 0108:43
+    0109:63 010a:43 010b:63 010c:43 010d:63 010e:44 010f:64 0110:44 0111:64 0112:45
+    0113:65 0114:45 0115:65 0116:45 0117:65 0118:45 0119:65 011a:45 011b:65 011c:47
+    011d:67 0120:47 0121:67 0122:47 0123:67 0124:48 0125:68 0126:48 0127:68 0128:49
+    0129:69 012a:49 012b:69 012c:49 012d:69 012e:49 012f:69 0134:4a 0135:6a 0136:4b
+    0137:6b 0139:4c 013a:6c 013b:4c 013c:6c 013d:4c 013e:6c 0141:4c 0142:6c 0143:4e
+    0144:6e 0145:4e 0146:6e 0147:4e 0148:6e 014c:4f 014d:6f 014e:4f 014f:6f 0150:4f
+    0151:6f 0154:52 0155:72 0156:52 0157:72 0158:52 0159:72 015a:53 015b:73 015c:53
+    015d:73 0162:54 0163:74 0164:54 0165:74 0166:54 0167:74 0168:55 0169:75 016a:55
+    016b:75 016c:55 016d:75 016e:55 016f:75 0170:55 0171:75 0172:55 0173:75 0174:57
+    0175:77 0176:59 0177:79 0179:5a 017b:5a 017c:7a 017d:5a 017e:7a 0180:62 0189:44
+    0197:49 019a:6c 019f:4f 01a0:4f 01a1:6f 01ab:74 01ae:54 01af:55 01b0:75 01b6:7a
+    01c0:7c 01c3:21 01cd:41 01ce:61 01cf:49 01d0:69 01d1:4f 01d2:6f 01d3:55 01d4:75
+    01d5:55 01d6:75 01d7:55 01d8:75 01d9:55 01da:75 01db:55 01dc:75 01de:41 01df:61
+    01e4:47 01e5:67 01e6:47 01e7:67 01e8:4b 01e9:6b 01ea:4f 01eb:6f 01ec:4f 01ed:6f
+    01f0:6a 0261:67 02b9:27 02ba:22 02bc:27 02c4:5e 02c7:5e 02c8:27 02cb:60 02cd:5f
+    02d8:5e 02d9:27 0300:60 0302:5e 0331:5f 0332:5f 04bb:68 0589:3a 066a:25 2000:20
+    2001:20 2002:20 2003:20 2004:20 2005:20 2006:20 2010:2d 2011:2d 2032:27 2035:60
+    203c:21 2044:2f 2074:34 2075:35 2076:36 2077:37 2078:38 2081:30 2084:34 2085:35
+    2086:36 2087:37 2088:38 2089:39 2102:43 2107:45 210a:67 210b:48 210c:48 210d:48
+    210e:68 2110:49 2111:49 2112:4c 2113:6c 2115:4e 2118:50 2119:50 211a:51 211b:52
+    211c:52 211d:52 2124:5a 2128:5a 212a:4b 212c:42 212d:43 212e:65 212f:65 2130:45
+    2131:46 2133:4d 2134:6f 2191:5e 2193:76 2194:2d 2195:7c 21a8:7c 2212:2d 2215:2f
+    2216:5c 2217:2a 221f:4c 2223:7c 2236:3a 223c:7e 2303:5e 2329:3c 232a:3e 2502:2d
+    250c:2d 2514:4c 2518:2d 251c:2b 2524:2b 252c:54 2534:2b 253c:2b 2550:3d 2554:2d
+    255a:4c 255d:2d 2566:54 256c:2b 2580:2d 2584:2d 2588:2d 2591:2d 2592:2d 2593:2d
+    25ac:2d 25b2:5e 25ba:3e 25c4:3c 25cb:30 25d9:30 263a:4f 263b:4f 263c:30 2640:2b
+    2642:3e 266a:64 266b:64 2758:7c 3000:20 3008:3c 3009:3e 301a:5b 301b:3d 301d:22
+    301e:22 ff01:21 ff02:22 ff03:23 ff04:24 ff05:25 ff06:26 ff07:27 ff08:28 ff09:29
+    ff0a:2a ff0b:2b ff0c:2c ff0d:2d ff0e:2e ff0f:2f ff10:30 ff11:31 ff12:32 ff13:33
+    ff14:34 ff15:35 ff16:36 ff17:37 ff18:38 ff19:39 ff1a:3a ff1b:3b ff1c:3c ff1d:3d
+    ff1e:3e ff20:40 ff21:41 ff22:42 ff23:43 ff24:44 ff25:45 ff26:46 ff27:47 ff28:48
+    ff29:49 ff2a:4a ff2b:4b ff2c:4c ff2d:4d ff2e:4e ff2f:4f ff30:50 ff31:51 ff32:52
+    ff33:53 ff34:54 ff35:55 ff36:56 ff37:57 ff38:58 ff39:59 ff3a:5a ff3b:5b ff3c:5c
+    ff3d:5d ff3e:5e ff3f:5f ff40:60 ff41:61 ff42:62 ff43:63 ff44:64 ff45:65 ff46:66
+    ff47:67 ff48:68 ff49:69 ff4a:6a ff4b:6b ff4c:6c ff4d:6d ff4e:6e ff4f:6f ff50:70
+    ff51:71 ff52:72 ff53:73 ff54:74 ff55:75 ff56:76 ff57:77 ff58:78 ff59:79 ff5a:7a
+    ff5b:7b ff5c:7c ff5d:7d ff5e:7e \r\n\r\n1255  (ANSI - Hebrew)\r\n0191:46 ff01:21
+    ff02:22 ff03:23 ff04:24 ff05:25 ff06:26 ff07:27 ff08:28 ff09:29 ff0a:2a ff0b:2b
+    ff0c:2c ff0d:2d ff0e:2e ff0f:2f ff10:30 ff11:31 ff12:32 ff13:33 ff14:34 ff15:35
+    ff16:36 ff17:37 ff18:38 ff19:39 ff1a:3a ff1b:3b ff1c:3c ff1d:3d ff1e:3e ff20:40
+    ff21:41 ff22:42 ff23:43 ff24:44 ff25:45 ff26:46 ff27:47 ff28:48 ff29:49 ff2a:4a
+    ff2b:4b ff2c:4c ff2d:4d ff2e:4e ff2f:4f ff30:50 ff31:51 ff32:52 ff33:53 ff34:54
+    ff35:55 ff36:56 ff37:57 ff38:58 ff39:59 ff3a:5a ff3b:5b ff3c:5c ff3d:5d ff3e:5e
+    ff3f:5f ff40:60 ff41:61 ff42:62 ff43:63 ff44:64 ff45:65 ff46:66 ff47:67 ff48:68
+    ff49:69 ff4a:6a ff4b:6b ff4c:6c ff4d:6d ff4e:6e ff4f:6f ff50:70 ff51:71 ff52:72
+    ff53:73 ff54:74 ff55:75 ff56:76 ff57:77 ff58:78 ff59:79 ff5a:7a ff5b:7b ff5c:7c
+    ff5d:7d ff5e:7e \r\n\r\n1256  (ANSI - Arabic)\r\n0620:41 0621:41 0622:43 0623:45
+    0624:45 0625:45 0626:45 0627:49 0628:49 0629:4f 062a:55 062b:55 062c:55 062d:46
+    062e:43 062f:44 0630:45 0631:46 0632:47 0633:48 0634:49 0635:4a 0636:4b 0637:4c
+    0638:4d 0639:4e 063a:4f 0641:41 0642:42 0643:43 0644:44 0645:45 0646:46 0647:47
+    0648:48 0649:49 064a:4a 064b:4b 064c:4c 064d:4d 064e:4e 064f:4f 0650:50 0651:51
+    0652:52 \r\n\r\n1257  (ANSI - Baltic)\r\nff01:21 ff02:22 ff03:23 ff04:24 ff05:25
+    ff06:26 ff07:27 ff08:28 ff09:29 ff0a:2a ff0b:2b ff0c:2c ff0d:2d ff0e:2e ff0f:2f
+    ff10:30 ff11:31 ff12:32 ff13:33 ff14:34 ff15:35 ff16:36 ff17:37 ff18:38 ff19:39
+    ff1a:3a ff1b:3b ff1c:3c ff1d:3d ff1e:3e ff20:40 ff21:41 ff22:42 ff23:43 ff24:44
+    ff25:45 ff26:46 ff27:47 ff28:48 ff29:49 ff2a:4a ff2b:4b ff2c:4c ff2d:4d ff2e:4e
+    ff2f:4f ff30:50 ff31:51 ff32:52 ff33:53 ff34:54 ff35:55 ff36:56 ff37:57 ff38:58
+    ff39:59 ff3a:5a ff3b:5b ff3c:5c ff3d:5d ff3e:5e ff3f:5f ff40:60 ff41:61 ff42:62
+    ff43:63 ff44:64 ff45:65 ff46:66 ff47:67 ff48:68 ff49:69 ff4a:6a ff4b:6b ff4c:6c
+    ff4d:6d ff4e:6e ff4f:6f ff50:70 ff51:71 ff52:72 ff53:73 ff54:74 ff55:75 ff56:76
+    ff57:77 ff58:78 ff59:79 ff5a:7a ff5b:7b ff5c:7c ff5d:7d ff5e:7e \r\n\r\n1258  (ANSI/OEM
+    - Viet Nam)\r\nff01:21 ff02:22 ff03:23 ff04:24 ff05:25 ff06:26 ff07:27 ff08:28
+    ff09:29 ff0a:2a ff0b:2b ff0c:2c ff0d:2d ff0e:2e ff0f:2f ff10:30 ff11:31 ff12:32
+    ff13:33 ff14:34 ff15:35 ff16:36 ff17:37 ff18:38 ff19:39 ff1a:3a ff1b:3b ff1c:3c
+    ff1d:3d ff1e:3e ff20:40 ff21:41 ff22:42 ff23:43 ff24:44 ff25:45 ff26:46 ff27:47
+    ff28:48 ff29:49 ff2a:4a ff2b:4b ff2c:4c ff2d:4d ff2e:4e ff2f:4f ff30:50 ff31:51
+    ff32:52 ff33:53 ff34:54 ff35:55 ff36:56 ff37:57 ff38:58 ff39:59 ff3a:5a ff3b:5b
+    ff3c:5c ff3d:5d ff3e:5e ff3f:5f ff40:60 ff41:61 ff42:62 ff43:63 ff44:64 ff45:65
+    ff46:66 ff47:67 ff48:68 ff49:69 ff4a:6a ff4b:6b ff4c:6c ff4d:6d ff4e:6e ff4f:6f
+    ff50:70 ff51:71 ff52:72 ff53:73 ff54:74 ff55:75 ff56:76 ff57:77 ff58:78 ff59:79
+    ff5a:7a ff5b:7b ff5c:7c ff5d:7d ff5e:7e \r\n\r\n20127 (US-ASCII)\r\n00a0:20 00a1:21
+    00a2:63 00a4:24 00a5:59 00a6:7c 00a9:43 00aa:61 00ab:3c 00ad:2d 00ae:52 00b2:32
+    00b3:33 00b7:2e 00b8:2c 00b9:31 00ba:6f 00bb:3e 00c0:41 00c1:41 00c2:41 00c3:41
+    00c4:41 00c5:41 00c6:41 00c7:43 00c8:45 00c9:45 00ca:45 00cb:45 00cc:49 00cd:49
+    00ce:49 00cf:49 00d0:44 00d1:4e 00d2:4f 00d3:4f 00d4:4f 00d5:4f 00d6:4f 00d8:4f
+    00d9:55 00da:55 00db:55 00dc:55 00dd:59 00e0:61 00e1:61 00e2:61 00e3:61 00e4:61
+    00e5:61 00e6:61 00e7:63 00e8:65 00e9:65 00ea:65 00eb:65 00ec:69 00ed:69 00ee:69
+    00ef:69 00f1:6e 00f2:6f 00f3:6f 00f4:6f 00f5:6f 00f6:6f 00f8:6f 00f9:75 00fa:75
+    00fb:75 00fc:75 00fd:79 00ff:79 0100:41 0101:61 0102:41 0103:61 0104:41 0105:61
+    0106:43 0107:63 0108:43 0109:63 010a:43 010b:63 010c:43 010d:63 010e:44 010f:64
+    0110:44 0111:64 0112:45 0113:65 0114:45 0115:65 0116:45 0117:65 0118:45 0119:65
+    011a:45 011b:65 011c:47 011d:67 011e:47 011f:67 0120:47 0121:67 0122:47 0123:67
+    0124:48 0125:68 0126:48 0127:68 0128:49 0129:69 012a:49 012b:69 012c:49 012d:69
+    012e:49 012f:69 0130:49 0131:69 0134:4a 0135:6a 0136:4b 0137:6b 0139:4c 013a:6c
+    013b:4c 013c:6c 013d:4c 013e:6c 0141:4c 0142:6c 0143:4e 0144:6e 0145:4e 0146:6e
+    0147:4e 0148:6e 014c:4f 014d:6f 014e:4f 014f:6f 0150:4f 0151:6f 0152:4f 0153:6f
+    0154:52 0155:72 0156:52 0157:72 0158:52 0159:72 015a:53 015b:73 015c:53 015d:73
+    015e:53 015f:73 0160:53 0161:73 0162:54 0163:74 0164:54 0165:74 0166:54 0167:74
+    0168:55 0169:75 016a:55 016b:75 016c:55 016d:75 016e:55 016f:75 0170:55 0171:75
+    0172:55 0173:75 0174:57 0175:77 0176:59 0177:79 0178:59 0179:5a 017b:5a 017c:7a
+    017d:5a 017e:7a 0180:62 0189:44 0191:46 0192:66 0197:49 019a:6c 019f:4f 01a0:4f
+    01a1:6f 01ab:74 01ae:54 01af:55 01b0:75 01b6:7a 01cd:41 01ce:61 01cf:49 01d0:69
+    01d1:4f 01d2:6f 01d3:55 01d4:75 01d5:55 01d6:75 01d7:55 01d8:75 01d9:55 01da:75
+    01db:55 01dc:75 01de:41 01df:61 01e4:47 01e5:67 01e6:47 01e7:67 01e8:4b 01e9:6b
+    01ea:4f 01eb:6f 01ec:4f 01ed:6f 01f0:6a 0261:67 02b9:27 02ba:22 02bc:27 02c4:5e
+    02c6:5e 02c8:27 02cb:60 02cd:5f 02dc:7e 0300:60 0302:5e 0303:7e 030e:22 0331:5f
+    0332:5f 2000:20 2001:20 2002:20 2003:20 2004:20 2005:20 2006:20 2010:2d 2011:2d
+    2013:2d 2014:2d 2018:27 2019:27 201a:2c 201c:22 201d:22 201e:22 2022:2e 2026:2e
+    2032:27 2035:60 2039:3c 203a:3e 2122:54 ff01:21 ff02:22 ff03:23 ff04:24 ff05:25
+    ff06:26 ff07:27 ff08:28 ff09:29 ff0a:2a ff0b:2b ff0c:2c ff0d:2d ff0e:2e ff0f:2f
+    ff10:30 ff11:31 ff12:32 ff13:33 ff14:34 ff15:35 ff16:36 ff17:37 ff18:38 ff19:39
+    ff1a:3a ff1b:3b ff1c:3c ff1d:3d ff1e:3e ff20:40 ff21:41 ff22:42 ff23:43 ff24:44
+    ff25:45 ff26:46 ff27:47 ff28:48 ff29:49 ff2a:4a ff2b:4b ff2c:4c ff2d:4d ff2e:4e
+    ff2f:4f ff30:50 ff31:51 ff32:52 ff33:53 ff34:54 ff35:55 ff36:56 ff37:57 ff38:58
+    ff39:59 ff3a:5a ff3b:5b ff3c:5c ff3d:5d ff3e:5e ff3f:5f ff40:60 ff41:61 ff42:62
+    ff43:63 ff44:64 ff45:65 ff46:66 ff47:67 ff48:68 ff49:69 ff4a:6a ff4b:6b ff4c:6c
+    ff4d:6d ff4e:6e ff4f:6f ff50:70 ff51:71 ff52:72 ff53:73 ff54:74 ff55:75 ff56:76
+    ff57:77 ff58:78 ff59:79 ff5a:7a ff5b:7b ff5c:7c ff5d:7d ff5e:7e \r\n\r\n20261
+    (T.61)\r\nf8dd:5c f8de:5e f8df:60 f8e0:7b f8fc:7d f8fd:7e f8fe:7f \r\n\r\n20866
+    (Russian - KOI8)\r\n00a7:15 00ab:3c 00ad:2d 00ae:52 00b1:2b 00b6:14 00bb:3e 00c0:41
+    00c1:41 00c2:41 00c3:41 00c4:41 00c5:41 00c7:43 00c8:45 00c9:45 00ca:45 00cb:45
+    00cc:49 00cd:49 00ce:49 00cf:49 00d1:4e 00d2:4f 00d3:4f 00d4:4f 00d5:4f 00d6:4f
+    00d8:4f 00d9:55 00da:55 00db:55 00dc:55 00dd:59 00e0:61 00e1:61 00e2:61 00e3:61
+    00e4:61 00e5:61 00e7:63 00e8:65 00e9:65 00ea:65 00eb:65 00ec:69 00ed:69 00ee:69
+    00ef:69 00f1:6e 00f2:6f 00f3:6f 00f4:6f 00f5:6f 00f6:6f 00f8:6f 00f9:75 00fa:75
+    00fb:75 00fc:75 00fd:79 00ff:79 0100:41 0101:61 0102:41 0103:61 0104:41 0105:61
+    0106:43 0107:63 0108:43 0109:63 010a:43 010b:63 010c:43 010d:63 010e:44 010f:64
+    0110:44 0111:64 0112:45 0113:65 0114:45 0115:65 0116:45 0117:65 0118:45 0119:65
+    011a:45 011b:65 011c:47 011d:67 011e:47 011f:67 0120:47 0121:67 0122:47 0123:67
+    0124:48 0125:68 0126:48 0127:68 0128:49 0129:69 012a:49 012b:69 012c:49 012d:69
+    012e:49 012f:69 0130:49 0134:4a 0135:6a 0136:4b 0137:6b 0139:4c 013a:6c 013b:4c
+    013c:6c 013d:4c 013e:6c 0141:4c 0142:6c 0143:4e 0144:6e 0145:4e 0146:6e 0147:4e
+    0148:6e 014c:4f 014d:6f 014e:4f 014f:6f 0150:4f 0151:6f 0154:52 0155:72 0156:52
+    0157:72 0158:52 0159:72 015a:53 015b:73 015c:53 015d:73 015e:53 015f:73 0160:53
+    0161:73 0162:54 0163:74 0164:54 0165:74 0166:54 0167:74 0168:55 0169:75 016a:55
+    016b:75 016c:55 016d:75 016e:55 016f:75 0170:55 0171:75 0172:55 0173:75 0174:57
+    0175:77 0176:59 0177:79 0178:59 0179:5a 017b:5a 017c:7a 017d:5a 017e:7a 0180:62
+    0197:49 019a:6c 019f:4f 01a0:4f 01a1:6f 01ab:74 01ae:54 01af:55 01b0:75 01cd:41
+    01ce:61 01cf:49 01d0:69 01d1:4f 01d2:6f 01d3:55 01d4:75 01d5:55 01d6:75 01d7:55
+    01d8:75 01d9:55 01da:75 01db:55 01dc:75 01de:41 01df:61 01e4:47 01e5:67 01e6:47
+    01e7:67 01e8:4b 01e9:6b 01ea:4f 01eb:6f 01ec:4f 01ed:6f 01f0:6a 2013:2d 2014:2d
+    2018:27 2019:27 201a:27 201c:22 201d:22 201e:22 2022:07 2026:3a 2030:25 2039:3c
+    203a:3e 203c:13 2122:54 2190:1b 2191:18 2192:1a 2193:19 2194:1d 2195:12 21a8:17
+    221f:1c 2302:7f 25ac:16 25b2:1e 25ba:10 25bc:1f 25c4:11 25cb:09 25d8:08 25d9:0a
+    263a:01 263b:02 263c:0f 2640:0c 2642:0b 2660:06 2663:05 2665:03 2666:04 266a:0d
+    266b:0e \r\n\r\n28591 (ISO 8859-1 Latin I)\r\n0100:41 0101:61 0102:41 0103:61
+    0104:41 0105:61 0106:43 0107:63 0108:43 0109:63 010a:43 010b:63 010c:43 010d:63
+    010e:44 010f:64 0110:44 0111:64 0112:45 0113:65 0114:45 0115:65 0116:45 0117:65
+    0118:45 0119:65 011a:45 011b:65 011c:47 011d:67 011e:47 011f:67 0120:47 0121:67
+    0122:47 0123:67 0124:48 0125:68 0126:48 0127:68 0128:49 0129:69 012a:49 012b:69
+    012c:49 012d:69 012e:49 012f:69 0130:49 0131:69 0134:4a 0135:6a 0136:4b 0137:6b
+    0139:4c 013a:6c 013b:4c 013c:6c 013d:4c 013e:6c 0141:4c 0142:6c 0143:4e 0144:6e
+    0145:4e 0146:6e 0147:4e 0148:6e 014c:4f 014d:6f 014e:4f 014f:6f 0150:4f 0151:6f
+    0152:4f 0153:6f 0154:52 0155:72 0156:52 0157:72 0158:52 0159:72 015a:53 015b:73
+    015c:53 015d:73 015e:53 015f:73 0160:53 0161:73 0162:54 0163:74 0164:54 0165:74
+    0166:54 0167:74 0168:55 0169:75 016a:55 016b:75 016c:55 016d:75 016e:55 016f:75
+    0170:55 0171:75 0172:55 0173:75 0174:57 0175:77 0176:59 0177:79 0178:59 0179:5a
+    017b:5a 017c:7a 017d:5a 017e:7a 0180:62 0189:44 0191:46 0192:66 0197:49 019a:6c
+    019f:4f 01a0:4f 01a1:6f 01ab:74 01ae:54 01af:55 01b0:75 01b6:7a 01cd:41 01ce:61
+    01cf:49 01d0:69 01d1:4f 01d2:6f 01d3:55 01d4:75 01d5:55 01d6:75 01d7:55 01d8:75
+    01d9:55 01da:75 01db:55 01dc:75 01de:41 01df:61 01e4:47 01e5:67 01e6:47 01e7:67
+    01e8:4b 01e9:6b 01ea:4f 01eb:6f 01ec:4f 01ed:6f 01f0:6a 0261:67 02b9:27 02ba:22
+    02bc:27 02c4:5e 02c6:5e 02c8:27 02cb:60 02cd:5f 02dc:7e 0300:60 0302:5e 0303:7e
+    030e:22 0331:5f 0332:5f 2000:20 2001:20 2002:20 2003:20 2004:20 2005:20 2006:20
+    2010:2d 2011:2d 2013:2d 2014:2d 2018:27 2019:27 201a:2c 201c:22 201d:22 201e:22
+    2022:2e 2026:2e 2032:27 2035:60 2039:3c 203a:3e 2122:54 ff01:21 ff02:22 ff03:23
+    ff04:24 ff05:25 ff06:26 ff07:27 ff08:28 ff09:29 ff0a:2a ff0b:2b ff0c:2c ff0d:2d
+    ff0e:2e ff0f:2f ff10:30 ff11:31 ff12:32 ff13:33 ff14:34 ff15:35 ff16:36 ff17:37
+    ff18:38 ff19:39 ff1a:3a ff1b:3b ff1c:3c ff1d:3d ff1e:3e ff20:40 ff21:41 ff22:42
+    ff23:43 ff24:44 ff25:45 ff26:46 ff27:47 ff28:48 ff29:49 ff2a:4a ff2b:4b ff2c:4c
+    ff2d:4d ff2e:4e ff2f:4f ff30:50 ff31:51 ff32:52 ff33:53 ff34:54 ff35:55 ff36:56
+    ff37:57 ff38:58 ff39:59 ff3a:5a ff3b:5b ff3c:5c ff3d:5d ff3e:5e ff3f:5f ff40:60
+    ff41:61 ff42:62 ff43:63 ff44:64 ff45:65 ff46:66 ff47:67 ff48:68 ff49:69 ff4a:6a
+    ff4b:6b ff4c:6c ff4d:6d ff4e:6e ff4f:6f ff50:70 ff51:71 ff52:72 ff53:73 ff54:74
+    ff55:75 ff56:76 ff57:77 ff58:78 ff59:79 ff5a:7a ff5b:7b ff5c:7c ff5d:7d ff5e:7e
+    \r\n\r\n28592 (ISO 8859-2 Central Europe)\r\n00a1:21 00a2:63 00a5:59 00a6:7c 00a9:43
+    00aa:61 00ab:3c 00ae:52 00b2:32 00b3:33 00b7:2e 00b9:31 00ba:6f 00bb:3e 00c0:41
+    00c3:41 00c5:41 00c6:41 00c8:45 00ca:45 00cc:49 00cf:49 00d0:44 00d1:4e 00d2:4f
+    00d5:4f 00d8:4f 00d9:55 00db:55 00e0:61 00e3:61 00e5:61 00e6:61 00e8:65 00ea:65
+    00ec:69 00ef:69 00f1:6e 00f2:6f 00f5:6f 00f8:6f 00f9:75 00fb:75 00ff:79 0100:41
+    0101:61 0108:43 0109:63 010a:43 010b:63 0112:45 0113:65 0114:45 0115:65 0116:45
+    0117:65 011c:47 011d:67 011e:47 011f:67 0120:47 0121:67 0122:47 0123:67 0124:48
+    0125:68 0126:48 0127:68 0128:49 0129:69 012a:49 012b:69 012c:49 012d:69 012e:49
+    012f:69 0130:49 0131:69 0134:4a 0135:6a 0136:4b 0137:6b 013b:4c 013c:6c 0145:4e
+    0146:6e 014c:4f 014d:6f 014e:4f 014f:6f 0152:4f 0153:6f 0156:52 0157:72 015c:53
+    015d:73 0166:54 0167:74 0168:55 0169:75 016a:55 016b:75 016c:55 016d:75 0172:55
+    0173:75 0174:57 0175:77 0176:59 0177:79 0178:59 0180:62 0189:44 0191:46 0192:66
+    0197:49 019a:6c 019f:4f 01a0:4f 01a1:6f 01ab:74 01ae:54 01af:55 01b0:75 01b6:7a
+    01cd:41 01ce:61 01cf:49 01d0:69 01d1:4f 01d2:6f 01d3:55 01d4:75 01d5:55 01d6:75
+    01d7:55 01d8:75 01d9:55 01da:75 01db:55 01dc:75 01de:41 01df:61 01e4:47 01e5:67
+    01e6:47 01e7:67 01e8:4b 01e9:6b 01ea:4f 01eb:6f 01ec:4f 01ed:6f 01f0:6a 0261:67
+    02b9:27 02ba:22 02bc:27 02c4:5e 02c6:5e 02c8:27 02cb:60 02cd:5f 02dc:7e 0300:60
+    0302:5e 0303:7e 030e:22 0331:5f 0332:5f 2000:20 2001:20 2002:20 2003:20 2004:20
+    2005:20 2006:20 2010:2d 2011:2d 2013:2d 2014:2d 2018:27 2019:27 201a:2c 201c:22
+    201d:22 201e:22 2022:2e 2026:2e 2032:27 2035:60 2039:3c 203a:3e 2122:54 ff01:21
+    ff02:22 ff03:23 ff04:24 ff05:25 ff06:26 ff07:27 ff08:28 ff09:29 ff0a:2a ff0b:2b
+    ff0c:2c ff0d:2d ff0e:2e ff0f:2f ff10:30 ff11:31 ff12:32 ff13:33 ff14:34 ff15:35
+    ff16:36 ff17:37 ff18:38 ff19:39 ff1a:3a ff1b:3b ff1c:3c ff1d:3d ff1e:3e ff20:40
+    ff21:41 ff22:42 ff23:43 ff24:44 ff25:45 ff26:46 ff27:47 ff28:48 ff29:49 ff2a:4a
+    ff2b:4b ff2c:4c ff2d:4d ff2e:4e ff2f:4f ff30:50 ff31:51 ff32:52 ff33:53 ff34:54
+    ff35:55 ff36:56 ff37:57 ff38:58 ff39:59 ff3a:5a ff3b:5b ff3c:5c ff3d:5d ff3e:5e
+    ff3f:5f ff40:60 ff41:61 ff42:62 ff43:63 ff44:64 ff45:65 ff46:66 ff47:67 ff48:68
+    ff49:69 ff4a:6a ff4b:6b ff4c:6c ff4d:6d ff4e:6e ff4f:6f ff50:70 ff51:71 ff52:72
+    ff53:73 ff54:74 ff55:75 ff56:76 ff57:77 ff58:78 ff59:79 ff5a:7a ff5b:7b ff5c:7c
+    ff5d:7d ff5e:7e \r\n\r\n28605 (ISO 8859-15 Latin 9)\r\n00a6:7c 0100:41 0101:61
+    0102:41 0103:61 0104:41 0105:61 0106:43 0107:63 0108:43 0109:63 010a:43 010b:63
+    010c:43 010d:63 010e:44 010f:64 0112:45 0113:65 0114:45 0115:65 0116:45 0117:65
+    0118:45 0119:65 011a:45 011b:65 011c:47 011d:67 011e:47 011f:67 0120:47 0121:67
+    0122:47 0123:67 0124:48 0125:68 0126:48 0127:68 0128:49 0129:69 012a:49 012b:69
+    012c:49 012d:69 012e:49 012f:69 0130:49 0131:69 0134:4a 0135:6a 0136:4b 0137:6b
+    0138:6b 0139:4c 013a:6c 013b:4c 013c:6c 013d:4c 013e:6c 0141:4c 0142:6c 0143:4e
+    0144:6e 0145:4e 0146:6e 0147:4e 0148:6e 014a:4e 014b:6e 014c:4f 014d:6f 014e:4f
+    014f:6f 0150:4f 0151:6f 0154:52 0155:72 0156:52 0157:72 0158:52 0159:72 015a:53
+    015b:73 015c:53 015d:73 015e:53 015f:73 0162:54 0163:74 0164:54 0165:74 0166:54
+    0167:74 0168:54 0169:74 016a:55 016b:75 016c:55 016d:75 016e:55 016f:75 0170:55
+    0171:75 0172:55 0173:75 0174:57 0175:77 0176:59 0177:79 0179:5a 017b:5a 017c:7a
+    0180:62 0189:44 0191:46 0192:66 0197:49 019a:6c 019f:4f 01a0:4f 01a1:6f 01ab:74
+    01ae:54 01af:55 01b0:75 01b6:7a 01cd:41 01ce:61 01cf:49 01d0:69 01d1:4f 01d2:6f
+    01d3:55 01d4:75 01d5:55 01d6:75 01d7:55 01d8:75 01d9:55 01da:75 01db:55 01dc:75
+    01de:41 01df:61 01e4:47 01e5:67 01e6:47 01e7:67 01e8:4b 01e9:6b 01ea:4f 01eb:6f
+    01ec:4f 01ed:6f 01f0:6a 0261:67 02b9:27 02ba:22 02bc:27 02c4:5e 02c6:5e 02c8:27
+    02cb:60 02cd:5f 02dc:7e 0300:60 0302:5e 0303:7e 030e:22 0331:5f 0332:5f 2000:20
+    2001:20 2002:20 2003:20 2004:20 2005:20 2006:20 2010:2d 2011:2d 2013:2d 2014:2d
+    2018:27 2019:27 201a:2c 201c:22 201d:22 201e:22 2022:2e 2026:2e 2032:27 2035:60
+    2039:3c 203a:3e 2122:54 ff01:21 ff02:22 ff03:23 ff04:24 ff05:25 ff06:26 ff07:27
+    ff08:28 ff09:29 ff0a:2a ff0b:2b ff0c:2c ff0d:2d ff0e:2e ff0f:2f ff10:30 ff11:31
+    ff12:32 ff13:33 ff14:34 ff15:35 ff16:36 ff17:37 ff18:38 ff19:39 ff1a:3a ff1b:3b
+    ff1c:3c ff1d:3d ff1e:3e ff20:40 ff21:41 ff22:42 ff23:43 ff24:44 ff25:45 ff26:46
+    ff27:47 ff28:48 ff29:49 ff2a:4a ff2b:4b ff2c:4c ff2d:4d ff2e:4e ff2f:4f ff30:50
+    ff31:51 ff32:52 ff33:53 ff34:54 ff35:55 ff36:56 ff37:57 ff38:58 ff39:59 ff3a:5a
+    ff3b:5b ff3c:5c ff3d:5d ff3e:5e ff3f:5f ff40:60 ff41:61 ff42:62 ff43:63 ff44:64
+    ff45:65 ff46:66 ff47:67 ff48:68 ff49:69 ff4a:6a ff4b:6b ff4c:6c ff4d:6d ff4e:6e
+    ff4f:6f ff50:70 ff51:71 ff52:72 ff53:73 ff54:74 ff55:75 ff56:76 ff57:77 ff58:78
+    ff59:79 ff5a:7a ff5b:7b ff5c:7c ff5d:7d ff5e:7e \r\n\r\n37    (IBM EBCDIC - U.S./Canada)\r\n0004:37
+    0005:2d 0006:2e 0007:2f 0008:16 0009:05 000a:25 0014:3c 0015:3d 0016:32 0017:26
+    001a:3f 001b:27 0020:40 0021:5a 0022:7f 0023:7b 0024:5b 0025:6c 0026:50 0027:7d
+    0028:4d 0029:5d 002a:5c 002b:4e 002c:6b 002d:60 002e:4b 002f:61 003a:7a 003b:5e
+    003c:4c 003d:7e 003e:6e 003f:6f 0040:7c 005f:6d 0060:79 007c:4f 007f:07 0080:20
+    0081:21 0082:22 0083:23 0084:24 0085:15 0086:06 0087:17 0088:28 0089:29 008a:2a
+    008b:2b 008c:2c 008d:09 008e:0a 008f:1b 0090:30 0091:31 0092:1a 0093:33 0094:34
+    0095:35 0096:36 0097:08 0098:38 0099:39 009a:3a 009b:3b 009c:04 009d:14 009e:3e
+    00a0:41 00a2:4a 00a6:6a 00ac:5f 00c0:64 00c1:65 00c2:62 00c3:66 00c4:63 00c5:67
+    00c7:68 00c8:74 00c9:71 00ca:72 00cb:73 00cc:78 00cd:75 00ce:76 00cf:77 00d1:69
+    00df:59 00e0:44 00e1:45 00e2:42 00e3:46 00e4:43 00e5:47 00e7:48 00e8:54 00e9:51
+    00ea:52 00eb:53 00ec:58 00ed:55 00ee:56 00ef:57 00f1:49 00f8:70 ff01:5a ff02:7f
+    ff03:7b ff04:5b ff05:6c ff06:50 ff07:7d ff08:4d ff09:5d ff0a:5c ff0b:4e ff0c:6b
+    ff0d:60 ff0e:4b ff0f:61 ff1a:7a ff1b:5e ff1c:4c ff1d:7e ff1e:6e ff20:7c ff3f:6d
+    ff40:79 ff5c:4f \r\n\r\n437   (OEM - United States)\r\n00a4:0f 00a7:15 00a8:22
+    00a9:63 00ad:2d 00ae:72 00af:5f 00b3:33 00b4:27 00b6:14 00b8:2c 00b9:31 00be:5f
+    00c0:41 00c1:41 00c2:41 00c3:41 00c8:45 00ca:45 00cb:45 00cc:49 00cd:49 00ce:49
+    00cf:49 00d0:44 00d2:4f 00d3:4f 00d4:4f 00d5:4f 00d7:78 00d8:4f 00d9:55 00da:55
+    00db:55 00dd:59 00de:5f 00e3:61 00f0:64 00f5:6f 00f8:6f 00fd:79 00fe:5f 0100:41
+    0101:61 0102:41 0103:61 0104:41 0105:61 0106:43 0107:63 0108:43 0109:63 010a:43
+    010b:63 010c:43 010d:63 010e:44 010f:64 0110:44 0111:64 0112:45 0113:65 0114:45
+    0115:65 0116:45 0117:65 0118:45 0119:65 011a:45 011b:65 011c:47 011d:67 011e:47
+    011f:67 0120:47 0121:67 0122:47 0123:67 0124:48 0125:68 0126:48 0127:68 0128:49
+    0129:69 012a:49 012b:69 012c:49 012d:69 012e:49 012f:69 0130:49 0131:69 0134:4a
+    0135:6a 0136:4b 0137:6b 0139:4c 013a:6c 013b:4c 013c:6c 013d:4c 013e:6c 0141:4c
+    0142:6c 0143:4e 0144:6e 0145:4e 0146:6e 0147:4e 0148:6e 014c:4f 014d:6f 014e:4f
+    014f:6f 0150:4f 0151:6f 0152:4f 0153:6f 0154:52 0155:72 0156:52 0157:72 0158:52
+    0159:72 015a:53 015b:73 015c:53 015d:73 015e:53 015f:73 0160:53 0161:73 0162:54
+    0163:74 0164:54 0165:74 0166:54 0167:74 0168:55 0169:75 016a:55 016b:75 016c:55
+    016d:75 016e:55 016f:75 0170:55 0171:75 0172:55 0173:75 0174:57 0175:77 0176:59
+    0177:79 0178:59 0179:5a 017b:5a 017c:7a 017d:5a 017e:7a 0180:62 0189:44 0197:49
+    019a:6c 019f:4f 01a0:4f 01a1:6f 01ab:74 01ae:54 01af:55 01b0:75 01b6:7a 01c0:7c
+    01c3:21 01cd:41 01ce:61 01cf:49 01d0:69 01d1:4f 01d2:6f 01d3:55 01d4:75 01d5:55
+    01d6:75 01d7:55 01d8:75 01d9:55 01da:75 01db:55 01dc:75 01de:41 01df:61 01e4:47
+    01e5:67 01e6:47 01e7:67 01e8:4b 01e9:6b 01ea:4f 01eb:6f 01ec:4f 01ed:6f 01f0:6a
+    0261:67 02b9:27 02ba:22 02bc:27 02c4:5e 02c6:5e 02c8:27 02ca:27 02cb:60 02cd:5f
+    02dc:7e 0300:60 0301:27 0302:5e 0303:7e 0308:22 030e:22 0327:2c 0331:5f 0332:5f
+    037e:3b 04bb:68 0589:3a 066a:25 2000:20 2001:20 2002:20 2003:20 2004:20 2005:20
+    2006:20 2010:2d 2011:2d 2013:2d 2014:2d 2017:5f 2018:60 2019:27 201a:2c 201c:22
+    201d:22 201e:2c 2020:2b 2022:07 2026:2e 2030:25 2032:27 2035:60 2039:3c 203a:3e
+    203c:13 2044:2f 2074:34 2075:35 2076:36 2077:37 2078:38 2080:30 2081:31 2082:32
+    2083:33 2084:34 2085:35 2086:36 2087:37 2088:38 2089:39 20dd:09 2102:43 2107:45
+    210a:67 210b:48 210c:48 210d:48 210e:68 2110:49 2111:49 2112:4c 2113:6c 2115:4e
+    2118:50 2119:50 211a:51 211b:52 211c:52 211d:52 2122:54 2124:5a 2128:5a 212a:4b
+    212c:42 212d:43 212e:65 212f:65 2130:45 2131:46 2133:4d 2134:6f 2190:1b 2191:18
+    2192:1a 2193:19 2194:1d 2195:12 21a8:17 2212:2d 2215:2f 2216:5c 2217:2a 221f:1c
+    2223:7c 2236:3a 223c:7e 2302:7f 2303:5e 2329:3c 232a:3e 25ac:16 25b2:1e 25ba:10
+    25bc:1f 25c4:11 25cb:09 25d8:08 25d9:0a 263a:01 263b:02 263c:0f 2640:0c 2642:0b
+    2660:06 2663:05 2665:03 2666:04 266a:0d 266b:0e 2758:7c 3000:20 3007:09 3008:3c
+    3009:3e 301a:5b 301b:5d ff01:21 ff02:22 ff03:23 ff04:24 ff05:25 ff06:26 ff07:27
+    ff08:28 ff09:29 ff0a:2a ff0b:2b ff0c:2c ff0d:2d ff0e:2e ff0f:2f ff10:30 ff11:31
+    ff12:32 ff13:33 ff14:34 ff15:35 ff16:36 ff17:37 ff18:38 ff19:39 ff1a:3a ff1b:3b
+    ff1c:3c ff1d:3d ff1e:3e ff20:40 ff21:41 ff22:42 ff23:43 ff24:44 ff25:45 ff26:46
+    ff27:47 ff28:48 ff29:49 ff2a:4a ff2b:4b ff2c:4c ff2d:4d ff2e:4e ff2f:4f ff30:50
+    ff31:51 ff32:52 ff33:53 ff34:54 ff35:55 ff36:56 ff37:57 ff38:58 ff39:59 ff3a:5a
+    ff3b:5b ff3c:5c ff3d:5d ff3e:5e ff3f:5f ff40:60 ff41:61 ff42:62 ff43:63 ff44:64
+    ff45:65 ff46:66 ff47:67 ff48:68 ff49:69 ff4a:6a ff4b:6b ff4c:6c ff4d:6d ff4e:6e
+    ff4f:6f ff50:70 ff51:71 ff52:72 ff53:73 ff54:74 ff55:75 ff56:76 ff57:77 ff58:78
+    ff59:79 ff5a:7a ff5b:7b ff5c:7c ff5d:7d ff5e:7e \r\n\r\n500   (IBM EBCDIC - International)\r\n0004:37
+    0005:2d 0006:2e 0007:2f 0008:16 0009:05 000a:25 0014:3c 0015:3d 0016:32 0017:26
+    001a:3f 001b:27 0020:40 0021:4f 0022:7f 0023:7b 0024:5b 0025:6c 0026:50 0027:7d
+    0028:4d 0029:5d 002a:5c 002b:4e 002c:6b 002d:60 002e:4b 002f:61 003a:7a 003b:5e
+    003c:4c 003d:7e 003e:6e 003f:6f 0040:7c 005b:4a 005d:5a 005e:5f 005f:6d 0060:79
+    007f:07 0080:20 0081:21 0082:22 0083:23 0084:24 0085:15 0086:06 0087:17 0088:28
+    0089:29 008a:2a 008b:2b 008c:2c 008d:09 008e:0a 008f:1b 0090:30 0091:31 0092:1a
+    0093:33 0094:34 0095:35 0096:36 0097:08 0098:38 0099:39 009a:3a 009b:3b 009c:04
+    009d:14 009e:3e 00a0:41 00a6:6a 00c0:64 00c1:65 00c2:62 00c3:66 00c4:63 00c5:67
+    00c7:68 00c8:74 00c9:71 00ca:72 00cb:73 00cc:78 00cd:75 00ce:76 00cf:77 00d1:69
+    00df:59 00e0:44 00e1:45 00e2:42 00e3:46 00e4:43 00e5:47 00e7:48 00e8:54 00e9:51
+    00ea:52 00eb:53 00ec:58 00ed:55 00ee:56 00ef:57 00f1:49 00f8:70 ff01:4f ff02:7f
+    ff03:7b ff04:5b ff05:6c ff06:50 ff07:7d ff08:4d ff09:5d ff0a:5c ff0b:4e ff0c:6b
+    ff0d:60 ff0e:4b ff0f:61 ff1a:7a ff1b:5e ff1c:4c ff1d:7e ff1e:6e ff20:7c ff3b:4a
+    ff3d:5a ff3e:5f ff3f:6d ff40:79 \r\n\r\n850   (OEM - Multilingual Latin I)\r\n0100:41
+    0101:61 0102:41 0103:61 0104:41 0105:61 0106:43 0107:63 0108:43 0109:63 010a:43
+    010b:63 010c:43 010d:63 010e:44 010f:64 0110:44 0111:64 0112:45 0113:65 0114:45
+    0115:65 0116:45 0117:65 0118:45 0119:65 011a:45 011b:65 011c:47 011d:67 011e:47
+    011f:67 0120:47 0121:67 0122:47 0123:67 0124:48 0125:68 0126:48 0127:68 0128:49
+    0129:69 012a:49 012b:69 012c:49 012d:69 012e:49 012f:69 0130:49 0134:4a 0135:6a
+    0136:4b 0137:6b 0139:4c 013a:6c 013b:4c 013c:6c 013d:4c 013e:6c 0141:4c 0142:6c
+    0143:4e 0144:6e 0145:4e 0146:6e 0147:4e 0148:6e 014c:4f 014d:6f 014e:4f 014f:6f
+    0150:4f 0151:6f 0152:4f 0153:6f 0154:52 0155:72 0156:52 0157:72 0158:52 0159:72
+    015a:53 015b:73 015c:53 015d:73 015e:53 015f:73 0160:53 0161:73 0162:54 0163:74
+    0164:54 0165:74 0166:54 0167:74 0168:55 0169:75 016a:55 016b:75 016c:55 016d:75
+    016e:55 016f:75 0170:55 0171:75 0172:55 0173:75 0174:57 0175:77 0176:59 0177:79
+    0178:59 0179:5a 017b:5a 017c:7a 017d:5a 017e:7a 0180:62 0189:44 0197:49 019a:6c
+    019f:4f 01a0:4f 01a1:6f 01a9:53 01ab:74 01ae:54 01af:55 01b0:75 01b6:5a 01c3:21
+    01cd:41 01ce:61 01cf:49 01d0:69 01d1:4f 01d2:6f 01d3:55 01d4:75 01d5:55 01d6:75
+    01d7:55 01d8:75 01d9:55 01da:75 01db:55 01dc:75 01de:41 01df:61 01e4:47 01e5:67
+    01e6:47 01e7:67 01e8:4b 01e9:6b 01ea:4f 01eb:6f 01ec:4f 01ed:6f 01f0:6a 0261:67
+    02ba:22 02bc:27 02c4:5e 02c6:5e 02c8:27 02cb:27 02cd:5f 02dc:7e 0300:27 0302:5e
+    0303:7e 030e:22 0331:5f 0332:5f 037e:3b 0393:47 03a3:53 03a6:46 03a9:4f 03b1:61
+    03b4:64 03b5:65 03c0:70 03c3:73 03c4:74 03c6:66 04bb:68 0589:3a 066a:25 2000:20
+    2001:20 2002:20 2003:20 2004:20 2005:20 2006:20 2010:2d 2011:2d 2013:2d 2014:2d
+    2018:27 2019:27 201a:27 201c:22 201d:22 201e:22 2022:07 2024:07 2026:2e 2030:25
+    2039:3c 203a:3e 203c:13 2044:2f 2070:30 2074:34 2075:35 2076:36 2077:37 2078:39
+    207f:6e 2080:30 2084:34 2085:35 2086:36 2087:37 2088:38 2089:39 20a7:50 20dd:4f
+    2102:43 2107:45 210a:67 210b:48 210c:48 210d:48 210e:68 2110:49 2111:49 2112:4c
+    2113:6c 2115:4e 2118:50 2119:50 211a:51 211b:52 211c:52 211d:52 2122:54 2124:5a
+    2126:4f 2128:5a 212a:4b 212c:42 212d:43 212e:65 212f:65 2130:45 2131:46 2133:4d
+    2134:6f 2190:1b 2191:18 2192:1a 2193:19 2194:1d 2195:12 21a8:17 2211:53 2212:2d
+    2215:2f 2216:2f 2217:2a 2219:07 221a:56 221e:38 221f:1c 2229:6e 2236:3a 223c:7e
+    2248:7e 2261:3d 2264:3d 2265:3d 2302:7f 2303:5e 2320:28 2321:29 2329:3c 232a:3e
+    25ac:16 25b2:1e 25ba:10 25bc:1f 25c4:11 25cb:09 25d8:08 25d9:0a 263a:01 263b:02
+    263c:0f 2640:0c 2642:0b 2660:06 2663:05 2665:03 2666:04 266a:0d 266b:0e 2713:56
+    3000:20 3007:4f 3008:3c 3009:3e 301a:5b 301b:5d ff01:21 ff02:22 ff03:23 ff04:24
+    ff05:25 ff06:26 ff07:27 ff08:28 ff09:29 ff0a:2a ff0b:2b ff0c:2c ff0d:2d ff0e:2e
+    ff0f:2f ff10:30 ff11:31 ff12:32 ff13:33 ff14:34 ff15:35 ff16:36 ff17:37 ff18:38
+    ff19:39 ff1a:3a ff1b:3b ff1c:3c ff1d:3d ff1e:3e ff20:40 ff21:41 ff22:42 ff23:43
+    ff24:44 ff25:45 ff26:46 ff27:47 ff28:48 ff29:49 ff2a:4a ff2b:4b ff2c:4c ff2d:4d
+    ff2e:4e ff2f:4f ff30:50 ff31:51 ff32:52 ff33:53 ff34:54 ff35:55 ff36:56 ff37:57
+    ff38:58 ff39:59 ff3a:5a ff3b:5b ff3c:5c ff3d:5d ff3e:5e ff3f:5f ff40:60 ff41:61
+    ff42:62 ff43:63 ff44:64 ff45:65 ff46:66 ff47:67 ff48:68 ff49:69 ff4a:6a ff4b:6b
+    ff4c:6c ff4d:6d ff4e:6e ff4f:6f ff50:70 ff51:71 ff52:72 ff53:73 ff54:74 ff55:75
+    ff56:76 ff57:77 ff58:78 ff59:79 ff5a:7a ff5b:7b ff5c:7c ff5d:7d ff5e:7e \r\n\r\n860
+    \  (OEM - Portuguese)\r\n00a4:0f 00a5:59 00a7:15 00a8:22 00a9:63 00ad:5f 00ae:72
+    00af:16 00b3:33 00b4:2f 00b6:14 00b8:2c 00b9:31 00be:33 00c4:41 00c5:41 00c6:41
+    00cb:45 00ce:49 00cf:49 00d0:44 00d6:4f 00d7:58 00d8:4f 00db:55 00dd:59 00de:54
+    00e4:61 00e5:61 00e6:61 00eb:65 00ee:69 00ef:69 00f0:64 00f6:6f 00f8:6f 00fb:75
+    00fd:79 00fe:74 00ff:79 0100:41 0101:61 0102:41 0103:61 0104:41 0105:61 0106:43
+    0107:63 0108:43 0109:63 010a:43 010b:63 010c:43 010d:63 010e:44 010f:64 0110:44
+    0111:64 0112:45 0113:65 0114:45 0115:65 0116:45 0117:65 0118:45 0119:65 011a:45
+    011b:65 011c:47 011d:67 011e:47 011f:67 0120:47 0121:67 0122:47 0123:67 0124:48
+    0125:68 0126:48 0127:68 0128:49 0129:69 012a:49 012b:69 012c:49 012d:69 012e:49
+    012f:69 0130:49 0131:69 0134:4a 0135:6a 0136:4b 0137:6b 0139:4c 013a:6c 013b:4c
+    013c:6c 013d:4c 013e:6c 0141:4c 0142:6c 0143:4e 0144:6e 0145:4e 0146:6e 0147:4e
+    0148:6e 014c:4f 014d:6f 014e:4f 014f:6f 0150:4f 0151:6f 0152:4f 0153:6f 0154:52
+    0155:72 0156:52 0157:72 0158:52 0159:72 015a:53 015b:73 015c:53 015d:73 015e:53
+    015f:73 0160:5c 0161:7c 0162:54 0163:74 0164:54 0165:74 0166:54 0167:74 0168:55
+    0169:75 016a:55 016b:75 016c:55 016d:75 016e:55 016f:75 0170:55 0171:75 0172:55
+    0173:75 0174:57 0175:77 0176:59 0177:79 0178:59 0179:5a 017b:5a 017c:7a 017d:5a
+    017e:7a 0180:62 0189:44 0191:46 0192:66 0197:49 019a:6c 019f:4f 01a0:4f 01a1:6f
+    01ab:74 01ae:54 01af:55 01b0:75 01b6:7a 01c0:7c 01c3:21 01cd:41 01ce:61 01cf:49
+    01d0:69 01d1:4f 01d2:6f 01d3:55 01d4:75 01d5:55 01d6:75 01d7:55 01d8:75 01d9:55
+    01da:75 01db:55 01dc:75 01de:41 01df:61 01e4:47 01e5:67 01e6:47 01e7:67 01e8:4b
+    01e9:6b 01ea:4f 01eb:6f 01ec:4f 01ed:6f 01f0:6a 0261:67 0278:66 02b9:27 02ba:22
+    02bc:27 02c4:5e 02c6:5e 02c8:27 02c9:16 02ca:2f 02cb:60 02cd:5f 02dc:7e 0300:60
+    0301:2f 0302:5e 0303:7e 0304:16 0305:16 0308:22 030e:22 0327:2c 0331:5f 0332:5f
+    037e:3b 04bb:68 0589:3a 066a:25 2000:20 2001:20 2002:20 2003:20 2004:20 2005:20
+    2006:20 2010:5f 2011:5f 2013:5f 2014:5f 2017:5f 2018:27 2019:27 201a:2c 201c:22
+    201d:22 201e:22 2022:07 2024:07 2026:2e 2030:25 2032:27 2035:60 2039:3c 203a:3e
+    203c:13 2044:2f 2070:30 2074:34 2075:35 2076:36 2077:37 2078:38 2080:30 2081:31
+    2083:33 2084:34 2085:35 2086:36 2087:37 2088:38 2089:39 20dd:4f 2102:43 2107:45
+    210a:67 210b:48 210c:48 210d:48 210e:68 2110:49 2111:49 2112:4c 2113:6c 2115:4e
+    2118:70 2119:50 211a:51 211b:52 211c:52 211d:52 2122:74 2124:5a 2128:5a 212a:4b
+    212b:41 212c:42 212d:43 212e:65 212f:65 2130:45 2131:46 2133:4d 2134:6f 2190:1b
+    2191:18 2192:1a 2193:19 2194:1d 2195:12 21a8:17 2205:4f 2212:5f 2215:2f 2216:5c
+    2217:2a 221f:1c 2223:7c 2236:3a 223c:7e 22c5:07 2302:7f 2303:5e 2329:3c 232a:3e
+    25ac:16 25b2:1e 25ba:10 25bc:1f 25c4:11 25cb:09 25d8:08 25d9:0a 263a:01 263b:02
+    263c:0f 2640:0c 2642:0b 2660:06 2663:05 2665:03 2666:04 266a:0d 266b:0e 3000:20
+    3007:4f 3008:3c 3009:3e 301a:5b 301b:5d 30fb:07 \r\n\r\n861   (OEM - Icelandic)\r\n00a2:63
+    00a4:0f 00a5:59 00a7:15 00a8:22 00a9:63 00aa:61 00ad:5f 00ae:72 00af:16 00b3:33
+    00b4:2f 00b6:14 00b8:2c 00b9:31 00ba:6f 00be:33 00c0:41 00c2:41 00c3:41 00c8:45
+    00ca:45 00cb:45 00cc:49 00ce:49 00cf:49 00d1:4e 00d2:4f 00d4:4f 00d5:4f 00d7:58
+    00d9:55 00db:55 00e3:61 00ec:69 00ee:69 00ef:69 00f1:6e 00f2:6f 00f5:6f 00f9:75
+    00ff:79 0100:41 0101:61 0102:41 0103:61 0104:41 0105:61 0106:43 0107:63 0108:43
+    0109:63 010a:43 010b:63 010c:43 010d:63 010e:44 010f:64 0111:64 0112:45 0113:65
+    0114:45 0115:65 0116:45 0117:65 0118:45 0119:65 011a:45 011b:65 011c:47 011d:67
+    011e:47 011f:67 0120:47 0121:67 0122:47 0123:67 0124:48 0125:68 0126:48 0127:68
+    0128:49 0129:69 012a:49 012b:69 012c:49 012d:69 012e:49 012f:69 0130:49 0131:69
+    0134:4a 0135:6a 0136:4b 0137:6b 0139:4c 013a:6c 013b:4c 013c:6c 013d:4c 013e:6c
+    0141:4c 0142:6c 0143:4e 0144:6e 0145:4e 0146:6e 0147:4e 0148:6e 014c:4f 014d:6f
+    014e:4f 014f:6f 0150:4f 0151:6f 0152:4f 0153:6f 0154:52 0155:72 0156:52 0157:72
+    0158:52 0159:72 015a:53 015b:73 015c:53 015d:73 015e:53 015f:73 0160:53 0161:73
+    0162:54 0163:74 0164:54 0165:74 0166:54 0167:74 0168:55 0169:75 016a:55 016b:75
+    016c:55 016d:75 016e:55 016f:75 0170:55 0171:75 0172:55 0173:75 0174:57 0175:77
+    0176:59 0177:79 0178:59 0179:5a 017b:5a 017c:7a 017d:5a 017e:7a 0180:62 0197:49
+    019a:6c 019f:4f 01a0:4f 01a1:6f 01ab:74 01ae:54 01af:55 01b0:75 01b6:7a 01c3:21
+    01cd:41 01ce:61 01cf:49 01d0:69 01d1:4f 01d2:6f 01d3:55 01d4:75 01d5:55 01d6:75
+    01d7:55 01d8:75 01d9:55 01da:75 01db:55 01dc:75 01de:41 01df:61 01e4:47 01e5:67
+    01e6:47 01e7:67 01e8:4b 01e9:6b 01ea:4f 01eb:6f 01ec:4f 01ed:6f 01f0:6a 0261:67
+    0278:66 02b9:27 02ba:22 02bc:27 02c4:5e 02c6:5e 02c8:27 02c9:16 02ca:2f 02cb:60
+    02cd:5f 02dc:7e 0300:60 0301:2f 0302:5e 0303:7e 0304:16 0305:16 0308:22 030e:22
+    0327:2c 0331:5f 0332:5f 037e:3b 04bb:68 0589:3a 066a:25 2000:20 2001:20 2002:20
+    2003:20 2004:20 2005:20 2006:20 2010:2d 2011:2d 2013:2d 2014:2d 2017:5f 2018:27
+    2019:27 201a:27 201c:22 201d:22 201e:22 2022:07 2024:07 2026:07 2030:25 2032:27
+    2035:27 2039:3c 203a:3e 203c:13 2044:2f 2070:30 2074:34 2075:35 2076:36 2077:37
+    2078:38 2080:30 2081:31 2083:33 2084:34 2085:35 2086:36 2087:37 2088:38 2089:39
+    20dd:4f 2102:43 2107:45 210a:67 210b:48 210c:48 210d:48 210e:68 2110:49 2111:49
+    2112:4c 2113:6c 2115:4e 2118:70 2119:50 211a:51 211b:52 211c:52 211d:52 2122:74
+    2124:5a 2128:5a 212a:4b 212c:42 212d:43 212e:65 212f:65 2130:45 2131:46 2133:4d
+    2134:6f 2190:1b 2191:18 2192:1a 2193:19 2194:1d 2195:12 21a8:17 2205:4f 2212:5f
+    2215:2f 2216:5c 2217:2a 221f:1c 2223:7c 2236:3a 223c:7e 22c5:07 2302:7f 2303:5e
+    2329:3c 232a:3e 25ac:16 25b2:1e 25ba:10 25bc:1f 25c4:11 25cb:09 25d8:08 25d9:0a
+    263a:01 263b:02 263c:0f 2640:0c 2642:0b 2660:06 2663:05 2665:03 2666:04 266a:0d
+    266b:0e 3000:20 3007:4f 3008:3c 3009:3e 301a:5b 301b:5d 30fb:07 \r\n\r\n863   (OEM
+    - Canadian French)\r\n00a1:21 00a5:59 00a9:63 00aa:61 00ad:16 00ae:72 00b9:33
+    00ba:6f 00c1:41 00c3:41 00c4:41 00c5:41 00c6:41 00cc:49 00cd:49 00d0:44 00d1:4e
+    00d2:4f 00d3:4f 00d5:4f 00d6:4f 00d7:58 00d8:4f 00da:55 00dd:59 00de:54 00e1:61
+    00e3:61 00e4:61 00e5:61 00e6:61 00ec:69 00ed:69 00f0:64 00f1:6e 00f2:6f 00f5:6f
+    00f6:6f 00f8:6f 00fd:79 00fe:74 00ff:79 0100:41 0101:61 0102:41 0103:61 0104:41
+    0105:61 0106:43 0107:63 0108:43 0109:63 010a:43 010b:63 010c:43 010d:63 010e:44
+    010f:64 0110:44 0111:64 0112:45 0113:65 0114:45 0115:65 0116:45 0117:65 0118:45
+    0119:65 011a:45 011b:65 011c:47 011d:67 011e:47 011f:67 0120:47 0121:67 0122:47
+    0123:67 0124:48 0125:68 0126:48 0127:68 0128:49 0129:69 012a:49 012b:69 012c:49
+    012d:69 012e:49 012f:69 0130:49 0131:69 0134:4a 0135:6a 0136:4b 0137:6b 0139:4c
+    013a:6c 013b:4c 013c:6c 013d:4c 013e:6c 0141:4c 0142:6c 0143:4e 0144:6e 0145:4e
+    0146:6e 0147:4e 0148:6e 014c:4f 014d:6f 014e:4f 014f:6f 0150:4f 0151:6f 0152:4f
+    0153:6f 0154:52 0155:72 0156:52 0157:72 0158:52 0159:72 015a:53 015b:73 015c:53
+    015d:73 015e:53 015f:73 0160:53 0161:73 0162:54 0163:74 0164:54 0165:74 0166:54
+    0167:74 0168:55 0169:75 016a:55 016b:75 016c:55 016d:75 016e:55 016f:75 0170:55
+    0171:75 0172:55 0173:75 0174:57 0175:77 0176:59 0177:79 0178:59 0179:5a 017b:5a
+    017c:7a 017d:5a 017e:7a 0180:62 0189:44 0197:49 019a:6c 019f:4f 01a0:4f 01a1:6f
+    01ab:74 01ae:54 01af:55 01b0:75 01b6:7a 01c3:21 01cd:41 01ce:61 01cf:49 01d0:69
+    01d1:4f 01d2:6f 01d3:55 01d4:75 01d5:55 01d6:75 01d7:55 01d8:75 01d9:55 01da:75
+    01db:55 01dc:75 01de:41 01df:61 01e4:47 01e5:67 01e6:47 01e7:67 01e8:4b 01e9:6b
+    01ea:4f 01eb:6f 01ec:4f 01ed:6f 01f0:6a 0261:67 02b9:22 02ba:27 02bc:27 02c4:5e
+    02c6:5e 02c8:27 02c9:16 02cb:60 02cd:5f 02dc:7e 0300:60 0302:5e 0303:7e 0304:16
+    0305:16 0331:5f 0332:5f 037e:3b 04bb:68 0589:3a 066a:25 2000:20 2001:20 2002:20
+    2003:20 2004:20 2005:20 2006:20 2010:2d 2011:2d 2013:2d 2014:2d 2018:27 2019:27
+    201a:27 201c:22 201d:22 201e:22 2022:07 2024:07 2026:07 2030:25 2032:27 2035:27
+    2039:3c 203a:3e 203c:13 2044:2f 2070:30 2074:34 2075:35 2076:36 2077:37 2078:38
+    2080:30 2081:31 2084:34 2085:35 2086:36 2087:37 2088:38 2089:39 20a7:50 20dd:4f
+    2102:43 2107:45 210a:67 210b:48 210c:48 210d:48 210e:68 2110:49 2111:49 2112:4c
+    2113:6c 2115:4e 2118:70 2119:50 211a:51 211b:52 211c:52 211d:52 2122:74 2124:5a
+    2128:5a 212a:4b 212b:41 212c:42 212d:43 212e:65 212f:65 2130:45 2131:46 2133:4d
+    2134:6f 2190:1b 2191:18 2192:1a 2193:19 2194:1d 2195:12 21a8:17 2205:4f 2212:5f
+    2215:2f 2216:5c 2217:2a 221f:1c 2223:7c 2236:3a 223c:7e 22c5:07 2302:7f 2303:5e
+    2329:3c 232a:3e 25ac:16 25b2:1e 25ba:10 25bc:1f 25c4:11 25cb:09 25d8:08 25d9:0a
+    263a:01 263b:02 263c:0f 2640:0c 2642:0b 2660:06 2663:05 2665:03 2666:04 266a:0d
+    266b:0e 3000:20 3007:4f 3008:3c 3009:3e 301a:5b 301b:5d 30fb:07 \r\n\r\n865   (OEM
+    - Nordic)\r\n00a2:63 00a5:59 00a7:15 00a8:22 00a9:63 00ad:5f 00ae:72 00af:16 00b3:33
+    00b4:2f 00b6:14 00b8:2c 00b9:31 00bb:3e 00be:33 00c0:41 00c1:41 00c2:41 00c3:41
+    00c8:45 00ca:45 00cb:45 00cc:49 00cd:49 00ce:49 00cf:49 00d0:44 00d2:4f 00d3:4f
+    00d4:4f 00d5:4f 00d7:58 00d9:55 00da:55 00db:55 00dd:59 00de:54 00e3:61 00f0:64
+    00f5:6f 00fd:79 00fe:74 0100:41 0101:61 0102:41 0103:61 0104:41 0105:61 0106:43
+    0107:63 0108:43 0109:63 010a:43 010b:63 010c:43 010d:63 010e:44 010f:64 0110:44
+    0111:64 0112:45 0113:65 0114:45 0115:65 0116:45 0117:65 0118:45 0119:65 011a:45
+    011b:65 011c:47 011d:67 011e:47 011f:67 0120:47 0121:67 0122:47 0123:67 0124:48
+    0125:68 0126:48 0127:68 0128:49 0129:69 012a:49 012b:69 012c:49 012d:69 012e:49
+    012f:69 0130:49 0131:69 0134:4a 0135:6a 0136:4b 0137:6b 0139:4c 013a:6c 013b:4c
+    013c:6c 013d:4c 013e:6c 0141:4c 0142:6c 0143:4e 0144:6e 0145:4e 0146:6e 0147:4e
+    0148:6e 014c:4f 014d:6f 014e:4f 014f:6f 0150:4f 0151:6f 0152:4f 0153:6f 0154:52
+    0155:72 0156:52 0157:72 0158:52 0159:72 015a:53 015b:73 015c:53 015d:73 015e:53
+    015f:73 0160:53 0161:73 0162:54 0163:74 0164:54 0165:74 0166:54 0167:74 0168:55
+    0169:75 016a:55 016b:75 016c:55 016d:75 016e:55 016f:75 0170:55 0171:75 0172:55
+    0173:75 0174:57 0175:77 0176:59 0177:79 0178:59 0179:5a 017b:5a 017c:7a 017d:5a
+    017e:7a 0180:62 0189:44 0197:49 019a:6c 019f:4f 01a0:4f 01a1:6f 01ab:74 01ae:54
+    01af:55 01b0:75 01b6:7a 01c3:21 01cd:41 01ce:61 01cf:49 01d0:69 01d1:4f 01d2:6f
+    01d3:55 01d4:75 01d5:55 01d6:75 01d7:55 01d8:75 01d9:55 01da:75 01db:55 01dc:75
+    01de:41 01df:61 01e4:47 01e5:67 01e6:47 01e7:67 01e8:4b 01e9:6b 01ea:4f 01eb:6f
+    01ec:4f 01ed:6f 01f0:6a 0261:67 02b9:27 02ba:22 02bc:27 02c4:5e 02c6:5e 02c8:27
+    02c9:16 02ca:2f 02cb:60 02cd:5f 02dc:7e 0300:60 0301:2f 0302:5e 0303:7e 0304:16
+    0305:16 0308:22 030e:22 0327:2c 0331:5f 0332:5f 037e:3b 04bb:68 0589:3a 066a:25
+    2000:20 2001:20 2002:20 2003:20 2004:20 2005:20 2006:20 2010:2d 2011:2d 2013:2d
+    2014:2d 2017:5f 2018:27 2019:27 201a:27 201c:22 201d:22 201e:22 2022:07 2024:07
+    2026:07 2030:25 2032:27 2035:27 2039:3c 203a:3e 203c:13 2044:2f 2070:30 2074:34
+    2075:35 2076:36 2077:37 2078:38 2080:30 2081:31 2083:33 2084:34 2085:35 2086:36
+    2087:37 2088:38 2089:39 20dd:4f 2102:43 2107:45 210a:67 210b:48 210c:48 210d:48
+    210e:68 2110:49 2111:49 2112:4c 2113:6c 2115:4e 2118:70 2119:50 211a:51 211b:52
+    211c:52 211d:52 2122:74 2124:5a 2128:5a 212a:4b 212c:42 212d:43 212e:65 212f:65
+    2130:45 2131:46 2133:4d 2134:6f 2190:1b 2191:18 2192:1a 2193:19 2194:1d 2195:12
+    21a8:17 2205:4f 2212:5f 2215:2f 2216:5c 2217:2a 221f:1c 2223:7c 2236:3a 223c:7e
+    226b:3c 22c5:07 2302:7f 2303:5e 2329:3c 232a:3e 25ac:16 25b2:1e 25ba:10 25bc:1f
+    25c4:11 25cb:09 25d8:08 25d9:0a 263a:01 263b:02 263c:0f 2640:0c 2642:0b 2660:06
+    2663:05 2665:03 2666:04 266a:0d 266b:0e 3000:20 3007:4f 3008:3c 3009:3e 300b:3e
+    301a:5b 301b:5d 30fb:07 \r\n\r\n874   (ANSI/OEM - Thai)\r\n00a7:15 00b6:14 203c:13
+    2190:1b 2191:18 2192:1a 2193:19 2194:1d 2195:12 21a8:17 221f:1c 2302:7f 25ac:16
+    25b2:1e 25ba:10 25bc:1f 25c4:11 25cb:09 25d8:08 25d9:0a 263a:01 263b:02 263c:0f
+    2640:0c 2642:0b 2660:06 2663:05 2665:03 2666:04 266a:0d 266b:0e ff01:21 ff02:22
+    ff03:23 ff04:24 ff05:25 ff06:26 ff07:27 ff08:28 ff09:29 ff0a:2a ff0b:2b ff0c:2c
+    ff0d:2d ff0e:2e ff0f:2f ff10:30 ff11:31 ff12:32 ff13:33 ff14:34 ff15:35 ff16:36
+    ff17:37 ff18:38 ff19:39 ff1a:3a ff1b:3b ff1c:3c ff1d:3d ff1e:3e ff20:40 ff21:41
+    ff22:42 ff23:43 ff24:44 ff25:45 ff26:46 ff27:47 ff28:48 ff29:49 ff2a:4a ff2b:4b
+    ff2c:4c ff2d:4d ff2e:4e ff2f:4f ff30:50 ff31:51 ff32:52 ff33:53 ff34:54 ff35:55
+    ff36:56 ff37:57 ff38:58 ff39:59 ff3a:5a ff3b:5b ff3c:5c ff3d:5d ff3e:5e ff3f:5f
+    ff40:60 ff41:61 ff42:62 ff43:63 ff44:64 ff45:65 ff46:66 ff47:67 ff48:68 ff49:69
+    ff4a:6a ff4b:6b ff4c:6c ff4d:6d ff4e:6e ff4f:6f ff50:70 ff51:71 ff52:72 ff53:73
+    ff54:74 ff55:75 ff56:76 ff57:77 ff58:78 ff59:79 ff5a:7a ff5b:7b ff5c:7c ff5d:7d
+    ff5e:7e \r\n\r\n932   (ANSI/OEM - Japanese Shift-JIS)\r\n00a1:21 00a5:5c 00a6:7c
+    00a9:63 00aa:61 00ad:2d 00ae:52 00b2:32 00b3:33 00b9:31 00ba:6f 00c0:41 00c1:41
+    00c2:41 00c3:41 00c4:41 00c5:41 00c6:41 00c7:43 00c8:45 00c9:45 00ca:45 00cb:45
+    00cc:49 00cd:49 00ce:49 00cf:49 00d0:44 00d1:4e 00d2:4f 00d3:4f 00d4:4f 00d5:4f
+    00d6:4f 00d8:4f 00d9:55 00da:55 00db:55 00dc:55 00dd:59 00de:54 00df:73 00e0:61
+    00e1:61 00e2:61 00e3:61 00e4:61 00e5:61 00e6:61 00e7:63 00e8:65 00e9:65 00ea:65
+    00eb:65 00ec:69 00ed:69 00ee:69 00ef:69 00f0:64 00f1:6e 00f2:6f 00f3:6f 00f4:6f
+    00f5:6f 00f6:6f 00f8:6f 00f9:75 00fa:75 00fb:75 00fc:75 00fd:79 00fe:74 00ff:79
+    \r\n\r\n936   (ANSI/OEM - Simplified Chinese GBK)\r\n00a6:7c 00aa:61 00ad:2d 00b2:32
+    00b3:33 00b9:31 00ba:6f 00d0:44 00dd:59 00de:54 00e2:61 00f0:65 00fd:79 00fe:74
+    \r\n\r\n949   (ANSI/OEM - Korean)\r\n00a6:7c 00c0:41 00c1:41 00c2:41 00c3:41 00c4:41
+    00c5:41 00c7:43 00c8:45 00c9:45 00ca:45 00cb:45 00cc:49 00cd:49 00ce:49 00cf:49
+    00d1:4e 00d2:4f 00d3:4f 00d4:4f 00d5:4f 00d6:4f 00d9:55 00da:55 00db:55 00dc:55
+    00dd:59 00e0:61 00e1:61 00e2:61 00e3:61 00e4:61 00e5:61 00e7:63 00e8:65 00e9:65
+    00ea:65 00eb:65 00ec:69 00ed:69 00ee:69 00ef:69 00f1:6e 00f2:6f 00f3:6f 00f4:6f
+    00f5:6f 00f6:6f 00f9:75 00fa:75 00fb:75 00fc:75 00fd:79 00ff:79 20a9:5c \r\n\r\n950
+    \  (ANSI/OEM - Traditional Chinese Big5)\r\n00a1:21 00a6:7c 00a9:63 00aa:61 00ad:2d
+    00ae:52 00b2:32 00b3:33 00b9:31 00ba:6f 00c0:41 00c1:41 00c2:41 00c3:41 00c4:41
+    00c5:41 00c6:41 00c7:43 00c8:45 00c9:45 00ca:45 00cb:45 00cc:49 00cd:49 00ce:49
+    00cf:49 00d0:44 00d1:4e 00d2:4f 00d3:4f 00d4:4f 00d5:4f 00d6:4f 00d8:4f 00d9:55
+    00da:55 00db:55 00dc:55 00dd:59 00de:54 00df:73 00e0:61 00e1:61 00e2:61 00e3:61
+    00e4:61 00e5:61 00e6:61 00e7:63 00e8:65 00e9:65 00ea:65 00eb:65 00ec:69 00ed:69
+    00ee:69 00ef:69 00f0:65 00f1:6e 00f2:6f 00f3:6f 00f4:6f 00f5:6f 00f6:6f 00f8:6f
+    00f9:75 00fa:75 00fb:75 00fc:75 00fd:79 00fe:74 00ff:79 \r\n\r\n(UTF-7)\r\n\r\n\r\n(UTF-8)\r\n\r\n\r\n"
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: nginx-modsecurity
+  namespace: nginx

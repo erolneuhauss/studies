@@ -33,10 +33,13 @@ spec:
       - name: nginx-config-volume
         configMap:
           name: nginx-configmap-multi
+      - name: nginx-modsecurity-volume
+        configMap:
+          name: nginx-modsecurity
       - name: webcontent-example
         emptyDir: {}
       containers:
-      - image: registry.fritz.box/arm64v8/nginx
+      - image: registry.fritz.box/fufuhu/docker-nginx-modsecurity:aarch64-v0.0.1
         name: nginx
         ports:
           - containerPort: 80
@@ -55,6 +58,9 @@ spec:
           - name: nginx-config-volume
             mountPath: /etc/nginx
             readOnly: false
+          - name: nginx-modsecurity-volume
+            mountPath: /etc/nginx/modsecurity
+            readOnly: false
           - name: nginx-webcontent-volume
             mountPath: /usr/share/nginx/html
           - name: webcontent-example
@@ -66,22 +72,7 @@ spec:
           initialDelaySeconds: 3
           periodSeconds: 60
       initContainers:
-      - image: registry.fritz.box/arm64v8/nginx
-        name: webcontent
-        command: ['/bin/sh']
-        args:
-          - -c
-          - >-
-            echo "check this out!" > /example.com/index.html
-        ports:
-          - containerPort: 80
-            name: http
-        volumeMounts:
-          - name: nginx-webcontent-volume
-            mountPath: /usr/share/nginx/html
-          - name: webcontent-example
-            mountPath: /example.com
-      - image: registry.fritz.box/arm64v8/nginx
+      - image: registry.fritz.box/fufuhu/docker-nginx-modsecurity:aarch64-v0.0.1
         name: nginx-test
         command: ['nginx', '-t']
         ports:
@@ -97,6 +88,24 @@ spec:
           - name: nginx-config-volume
             mountPath: /etc/nginx
             readOnly: false
+          - name: nginx-modsecurity-volume
+            mountPath: /etc/nginx/modsecurity
+            readOnly: false
+          - name: webcontent-example
+            mountPath: /example.com
+      - image: registry.fritz.box/arm64v8/nginx
+        name: webcontent
+        command: ['/bin/sh']
+        args:
+          - -c
+          - >-
+            echo "check this out!" > /example.com/index.html
+        ports:
+          - containerPort: 80
+            name: http
+        volumeMounts:
+          - name: nginx-webcontent-volume
+            mountPath: /usr/share/nginx/html
           - name: webcontent-example
             mountPath: /example.com
 
