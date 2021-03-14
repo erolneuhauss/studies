@@ -124,3 +124,4 @@ charset_map  windows-1251  utf-8 {
     FE  D18E ;   # small yu
     FF  D18F ;   # small ya
 }
+
