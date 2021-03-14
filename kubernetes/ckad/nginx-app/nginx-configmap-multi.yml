@@ -4,8 +4,12 @@ data:
     # vim: set syntax=nginx:
     server {
         listen 80 default_server;
+        listen 443 ssl;
         server_name _;
         root   /usr/share/nginx/html;
+
+        ssl_certificate /etc/ssl/certs/public.crt;
+        ssl_certificate_key /etc/ssl/private/private.key;
 
         location = /admin.html {
           auth_basic "Login Required";

@@ -18,6 +18,12 @@ spec:
         configHash: ""
     spec:
       volumes:
+      - name: nginx-ssl-public-key-volume
+        secret:
+          secretName: nginx-ssl-public-key-secret
+      - name: nginx-ssl-private-key-volume
+        secret:
+          secretName: nginx-ssl-private-key-secret
       - name: secret-htpasswd-volume
         secret:
           secretName: nginx-protected
@@ -35,7 +41,15 @@ spec:
         ports:
           - containerPort: 80
             name: http
+          - containerPort: 443
+            name: https
         volumeMounts:
+          - name: nginx-ssl-public-key-volume
+            mountPath: /etc/ssl/certs/public.crt
+            subPath: public.crt
+          - name: nginx-ssl-private-key-volume
+            mountPath: /etc/ssl/private/private.key
+            subPath: private.key
           - name: secret-htpasswd-volume
             mountPath: /etc/nginx/protected
           - name: nginx-config-volume
@@ -74,6 +88,12 @@ spec:
           - containerPort: 80
             name: http
         volumeMounts:
+          - name: nginx-ssl-public-key-volume
+            mountPath: /etc/ssl/certs/public.crt
+            subPath: public.crt
+          - name: nginx-ssl-private-key-volume
+            mountPath: /etc/ssl/private/private.key
+            subPath: private.key
           - name: nginx-config-volume
             mountPath: /etc/nginx
             readOnly: false
