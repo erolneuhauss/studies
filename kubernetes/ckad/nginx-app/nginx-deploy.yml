@@ -33,16 +33,13 @@ spec:
             - key: example.com.conf
               path: example.com.conf
       initContainers:
-      - image: registry.fritz.box/arm64v8/nginx
+      - image: registry.fritz.box/arm64v8/busybox
         name: webcontent
         command: ['sh', '-c', 'echo "check this out!" > /example.com/index.html']
         ports:
           - containerPort: 80
             name: http
         volumeMounts:
-          - name: nginx-config-volume
-            mountPath: /etc/nginx
-            readOnly: false
           - name: webcontent-example
             mountPath: /example.com
       - image: registry.fritz.box/arm64v8/nginx
