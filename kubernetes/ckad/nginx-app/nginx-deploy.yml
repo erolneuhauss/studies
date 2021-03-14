@@ -18,6 +18,9 @@ spec:
         configHash: ""
     spec:
       volumes:
+      - name: secret-htpasswd-volume
+        secret:
+          secretName: nginx-protected
       - name: nginx-webcontent-volume
         configMap:
           name: nginx-webcontent
@@ -33,6 +36,8 @@ spec:
           - containerPort: 80
             name: http
         volumeMounts:
+          - name: secret-htpasswd-volume
+            mountPath: /etc/nginx/protected
           - name: nginx-config-volume
             mountPath: /etc/nginx
             readOnly: false
