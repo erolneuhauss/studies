@@ -18,23 +18,14 @@ spec:
         configHash: ""
     spec:
       volumes:
-      - name: htpasswd-secret-volume
-        secret:
-          secretName: htpasswd-secret
-      - name: webcontent-example
-        emptyDir: {}
+      - name: nginx-webcontent-volume
+        configMap:
+          name: nginx-webcontent
       - name: nginx-config-volume
         configMap:
-          name: nginx-configmap
-          items:
-            - key: mime.types
-              path: mime.types
-            - key: nginx.conf
-              path: nginx.conf
-            - key: default.conf
-              path: default.conf
-            - key: example.com.conf
-              path: example.com.conf
+          name: nginx-configmap-multi
+      - name: webcontent-example
+        emptyDir: {}
       containers:
       - image: registry.fritz.box/arm64v8/nginx
         name: nginx
@@ -42,12 +33,11 @@ spec:
           - containerPort: 80
             name: http
         volumeMounts:
-          - name: htpasswd-secret-volume
-            mountPath: /etc/nginx/.htpasswd
-            subPath: /etc/nginx/.htpasswd
           - name: nginx-config-volume
             mountPath: /etc/nginx
             readOnly: false
+          - name: nginx-webcontent-volume
+            mountPath: /usr/share/nginx/html
           - name: webcontent-example
             mountPath: /example.com
         livenessProbe:
@@ -57,13 +47,19 @@ spec:
           initialDelaySeconds: 3
           periodSeconds: 60
       initContainers:
-      - image: registry.fritz.box/arm64v8/busybox
+      - image: registry.fritz.box/arm64v8/nginx
         name: webcontent
-        command: ['sh', '-c', 'echo "check this out!" > /example.com/index.html']
+        command: ['/bin/sh']
+        args:
+          - -c
+          - >-
+            echo "check this out!" > /example.com/index.html
         ports:
           - containerPort: 80
             name: http
         volumeMounts:
+          - name: nginx-webcontent-volume
+            mountPath: /usr/share/nginx/html
           - name: webcontent-example
             mountPath: /example.com
       - image: registry.fritz.box/arm64v8/nginx
