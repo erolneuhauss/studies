@@ -28,6 +28,7 @@ data:
   admin.html: |
     <h1>Access to restriced area granted!</h1>
     Welcome to the dark net :-)
+  healthz.html: OK
   index.html: |
     <!DOCTYPE html>
     <html>
@@ -54,6 +55,7 @@ data:
     <p><em>Thank you for using nginx.</em></p>
     </body>
     </html>
+  ready.html: READY
 kind: ConfigMap
 metadata:
   creationTimestamp: null
