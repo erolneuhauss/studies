@@ -81,16 +81,6 @@ spec:
             scheme: HTTPS
           initialDelaySeconds: 3
           periodSeconds: 60
-        readinessProbe:
-          httpGet:
-            scheme: HTTP
-            host:
-            path: /
-            httpHeaders:
-              - name: Host
-                value: www.example.com
-            port: http
-          initialDelaySeconds: 3
       initContainers:
       - image: registry.fritz.box/fufuhu/docker-nginx-modsecurity:aarch64-v0.0.1
         name: nginx-test
