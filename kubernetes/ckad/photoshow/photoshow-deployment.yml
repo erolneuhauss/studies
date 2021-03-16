@@ -19,6 +19,15 @@ spec:
       labels:
         app: photoshow
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                - arm64
       containers:
       - image: linuxserver/photoshow:latest
         name: photoshow
