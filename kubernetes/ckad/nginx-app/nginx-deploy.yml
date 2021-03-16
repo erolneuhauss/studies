@@ -17,6 +17,15 @@ spec:
       annotations:
         configHash: ""
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                - arm64
       volumes:
       - name: nginx-ssl-public-key-volume
         secret:
