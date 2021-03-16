@@ -396,7 +396,7 @@ data:
     user  nginx;
     worker_processes  1;
 
-    error_log  /var/log/nginx/error.log warn;
+    error_log  /var/log/nginx/error.log info;
     pid        /var/run/nginx.pid;
 
     events {
@@ -408,11 +408,10 @@ data:
       include       /etc/nginx/mime.types;
       default_type  application/octet-stream;
 
-      log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
-                        '$status $body_bytes_sent "$http_referer" '
-                        '"$http_user_agent" "$http_x_forwarded_for"';
-
-      access_log  /var/log/nginx/access.log  main;
+      log_format main '$remote_addr - $remote_user [$time_local] '
+                           '"$request" $status $bytes_sent '
+                           '"$http_referer" "$http_user_agent"';
+      access_log  /var/log/nginx/access.log main;
 
       sendfile        on;
       #tcp_nopush     on;
@@ -424,11 +423,15 @@ data:
       include /etc/nginx/photos.example.com.conf;
     }
 
-  photos.example.conf: |+
+  photos.example.com.conf: |+
     # vim: set syntax=nginx:
     server {
       listen 80;
       server_name photos.example.com;
+
+      client_max_body_size 4m;
+
+      access_log  /var/log/nginx/access.log main;
 
       location / {
         proxy_pass http://photoshow.photoshow:8080;

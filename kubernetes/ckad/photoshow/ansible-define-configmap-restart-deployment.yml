@@ -16,6 +16,14 @@
         path: reverse-proxy-configmap.yml
         state: absent
 
+    - name: delete configmap
+      k8s:
+        state: absent
+        api_version: v1
+        kind: ConfigMap
+        namespace: photoshow
+        name: reverse-proxy-configmap
+
     - name: create new configmap file
       shell: kubectl --namespace=photoshow create configmap reverse-proxy-configmap --from-file=etc-nginx --dry-run=client --output=yaml > reverse-proxy-configmap.yml
 
@@ -28,3 +36,6 @@
       k8s:
         state: present
         src: reverse-proxy-deploy.yml
+
+    - name: restart deployment
+      shell: kubectl --namespace=photoshow rollout restart deployment reverse-proxy
