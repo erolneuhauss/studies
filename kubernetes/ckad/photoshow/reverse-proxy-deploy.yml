@@ -23,13 +23,13 @@ spec:
               - key: kubernetes.io/arch
                 operator: In
                 values:
-                - arm64
+                - amd64
       volumes:
       - name: reverse-proxy-config-volume
         configMap:
           name: reverse-proxy-configmap
       containers:
-      - image: registry.fritz.box/arm64v8/nginx
+      - image: nginx
         name: nginx
         ports:
           - containerPort: 80
@@ -47,3 +47,4 @@ spec:
                 value: photos.example.com
             port: http
           initialDelaySeconds: 3
+          periodSeconds: 60
