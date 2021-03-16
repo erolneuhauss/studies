@@ -1,0 +1,53 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: photoshow
+  name: photoshow
+  namespace: photoshow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: photoshow
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: photoshow
+    spec:
+      containers:
+      - image: linuxserver/photoshow:latest
+        name: photoshow
+        ports:
+        - containerPort: 80
+        env:
+          - name: PUID
+            value: "2000"
+          - name: PGID
+            value: "2000"
+          - name: TZ
+            value: "Europe/Berlin"
+        resources: {}
+        volumeMounts:
+          - mountPath: /config
+            name: photoshow-config-volume
+          - mountPath: /Pictures
+            name: photoshow-pictures-volume
+          - mountPath: /Thumbs
+            name: photoshow-thumbs-volume
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      volumes:
+        - name: photoshow-config-volume
+          persistentVolumeClaim:
+            claimName: photoshow-cephfs-config-pvc
+        - name: photoshow-pictures-volume
+          persistentVolumeClaim:
+            claimName: photoshow-cephfs-pictures-pvc
+        - name: photoshow-thumbs-volume
+          persistentVolumeClaim:
+            claimName: photoshow-cephfs-thumbs-pvc

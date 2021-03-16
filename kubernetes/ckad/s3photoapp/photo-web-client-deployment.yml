@@ -1,0 +1,51 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: web-client
+  name: web-client
+  namespace: s3photoapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-client
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: web-client
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+      containers:
+      - image: cloudassessmentscom/web-client
+        name: web-client
+        command: ['npm', 'run', 'prod']
+        ports:
+        - containerPort: 3000
+        env:
+          - name: FILTER_HOST
+            value: "photo-filter"
+          - name: FILTER_PORT
+            value: "3002"
+          - name: STORAGE_HOST
+            value: "photo-storage"
+          - name: STORAGE_PORT
+            value: "3001"
+        envFrom:
+        - secretRef:
+            name: s3photoapp-aws-credentials
+        resources: {}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always

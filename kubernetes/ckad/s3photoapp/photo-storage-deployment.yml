@@ -1,0 +1,42 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: photo-storage
+  name: photo-storage
+  namespace: s3photoapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: photo-storage
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: photo-storage
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+      containers:
+      - image: cloudassessmentscom/photo-storage
+        name: photo-storage
+        command: ['npm', 'run', 'prod']
+        ports:
+        - containerPort: 3001
+        envFrom:
+        - secretRef:
+            name: s3photoapp-aws-credentials
+        resources: {}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always

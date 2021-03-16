@@ -1,0 +1,39 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: photo-filter
+  name: photo-filter
+  namespace: s3photoapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: photo-filter
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: photo-filter
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+      containers:
+      - image: cloudassessmentscom/photo-filter
+        name: photo-filter
+        command: ['npm', 'run', 'prod']
+        ports:
+        - containerPort: 3002
+        resources: {}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always

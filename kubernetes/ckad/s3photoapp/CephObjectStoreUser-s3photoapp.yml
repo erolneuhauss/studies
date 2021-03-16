@@ -1,0 +1,8 @@
+apiVersion: ceph.rook.io/v1
+kind: CephObjectStoreUser
+metadata:
+  name: s3photo-user
+  namespace: rook-ceph
+spec:
+  store: my-store
+  displayName: "s3 user for s3photoapp"
