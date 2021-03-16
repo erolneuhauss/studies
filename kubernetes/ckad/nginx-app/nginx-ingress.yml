@@ -6,28 +6,6 @@ metadata:
   namespace: nginx
 spec:
   rules:
-  - host: "example.com"
-    http:
-      paths:
-      - backend:
-          service:
-            name: nginx
-            port:
-              name: http
-        path: /
-        pathType: ImplementationSpecific
-
-  - host: "*.example.com"
-    http:
-      paths:
-      - backend:
-          service:
-            name: nginx
-            port:
-              name: http
-        path: /
-        pathType: ImplementationSpecific
-
   - host: nginx.fritz.box
     http:
       paths:
