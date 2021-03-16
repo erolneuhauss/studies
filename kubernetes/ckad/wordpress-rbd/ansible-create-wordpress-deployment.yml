@@ -1,0 +1,115 @@
+#!~/.local/bin/ansible-playbook
+---
+
+- name: deploy kubernetes wordpress php7.3-fpm
+  hosts: localhost
+  connection: local
+  serial: 1
+  gather_facts: false
+  become: false
+  collections:
+    - community.kubernetes
+  tasks:
+    - name: Create a k8s namespace
+      k8s:
+        name: wordpress
+        api_version: v1
+        kind: Namespace
+        state: present
+
+    - name: Create mysql db
+      k8s:
+        state: present
+        src: mysql.yaml
+
+    - name: Create PersistentVolumeClaim
+      k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: PersistentVolumeClaim
+          metadata:
+            name: wp-pv-claim
+            namespace: wordpress
+            labels:
+              app: wordpress
+          spec:
+            storageClassName: rook-ceph-block
+            accessModes:
+            - ReadWriteOnce
+            resources:
+              requests:
+                storage: 5Gi
+
+    - name: Create wordpress-secrets
+      k8s:
+        state: present
+        src: wordpress-secrets.yml
+
+    - name: Create Deployment
+      k8s:
+        state: present
+        definition:
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: wordpress-php7.3-fpm
+            namespace: wordpress
+            labels:
+              app: wordpress
+          spec:
+            selector:
+              matchLabels:
+                app: wordpress
+            strategy:
+              type: Recreate
+            template:
+              metadata:
+                labels:
+                  app: wordpress
+              spec:
+                affinity:
+                  nodeAffinity:
+                    requiredDuringSchedulingIgnoredDuringExecution:
+                      nodeSelectorTerms:
+                      - matchExpressions:
+                        - key: kubernetes.io/arch
+                          operator: In
+                          values:
+                          - arm64
+                volumes:
+                - name: wordpress-persistent-storage
+                  persistentVolumeClaim:
+                    claimName: wp-pv-claim
+                containers:
+                - image: registry.fritz.box/arm64v8/wordpress-php7.3-fpm
+                  name: wordpress
+                  envFrom:
+                  - secretRef:
+                      name: wordpress-secrets
+                  ports:
+                  - containerPort: 9000
+                    name: php-fpm
+                  volumeMounts:
+                  - name: wordpress-persistent-storage
+                    mountPath: /var/www/html
+
+    - name: Create Service
+      k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: wordpress
+            namespace: wordpress
+            labels:
+              app: wordpress
+          spec:
+            selector:
+              app: wordpress
+            ports:
+            - protocol: TCP
+              targetPort: 9000
+              name: fpm
+              port: 9000
