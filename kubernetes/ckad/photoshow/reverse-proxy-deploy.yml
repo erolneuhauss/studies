@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: reverse-proxy
+  name: reverse-proxy
+  namespace: photoshow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reverse-proxy
+  template:
+    metadata:
+      labels:
+        app: reverse-proxy
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                - arm64
+      volumes:
+      - name: reverse-proxy-config-volume
+        configMap:
+          name: reverse-proxy-configmap
+      containers:
+      - image: registry.fritz.box/arm64v8/nginx
+        name: nginx
+        ports:
+          - containerPort: 80
+            name: http
+        volumeMounts:
+          - name: reverse-proxy-config-volume
+            mountPath: /etc/nginx
+#        livenessProbe:
+#          httpGet:
+#            scheme: HTTP
+#            host:
+#            path: /
+#            httpHeaders:
+#              - name: Host
+#                value: photos.example.com
+#            port: http
+#          initialDelaySeconds: 3

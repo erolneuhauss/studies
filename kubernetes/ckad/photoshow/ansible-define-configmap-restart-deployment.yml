@@ -1,0 +1,30 @@
+#!~/.local/bin/ansible-playbook
+---
+# rm -f nginx-webcontent.yml && k -n nginx create configmap nginx-webcontent --from-file=usr-share-nginx-html $do > nginx-webcontent.yml && k apply -f nginx-webcontent.yml && k -n nginx rollout restart deployment nginx && k -n nginx get pods -o wide --watch
+
+- name: deploy kubernetes reverse-proxy-configmap
+  hosts: localhost
+  connection: local
+  serial: 1
+  gather_facts: false
+  become: false
+  collections:
+    - community.kubernetes
+  tasks:
+    - name: remove current configmap file
+      file:
+        path: reverse-proxy-configmap.yml
+        state: absent
+
+    - name: create new configmap file
+      shell: kubectl --namespace=photoshow create configmap reverse-proxy-configmap --from-file=etc-nginx --dry-run=client --output=yaml > reverse-proxy-configmap.yml
+
+    - name: read definition file
+      k8s:
+        state: present
+        src: reverse-proxy-configmap.yml
+
+    - name: deploy reverse-proxy
+      k8s:
+        state: present
+        src: reverse-proxy-deploy.yml

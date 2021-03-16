@@ -1,0 +1,36 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: reverse-proxy
+  name: reverse-proxy
+  namespace: photoshow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reverse-proxy
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: reverse-proxy
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                - arm64
+      containers:
+      - image: nginx
+        name: reverse-proxy
+        ports:
+        - containerPort: 80
+        imagePullPolicy: IfNotPresent
