@@ -10,19 +10,19 @@
   collections:
     - community.kubernetes
   tasks:
-    - name: Create a k8s namespace
+    - name: Create wordpress namespace
       k8s:
         name: wordpress
         api_version: v1
         kind: Namespace
         state: present
 
-    - name: Create mysql db
+    - name: Create mysql db deployment from file mysql.yaml
       k8s:
         state: present
         src: mysql.yaml
 
-    - name: Create PersistentVolumeClaim
+    - name: Create PersistentVolumeClaim for wordpress
       k8s:
         state: present
         definition:
@@ -41,12 +41,12 @@
               requests:
                 storage: 5Gi
 
-    - name: Create wordpress-secrets
+    - name: Create wordpress-secrets from file
       k8s:
         state: present
         src: wordpress-secrets.yml
 
-    - name: Create Deployment
+    - name: Create Deployment wordpress-php7.3-fpm
       k8s:
         state: present
         definition:
@@ -94,7 +94,7 @@
                   - name: wordpress-persistent-storage
                     mountPath: /var/www/html
 
-    - name: Create Service
+    - name: Create Service for wordpress on port 9000
       k8s:
         state: present
         definition:
@@ -113,3 +113,64 @@
               targetPort: 9000
               name: https
               port: 9000
+
+    - name: create nginx configmap from directory
+      shell: kubectl --namespace=wordpress create configmap nginx-configmap --from-file=etc-nginx
+
+    - name: Create nginx reverse proxy Deployment
+      k8s:
+        state: present
+        definition:
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            labels:
+              app: nginx
+            name: nginx-reverse-proxy
+            namespace: wordpress
+          spec:
+            replicas: 1
+            selector:
+              matchLabels:
+                app: nginx
+            template:
+              metadata:
+                labels:
+                  app: nginx
+              spec:
+                affinity:
+                  nodeAffinity:
+                    requiredDuringSchedulingIgnoredDuringExecution:
+                      nodeSelectorTerms:
+                      - matchExpressions:
+                        - key: kubernetes.io/arch
+                          operator: In
+                          values:
+                          - arm64
+                volumes:
+                - name: nginx-config-volume
+                  configMap:
+                    name: nginx-configmap
+                containers:
+                - image: registry.fritz.box/arm64v8/nginx
+                  name: nginx
+                  ports:
+                    - containerPort: 80
+                      name: http
+                    - containerPort: 443
+                      name: https
+                  volumeMounts:
+                    - name: nginx-config-volume
+                      mountPath: /etc/nginx
+                      readOnly: false
+                  livenessProbe:
+                    httpGet:
+                      path: /
+                      port: http
+                      scheme: HTTP
+                      httpHeaders:
+                        - name: Host
+                          value: wordpress.example.com
+                    initialDelaySeconds: 3
+                    periodSeconds: 60
+
