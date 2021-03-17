@@ -111,12 +111,30 @@
                 - name: nginx-config-volume
                   configMap:
                     name: nginx-configmap
+                - name: php-fpm-fastcgi-cache
+                  emptyDir: {}
                 - name: php-fpm-config-volume
                   configMap:
                     name: php-fpm-configmap
                 - name: wordpress-persistent-storage
                   persistentVolumeClaim:
                     claimName: wp-pv-claim
+                initContainers:
+                - image: registry.fritz.box/arm64v8/nginx
+                  name: nginx-test
+                  command: ['nginx', '-t']
+                  ports:
+                    - containerPort: 80
+                      name: http
+                  volumeMounts:
+                  - name: php-fpm-fastcgi-cache
+                    mountPath: /var/cache/nginx/wordpress
+                    readOnly: false
+                  - name: nginx-config-volume
+                    mountPath: /etc/nginx
+                    readOnly: false
+                  - name: wordpress-persistent-storage
+                    mountPath: /var/www/html
                 containers:
                 - image: registry.fritz.box/arm64v8/wordpress-php7.3-fpm
                   name: wordpress
@@ -137,6 +155,9 @@
                     - containerPort: 80
                       name: http
                   volumeMounts:
+                  - name: php-fpm-fastcgi-cache
+                    mountPath: /var/cache/nginx/fastcgi_wordpress
+                    readOnly: false
                   - name: nginx-config-volume
                     mountPath: /etc/nginx
                     readOnly: false
@@ -152,6 +173,9 @@
                           value: wordpress.example.com
                     initialDelaySeconds: 3
                     periodSeconds: 60
+
+    - name: rollout restart wordpress
+      shell: kubectl --namespace=wordpress rollout restart deployment wordpress-php7.3-fpm
 
     - name: Create Service for wordpress on port 9000
       k8s:
