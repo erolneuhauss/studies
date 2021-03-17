@@ -61,6 +61,17 @@
     - name: create nginx configmap from directory
       shell: kubectl --namespace=wordpress create configmap nginx-configmap --from-file=etc-nginx
 
+    - name: delete php-fpm configmap
+      k8s:
+        state: absent
+        api_version: v1
+        kind: ConfigMap
+        namespace: wordpress
+        name: php-fpm-configmap
+
+    - name: create nginx configmap from directory
+      shell: kubectl --namespace=wordpress create configmap php-fpm-configmap --from-file=conf.d
+
       # if we have used cehpfs instead of ceph-rbd, we could have gone with two separate pods
       # one for wordpress-php7.3-fpm and one for nginx
       # with ceph-rbd, we only can mount the same volume only once in a pod
@@ -100,6 +111,9 @@
                 - name: nginx-config-volume
                   configMap:
                     name: nginx-configmap
+                - name: php-fpm-config-volume
+                  configMap:
+                    name: php-fpm-configmap
                 - name: wordpress-persistent-storage
                   persistentVolumeClaim:
                     claimName: wp-pv-claim
@@ -115,6 +129,8 @@
                   volumeMounts:
                   - name: wordpress-persistent-storage
                     mountPath: /var/www/html
+                  - name: php-fpm-config-volume
+                    mountPath: /usr/local/etc/php/conf.d
                 - image: registry.fritz.box/arm64v8/nginx
                   name: nginx
                   ports:
