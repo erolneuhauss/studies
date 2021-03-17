@@ -60,7 +60,11 @@
 
     - name: create nginx configmap from directory
       shell: kubectl --namespace=wordpress create configmap nginx-configmap --from-file=etc-nginx
-#
+
+      # if we have used cehpfs instead of ceph-rbd, we could have gone with two separate pods
+      # one for wordpress-php7.3-fpm and one for nginx
+      # with ceph-rbd, we only can mount the same volume only once in a pod
+      # so with ceph-rbd, nginx container runs as a sidecar container
     - name: Create Deployment wordpress-php7.3-fpm
       k8s:
         state: present
