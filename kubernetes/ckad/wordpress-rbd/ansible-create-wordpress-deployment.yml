@@ -89,7 +89,7 @@
                       name: wordpress-secrets
                   ports:
                   - containerPort: 9000
-                    name: php-fpm
+                    name: https
                   volumeMounts:
                   - name: wordpress-persistent-storage
                     mountPath: /var/www/html
@@ -111,5 +111,5 @@
             ports:
             - protocol: TCP
               targetPort: 9000
-              name: fpm
+              name: https
               port: 9000
