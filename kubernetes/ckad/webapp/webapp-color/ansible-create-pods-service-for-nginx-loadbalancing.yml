@@ -1,0 +1,189 @@
+#!~/.local/bin/ansible-playbook
+---
+- name: deploy kubernetes webapp-colors for loadbalancing practice
+  hosts: localhost
+  connection: local
+  serial: 1
+  gather_facts: false
+  become: false
+  collections:
+    - community.kubernetes
+  tasks:
+    - name: Create webapp namespace
+      k8s:
+        name: webapp
+        api_version: v1
+        kind: Namespace
+        state: present
+
+    - name: delete nginx configmap
+      k8s:
+        state: absent
+        api_version: v1
+        kind: ConfigMap
+        namespace: webapp
+        name: nginx-configmap
+      ignore_errors: true
+
+    - name: create nginx configmap from directory
+      shell: kubectl --namespace=webapp create configmap nginx-configmap --from-file=etc-nginx
+
+    - name: Create Deployment nginx-loadbalancer
+      k8s:
+        state: present
+        definition:
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: nginx-loadbalancer
+            namespace: webapp
+            labels:
+              app: loadbalancer
+          spec:
+            replicas: 1
+            selector:
+              matchLabels:
+                app: loadbalancer
+            template:
+              metadata:
+                labels:
+                  app: loadbalancer
+              spec:
+                affinity:
+                  nodeAffinity:
+                    requiredDuringSchedulingIgnoredDuringExecution:
+                      nodeSelectorTerms:
+                      - matchExpressions:
+                        - key: kubernetes.io/arch
+                          operator: In
+                          values:
+                          - arm64
+                volumes:
+                - name: nginx-config-volume
+                  configMap:
+                    name: nginx-configmap
+                containers:
+                - image: registry.fritz.box/arm64v8/nginx
+                  name: nginx
+                  ports:
+                  - containerPort: 80
+                    name: http
+                  volumeMounts:
+                  - name: nginx-config-volume
+                    mountPath: /etc/nginx
+                    readOnly: false
+
+    - name: Create nginx Service for loadbalancing webapp-color apps
+      k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: loadbalancer
+            namespace: webapp
+            labels:
+              app: loadbalancer
+          spec:
+            selector:
+              app: loadbalancer
+            ports:
+            - protocol: TCP
+              targetPort: 80
+              name: http
+              port: 80
+
+    - name: Create Deployment webapp-color
+      tags:
+        - images
+      loop:
+        - red
+        - green
+        - blue
+        - blue2
+        - darkblue
+        - pink
+      k8s:
+        state: present
+        definition:
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: "webpp-color-{{ item }}"
+            namespace: webapp
+            labels:
+              app: "webpp-color-{{ item }}"
+          spec:
+            replicas: 1
+            selector:
+              matchLabels:
+                app: "webpp-color-{{ item }}"
+            template:
+              metadata:
+                labels:
+                  app: "webpp-color-{{ item }}"
+              spec:
+                affinity:
+                  nodeAffinity:
+                    requiredDuringSchedulingIgnoredDuringExecution:
+                      nodeSelectorTerms:
+                      - matchExpressions:
+                        - key: kubernetes.io/arch
+                          operator: In
+                          values:
+                          - arm64
+                volumes:
+                  - name: proxy-cache
+                    emptyDir: {}
+                containers:
+                - image: registry.fritz.box/my/arm64v8/simple-webapp-color:v0.2.3
+                  name: "webpp-color-{{ item }}"
+                  ports:
+                  - containerPort: 8080
+                    name: http
+                  env:
+                    - name: APP_COLOR
+                      value: "{{ item }}"
+                  volumeMounts:
+                    - name: proxy-cache
+                      mountPath: /var/cache/nginx/webapp
+
+    - name: Create Service for webapp-color on port 8080
+      loop:
+        - red
+        - green
+        - blue
+        - blue2
+        - darkblue
+        - pink
+      k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: "webpp-color-{{ item }}"
+            namespace: webapp
+            labels:
+              app: "webpp-color-{{ item }}"
+          spec:
+            selector:
+              app: "webpp-color-{{ item }}"
+            ports:
+            - protocol: TCP
+              targetPort: 8080
+              name: https
+              port: 8080
+
+    - name: rollout restart webapp-color
+      tags:
+        - restarts
+      loop:
+        - red
+        - green
+        - blue
+        - blue2
+        - darkblue
+        - pink
+      command: "kubectl --namespace=webapp rollout restart deployment webpp-color-{{ item }}"
+
