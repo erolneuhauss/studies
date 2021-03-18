@@ -14,6 +14,9 @@ kubernetes_apiserver_advertise_address=192.168.178.51
 [other]
 raspberrypi ansible_host=192.168.178.19
 
+[eneuhauss]
+nuc ansible_host=192.168.178.30 ansible_ssh_user=eneuhauss ansible_user=eneuhauss ansible_become=true
+
 [other:vars]
 ansible_ssh_user=pi
 ansible_user=pi

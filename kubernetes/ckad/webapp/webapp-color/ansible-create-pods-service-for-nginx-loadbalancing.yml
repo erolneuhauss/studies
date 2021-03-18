@@ -73,6 +73,11 @@
                     mountPath: /etc/nginx
                     readOnly: false
 
+    - name: rollout restart nginx
+      tags:
+        - restarts
+      command: "kubectl --namespace=webapp rollout restart deployment nginx-loadbalancer"
+
     - name: Create nginx Service for loadbalancing webapp-color apps
       k8s:
         state: present
