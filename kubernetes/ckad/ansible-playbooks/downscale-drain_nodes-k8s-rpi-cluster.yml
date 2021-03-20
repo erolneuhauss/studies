@@ -10,30 +10,12 @@
     - community.kubernetes
   vars:
     namespace:
-      - name: default
-        deployment: whoami
       - name: kanboard
         deployment: kanboard
       - name: kanboard
         deployment: db
-      - name: webapp
-        deployment: webapp-color
-      - name: webapp
-        deployment: webapp-mysql-db
-      - name: webapp
-        deployment: webapp-mysql-static
-      - name: webapp
-        deployment: webapp-mysql-web
-      - name: webapp
-        deployment: webapp-wear
       - name: registry
         deployment: docker-registry
-      - name: drupal
-        deployment: drupal
-      - name: drupal
-        deployment: mysql
-      - name: default
-        deployment: nfs-client-provisioner
       - name: monitoring
         deployment: grafana
       - name: monitoring
@@ -44,42 +26,6 @@
         deployment: kube-state-metrics
       - name: kube-system
         deployment: metrics-server
-      - name: rook-ceph
-        deployment: rook-ceph-osd-0
-      - name: rook-ceph
-        deployment: rook-ceph-osd-1
-      - name: rook-ceph
-        deployment: rook-ceph-osd-2
-      - name: rook-ceph
-        deployment: rook-ceph-osd-3
-      - name: rook-ceph
-        deployment: rook-ceph-osd-4
-      - name: rook-ceph
-        deployment: rook-ceph-osd-5
-      - name: rook-ceph
-        deployment: rook-ceph-osd-6
-      - name: rook-ceph
-        deployment: rook-ceph-osd-7
-      - name: rook-ceph
-        deployment: csi-cephfsplugin-provisioner
-      - name: rook-ceph
-        deployment: rook-ceph-crashcollector-k8s-master01.fritz.box
-      - name: rook-ceph
-        deployment: rook-ceph-crashcollector-k8s-worker01.fritz.box
-      - name: rook-ceph
-        deployment: rook-ceph-crashcollector-k8s-worker02.fritz.box
-      - name: rook-ceph
-        deployment: rook-ceph-crashcollector-k8s-worker03.fritz.box
-      - name: rook-ceph
-        deployment: rook-ceph-mds-myfs-a
-      - name: rook-ceph
-        deployment: rook-ceph-mds-myfs-b
-      - name: rook-ceph
-        deployment: rook-ceph-mgr-a
-      - name: rook-ceph
-        deployment: rook-ceph-operator
-      - name: rook-ceph
-        deployment: rook-ceph-tools
   tasks:
     - name: take care of kanboard
       block:
@@ -158,6 +104,8 @@
         msg: "{{ availableReplicas | json_query('results[*].stdout_lines') | to_nice_json }}"
 
     - name: drain nodes
+      tags:
+        - drain
       command: >
         kubectl
         drain
@@ -166,6 +114,7 @@
         --force
         "{{ item }}"
       loop:
+        - k8s-worker04.fritz.box
         - k8s-worker03.fritz.box
         - k8s-worker02.fritz.box
         - k8s-worker01.fritz.box
