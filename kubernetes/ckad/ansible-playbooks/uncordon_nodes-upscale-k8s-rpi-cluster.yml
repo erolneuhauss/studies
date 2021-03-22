@@ -12,34 +12,34 @@
         deployment: rook-ceph-operator
       - name: rook-ceph
         deployment: rook-ceph-mgr-a
-      - name: rook-ceph
-        deployment: rook-ceph-osd-0
-      - name: rook-ceph
-        deployment: rook-ceph-osd-1
-      - name: rook-ceph
-        deployment: rook-ceph-osd-2
-      - name: rook-ceph
-        deployment: rook-ceph-osd-3
-      - name: rook-ceph
-        deployment: rook-ceph-osd-4
-      - name: rook-ceph
-        deployment: rook-ceph-osd-5
-      - name: rook-ceph
-        deployment: rook-ceph-osd-6
-      - name: rook-ceph
-        deployment: rook-ceph-osd-7
-      - name: rook-ceph
-        deployment: rook-ceph-crashcollector-k8s-master01.fritz.box
-      - name: rook-ceph
-        deployment: rook-ceph-crashcollector-k8s-worker01.fritz.box
-      - name: rook-ceph
-        deployment: rook-ceph-crashcollector-k8s-worker02.fritz.box
-      - name: rook-ceph
-        deployment: rook-ceph-crashcollector-k8s-worker03.fritz.box
-      - name: rook-ceph
-        deployment: rook-ceph-mds-myfs-a
-      - name: rook-ceph
-        deployment: rook-ceph-mds-myfs-b
+#      - name: rook-ceph
+#        deployment: rook-ceph-osd-0
+#      - name: rook-ceph
+#        deployment: rook-ceph-osd-1
+#      - name: rook-ceph
+#        deployment: rook-ceph-osd-2
+#      - name: rook-ceph
+#        deployment: rook-ceph-osd-3
+#      - name: rook-ceph
+#        deployment: rook-ceph-osd-4
+#      - name: rook-ceph
+#        deployment: rook-ceph-osd-5
+#      - name: rook-ceph
+#        deployment: rook-ceph-osd-6
+#      - name: rook-ceph
+#        deployment: rook-ceph-osd-7
+#      - name: rook-ceph
+#        deployment: rook-ceph-crashcollector-k8s-master01.fritz.box
+#      - name: rook-ceph
+#        deployment: rook-ceph-crashcollector-k8s-worker01.fritz.box
+#      - name: rook-ceph
+#        deployment: rook-ceph-crashcollector-k8s-worker02.fritz.box
+#      - name: rook-ceph
+#        deployment: rook-ceph-crashcollector-k8s-worker03.fritz.box
+#      - name: rook-ceph
+#        deployment: rook-ceph-mds-myfs-a
+#      - name: rook-ceph
+#        deployment: rook-ceph-mds-myfs-b
       - name: rook-ceph
         deployment: csi-cephfsplugin-provisioner
       - name: rook-ceph
@@ -54,20 +54,20 @@
         deployment: prometheus-operator
       - name: monitoring
         deployment: grafana
-      - name: default
-        deployment: nfs-client-provisioner
-#      - name: drupal
-#        deployment: mysql
-#      - name: drupal
-#        deployment: drupal
       - name: registry
         deployment: docker-registry
       - name: kanboard
         deployment: db
       - name: kanboard
         deployment: kanboard
-      - name: default
-        deployment: whoami
+      - name: flux-system
+        deployment: helm-controller
+      - name: flux-system
+        deployment: kustomize-controller
+      - name: flux-system
+        deployment: notification-controller
+      - name: flux-system
+        deployment: source-controller
 
   tasks:
     - name: uncordon nodes
@@ -76,9 +76,11 @@
         uncordon
         "{{ item }}"
       loop:
+        - k8s-master02.fritz.box
         - k8s-worker01.fritz.box
         - k8s-worker02.fritz.box
         - k8s-worker03.fritz.box
+        - k8s-worker04.fritz.box
 
     - name: scale up deployments
       command: >
