@@ -16,16 +16,6 @@
         deployment: db
       - name: registry
         deployment: docker-registry
-      - name: monitoring
-        deployment: grafana
-      - name: monitoring
-        deployment: prometheus-operator
-      - name: monitoring
-        deployment: prometheus-adapter
-      - name: monitoring
-        deployment: kube-state-metrics
-      - name: kube-system
-        deployment: metrics-server
   tasks:
     - name: take care of kanboard
       block:
