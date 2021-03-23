@@ -1,7 +1,54 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+
+namespace: whoami
+namePrefix: dev-
+#nameSuffix: "-01"
+
 resources:
+  - namespace.yaml
   - deployment.yaml
   - service.yaml
   - ingress.yaml
+  - mariadb-service.yaml
 
+configMapGenerator:
+  - name: test-config
+    behavior: create
+    envs:
+      - app.config
+
+secretGenerator:
+  - name: test-secret
+    behavior: create
+    envs:
+      - app.secret
+
+generatorOptions:
+  disableNameSuffixHash: true
+  labels:
+    added.label: drafty
+  annotations:
+    added.annotation: drafty
+
+vars:
+  - name: DBSERVICE
+    objref:
+      kind: Service
+      name: mariadb
+      apiVersion: v1
+  - name: DBNAMESPACE
+    objref:
+      kind: Service
+      name: mariadb
+      apiVersion: v1
+    fieldref:
+      fieldpath: metadata.namespace
+
+replicas:
+  - name: whoami
+    count: 3
+
+images:
+  - name: containous/whoami
+    newTag: v1.5.0
