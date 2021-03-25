@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namePrefix: prod-
+
+commonLabels:
+  variant: prod
+
+resources:
+- ../../base
+
+patchesStrategicMerge:
+- configMap.yaml

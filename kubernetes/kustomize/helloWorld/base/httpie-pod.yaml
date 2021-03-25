@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: httpie
+spec:
+  template:
+    metadata:
+      labels:
+        job: httpie
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+      containers:
+      - args:
+        - http://$(SERVICE).$(NAMESPACE):$(PORT)
+        image: registry.fritz.box/amd64/alpine/httpie
+        name: httpie
+        resources: {}
+      restartPolicy: Never
