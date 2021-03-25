@@ -19,7 +19,8 @@ spec:
                 - amd64
       containers:
       - args:
-        - http://$(SERVICE).$(NAMESPACE):$(PORT)
+        #        - http://$(SERVICE).$(NAMESPACE):$(PORT)
+        - http://$(SERVICE).$(NAMESPACE):80
         image: registry.fritz.box/amd64/alpine/httpie
         name: httpie
         resources: {}

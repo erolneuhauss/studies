@@ -26,12 +26,14 @@ vars:
       apiVersion: v1
     fieldref:
       fieldpath: metadata.namespace
-  - name: PORT
-    objref:
-      kind: Service
-      name: the-service
-      apiVersion: v1
-    fieldref:
-      fieldpath: spec.ports.0.port
-
-
+# kustomize build failed: field specified in var '{PORT ~G_v1_Service {spec.ports.0.port}}' not found in corresponding resource
+# so this works on the console fine:
+# kustomize build overlays/dev
+# but not via fluxcd's kustomize-controller
+#  - name: PORT
+#    objref:
+#      kind: Service
+#      name: the-service
+#      apiVersion: v1
+#    fieldref:
+#      fieldpath: spec.ports[0].port
