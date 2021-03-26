@@ -16,6 +16,36 @@
         deployment: db
       - name: registry
         deployment: docker-registry
+      - deployment: rook-ceph-operator
+        name: rook-ceph
+      - deployment: rook-ceph-mgr-a
+        name: rook-ceph
+      - deployment: rook-ceph-mon-b
+        name: rook-ceph
+      - deployment: rook-ceph-mon-c
+        name: rook-ceph
+      - deployment: rook-ceph-mon-d
+        name: rook-ceph
+      - deployment: rook-ceph-mds-myfs-a
+        name: rook-ceph
+      - deployment: rook-ceph-mds-myfs-b
+        name: rook-ceph
+      - deployment: rook-ceph-osd-0
+        name: rook-ceph
+      - deployment: rook-ceph-osd-1
+        name: rook-ceph
+      - deployment: rook-ceph-osd-2
+        name: rook-ceph
+      - deployment: rook-ceph-osd-3
+        name: rook-ceph
+      - deployment: rook-ceph-osd-4
+        name: rook-ceph
+      - deployment: rook-ceph-osd-5
+        name: rook-ceph
+      - deployment: rook-ceph-osd-6
+        name: rook-ceph
+      - deployment: rook-ceph-osd-7
+        name: rook-ceph
   tasks:
     - name: take care of kanboard
       block:
@@ -93,6 +123,16 @@
       debug:
         msg: "{{ availableReplicas | json_query('results[*].stdout_lines') | to_nice_json }}"
 
+- name: drain nodes
+  hosts: localhost
+  connection: local
+  serial: 5
+  gather_facts: false
+  become: false
+  collections:
+    - community.kubernetes
+
+  tasks:
     - name: drain nodes
       tags:
         - drain
@@ -108,3 +148,4 @@
         - k8s-worker03.fritz.box
         - k8s-worker02.fritz.box
         - k8s-worker01.fritz.box
+        - k8s-master02.fritz.box

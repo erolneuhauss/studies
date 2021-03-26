@@ -8,12 +8,36 @@
     - community.kubernetes
   vars:
     namespace:
-      - name: registry
-        deployment: docker-registry
-      - name: kanboard
-        deployment: db
-      - name: kanboard
-        deployment: kanboard
+      - deployment: rook-ceph-operator
+        name: rook-ceph
+      - deployment: rook-ceph-mgr-a
+        name: rook-ceph
+      - deployment: rook-ceph-mon-b
+        name: rook-ceph
+      - deployment: rook-ceph-mon-c
+        name: rook-ceph
+      - deployment: rook-ceph-mon-d
+        name: rook-ceph
+      - deployment: rook-ceph-mds-myfs-a
+        name: rook-ceph
+      - deployment: rook-ceph-mds-myfs-b
+        name: rook-ceph
+      - deployment: rook-ceph-osd-0
+        name: rook-ceph
+      - deployment: rook-ceph-osd-1
+        name: rook-ceph
+      - deployment: rook-ceph-osd-2
+        name: rook-ceph
+      - deployment: rook-ceph-osd-3
+        name: rook-ceph
+      - deployment: rook-ceph-osd-4
+        name: rook-ceph
+      - deployment: rook-ceph-osd-5
+        name: rook-ceph
+      - deployment: rook-ceph-osd-6
+        name: rook-ceph
+      - deployment: rook-ceph-osd-7
+        name: rook-ceph
   tasks:
     - name: uncordon nodes
       command: >
@@ -27,7 +51,43 @@
         - k8s-worker03.fritz.box
         - k8s-worker04.fritz.box
 
-    - name: scale up deployments
+    - name: scale up ceph deployments
+      command: >
+        kubectl
+        --namespace "{{ item.name }}"
+        scale deployment "{{ item.deployment }}"
+        --replicas 1
+      loop: "{{ namespace }}"
+
+    - name: look for running pods
+      command: >
+        kubectl
+        --namespace "{{ item.name }}"
+        get deployment "{{ item.deployment }}"
+        -o custom-columns=REPLICAS:.status.availableReplicas
+      register: availableReplicas
+      loop: "{{ namespace }}"
+
+    - name:
+      debug:
+        msg: "{{ availableReplicas | json_query('results[*].stdout_lines') | to_nice_json }}"
+
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  become: false
+  collections:
+    - community.kubernetes
+  vars:
+    namespace:
+      - name: registry
+        deployment: docker-registry
+      - name: kanboard
+        deployment: db
+      - name: kanboard
+        deployment: kanboard
+  tasks:
+    - name: scale up deployments depending on ceph
       command: >
         kubectl
         --namespace "{{ item.name }}"
