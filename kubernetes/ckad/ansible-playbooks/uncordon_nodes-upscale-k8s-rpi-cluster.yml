@@ -51,6 +51,10 @@
         - k8s-worker03.fritz.box
         - k8s-worker04.fritz.box
 
+    - name: resume flux-system
+      command: >
+        flux resume kustomization flux-system
+
     - name: scale up ceph deployments
       command: >
         kubectl
@@ -72,6 +76,22 @@
       debug:
         msg: "{{ availableReplicas | json_query('results[*].stdout_lines') | to_nice_json }}"
 
+    - name: get ceph cluster health
+      tags: ceph
+      command: >
+        kubectl get
+        --namespace rook-ceph
+        cephcluster rook-ceph
+      register: Health
+      until: Health.stdout.find('HEALTH_OK') !=-1
+      retries: 30
+      delay: 60
+
+    - name: Health message
+      tags: ceph
+      debug:
+        msg: "{{ Health }}"
+
 - hosts: localhost
   connection: local
   gather_facts: false
@@ -87,6 +107,10 @@
       - name: kanboard
         deployment: kanboard
   tasks:
+    - name: suspend flux-system
+      command: >
+        flux suspend kustomization flux-system
+
     - name: scale up deployments depending on ceph
       command: >
         kubectl

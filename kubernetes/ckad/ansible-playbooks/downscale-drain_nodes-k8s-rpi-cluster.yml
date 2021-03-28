@@ -47,6 +47,10 @@
       - deployment: rook-ceph-osd-7
         name: rook-ceph
   tasks:
+    - name: suspend flux-system
+      command: >
+        flux suspend kustomization flux-system
+
     - name: take care of kanboard
       block:
       - name: scale down kanboard deployment
