@@ -38,6 +38,15 @@
         name: rook-ceph
       - deployment: rook-ceph-osd-7
         name: rook-ceph
+      - deployment: rook-ceph-crashcollector-k8s-worker04.fritz.box
+        name: rook-ceph
+      - deployment: rook-ceph-crashcollector-k8s-worker03.fritz.box
+        name: rook-ceph
+      - deployment: rook-ceph-crashcollector-k8s-worker02.fritz.box
+        name: rook-ceph
+      - deployment: rook-ceph-crashcollector-k8s-worker01.fritz.box
+        name: rook-ceph
+  tasks:
   tasks:
     - name: uncordon nodes
       command: >
