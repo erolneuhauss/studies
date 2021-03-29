@@ -60,10 +60,6 @@
         - k8s-worker03.fritz.box
         - k8s-worker04.fritz.box
 
-    - name: resume flux-system
-      command: >
-        flux resume kustomization flux-system
-
     - name: scale up ceph deployments
       command: >
         kubectl
@@ -116,9 +112,9 @@
       - name: kanboard
         deployment: kanboard
   tasks:
-    - name: suspend flux-system
+    - name: resume flux-system
       command: >
-        flux suspend kustomization flux-system
+        flux resume kustomization flux-system
 
     - name: scale up deployments depending on ceph
       command: >
