@@ -3,6 +3,7 @@ k8s-worker01 ansible_host=192.168.178.61 kubernetes_role=node
 k8s-worker02 ansible_host=192.168.178.62 kubernetes_role=node
 k8s-worker03 ansible_host=192.168.178.63 kubernetes_role=node
 k8s-worker04 ansible_host=192.168.178.64 kubernetes_role=node
+k8s-worker05 ansible_host=192.168.178.65 kubernetes_role=node
 
 [dramble:vars]
 ansible_ssh_user=ubuntu
@@ -10,9 +11,6 @@ ansible_user=ubuntu
 ansible_become=true
 deploy_target=pi
 kubernetes_apiserver_advertise_address=192.168.178.52
-
-[other]
-raspberrypi ansible_host=192.168.178.19
 
 [master]
 k8s-master02 ansible_host=192.168.178.52 kubernetes_role=master ansible_ssh_user=eneuhauss ansible_user=eneuhauss ansible_become=true

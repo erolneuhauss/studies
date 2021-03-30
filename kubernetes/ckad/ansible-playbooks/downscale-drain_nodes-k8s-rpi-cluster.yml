@@ -10,13 +10,41 @@
     - community.kubernetes
   vars:
     namespace:
-      - name: kanboard
-        deployment: kanboard
-      - name: kanboard
-        deployment: db
-      - name: registry
-        deployment: docker-registry
+      - deployment: kanboard
+        name: kanboard
+      - deployment: db
+        name: kanboard
+      - deployment: docker-registry
+        name: registry
+      - deployment: helm-controller
+        name: flux-system
+      - deployment: kustomize-controller
+        name: flux-system
+      - deployment: notification-controller
+        name: flux-system
+      - deployment: source-controller
+        name: flux-system
+      - deployment: prometheus-operator
+        name: monitoring
+      - deployment: prometheus-adapter
+        name: monitoring
+      - deployment: mysqld-exporter-prometheus-mysql-exporter
+        name: monitoring
+      - deployment: kube-state-metrics
+        name: monitoring
+      - deployment: grafana
+        name: monitoring
+      - deployment: dashboard-metrics-scraper
+        name: kubernetes-dashboard
+      - deployment: kubernetes-dashboard
+        name: kubernetes-dashboard
+      - deployment: dev-the-deployment
+        name: default
+      - deployment: prod-the-deployment
+        name: default
       - deployment: rook-ceph-operator
+        name: rook-ceph
+      - deployment: rook-ceph-tools
         name: rook-ceph
       - deployment: rook-ceph-mgr-a
         name: rook-ceph
@@ -25,6 +53,10 @@
       - deployment: rook-ceph-mon-c
         name: rook-ceph
       - deployment: rook-ceph-mon-d
+        name: rook-ceph
+      - deployment: rook-ceph-mon-e
+        name: rook-ceph
+      - deployment: rook-ceph-mon-f
         name: rook-ceph
       - deployment: rook-ceph-mds-myfs-a
         name: rook-ceph
@@ -46,7 +78,11 @@
         name: rook-ceph
       - deployment: rook-ceph-osd-7
         name: rook-ceph
-      - deployment: rook-ceph-osd-7
+      - deployment: rook-ceph-osd-8
+        name: rook-ceph
+      - deployment: rook-ceph-osd-9
+        name: rook-ceph
+      - deployment: rook-ceph-crashcollector-k8s-worker05.fritz.box
         name: rook-ceph
       - deployment: rook-ceph-crashcollector-k8s-worker04.fritz.box
         name: rook-ceph

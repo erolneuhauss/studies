@@ -45,7 +45,7 @@ spec:
   waitTimeoutForHealthyOSDInMinutes: 10
   mon:
     # Set the number of mons to be started. Must be an odd number, and is generally recommended to be 3.
-    count: 3
+    count: 5
     # The mons should be on unique nodes. For production, at least 3 nodes are recommended for this reason.
     # Mons should only be allowed on the same node for test environments where data loss is acceptable.
     allowMultiplePerNode: false
@@ -98,9 +98,9 @@ spec:
     # specified number of days.
     #daysToRetain: 30
   # enable log collector, daemons will log on files and rotate
-  # logCollector:
-  #   enabled: true
-  #   periodicity: 24h # SUFFIX may be 'h' for hours or 'd' for days.
+  logCollector:
+    enabled: true
+    periodicity: 24h # SUFFIX may be 'h' for hours or 'd' for days.
   # automate [data cleanup process](https://github.com/rook/rook/blob/master/Documentation/ceph-teardown.md#delete-the-data-on-hosts) in cluster destruction.
   cleanupPolicy:
     # Since cluster cleanup is destructive to data, confirmation is required.
@@ -210,6 +210,7 @@ spec:
     - name: "k8s-worker02.fritz.box"
     - name: "k8s-worker03.fritz.box"
     - name: "k8s-worker04.fritz.box"
+    - name: "k8s-worker05.fritz.box"
 #      - name: "nvme01" # multiple osds can be created on high performance devices
 #        config:
 #          osdsPerDevice: "5"
