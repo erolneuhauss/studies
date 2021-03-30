@@ -14,8 +14,3 @@ kubernetes_apiserver_advertise_address=192.168.178.52
 
 [master]
 k8s-master02 ansible_host=192.168.178.52 kubernetes_role=master ansible_ssh_user=eneuhauss ansible_user=eneuhauss ansible_become=true
-
-[other:vars]
-ansible_ssh_user=pi
-ansible_user=pi
-ansible_become=true
