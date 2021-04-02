@@ -196,6 +196,7 @@
         --force
         "{{ item }}"
       loop:
+        - k8s-worker05.fritz.box
         - k8s-worker04.fritz.box
         - k8s-worker03.fritz.box
         - k8s-worker02.fritz.box
