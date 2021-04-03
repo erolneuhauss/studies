@@ -8,24 +8,6 @@
     - community.kubernetes
   vars:
     namespace:
-      - deployment: rook-ceph-operator
-        name: rook-ceph
-      - deployment: rook-ceph-mgr-a
-        name: rook-ceph
-      - deployment: rook-ceph-mon-b
-        name: rook-ceph
-      - deployment: rook-ceph-mon-c
-        name: rook-ceph
-      - deployment: rook-ceph-mon-e
-        name: rook-ceph
-      - deployment: rook-ceph-mon-f
-        name: rook-ceph
-      - deployment: rook-ceph-mon-g
-        name: rook-ceph
-      - deployment: rook-ceph-mds-myfs-a
-        name: rook-ceph
-      - deployment: rook-ceph-mds-myfs-b
-        name: rook-ceph
       - deployment: rook-ceph-osd-0
         name: rook-ceph
       - deployment: rook-ceph-osd-1
@@ -46,17 +28,25 @@
         name: rook-ceph
       - deployment: rook-ceph-osd-9
         name: rook-ceph
-      - deployment: rook-ceph-crashcollector-k8s-worker05.fritz.box
+      - deployment: rook-ceph-mon-b
         name: rook-ceph
-      - deployment: rook-ceph-crashcollector-k8s-worker04.fritz.box
+      - deployment: rook-ceph-mon-c
         name: rook-ceph
-      - deployment: rook-ceph-crashcollector-k8s-worker03.fritz.box
+      - deployment: rook-ceph-mon-e
         name: rook-ceph
-      - deployment: rook-ceph-crashcollector-k8s-worker02.fritz.box
+      - deployment: rook-ceph-mon-f
         name: rook-ceph
-      - deployment: rook-ceph-crashcollector-k8s-worker01.fritz.box
+      - deployment: rook-ceph-mon-g
+        name: rook-ceph
+      - deployment: rook-ceph-mds-myfs-a
+        name: rook-ceph
+      - deployment: rook-ceph-mds-myfs-b
         name: rook-ceph
       - deployment: rook-ceph-tools
+        name: rook-ceph
+      - deployment: rook-ceph-mgr-a
+        name: rook-ceph
+      - deployment: rook-ceph-operator
         name: rook-ceph
       - deployment: metrics-server
         name: kube-system
