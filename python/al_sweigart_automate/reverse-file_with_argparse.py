@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import argparse
+import argparse, sys
 
 # build the parser
 parser = argparse.ArgumentParser(description='Read a file in file in reverse')
@@ -13,15 +13,26 @@ args = parser.parse_args()
 
 print(args)
 
+try:
+    f = open(args.filename, 'r')
+    limit = args.limit
+except FileNotFoundError as err:
+    print(f"Error: {err}")
+    sys.exit(2)
+# except:
+#     print("A general error occured")
+else:
+    with f:
 # read the file, reverse the contents and print
-with open(args.filename, 'r') as f:
-    lines = f.readlines()
-    print(lines)
-    lines.reverse()
-    print(lines)
+        lines = f.readlines()
+        print(lines)
+        lines.reverse()
+        print(lines)
 
-    if args.limit:
-        lines = lines[:args.limit]
+        if args.limit:
+            lines = lines[:limit]
 
-    for line in lines:
-        print(line.strip()[::-1])
+        for line in lines:
+            print(line.strip()[::-1]) # negative steps used in slice to revert string
+finally:
+    print(' End of computation '.center(30, '='))
