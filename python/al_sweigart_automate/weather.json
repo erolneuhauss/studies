@@ -1,0 +1,43 @@
+{
+  "coord": {
+    "lon": 7.0484,
+    "lat": 50.8768
+  },
+  "weather": [
+    {
+      "id": 801,
+      "main": "Clouds",
+      "description": "Ein paar Wolken",
+      "icon": "02d"
+    }
+  ],
+  "base": "stations",
+  "main": {
+    "temp": 9.22,
+    "feels_like": 8.72,
+    "temp_min": 8,
+    "temp_max": 11.67,
+    "pressure": 1030,
+    "humidity": 49
+  },
+  "visibility": 10000,
+  "wind": {
+    "speed": 1.54,
+    "deg": 0
+  },
+  "clouds": {
+    "all": 20
+  },
+  "dt": 1618330813,
+  "sys": {
+    "type": 1,
+    "id": 1271,
+    "country": "DE",
+    "sunrise": 1618288868,
+    "sunset": 1618338182
+  },
+  "timezone": 7200,
+  "id": 0,
+  "name": "Köln",
+  "cod": 200
+}
