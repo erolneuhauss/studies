@@ -40,10 +40,6 @@
         name: kubernetes-dashboard
       - deployment: metrics-server
         name: kube-system
-      - deployment: dev-the-deployment
-        name: default
-      - deployment: prod-the-deployment
-        name: default
       - deployment: rook-ceph-operator
         name: rook-ceph
       - deployment: rook-ceph-tools
