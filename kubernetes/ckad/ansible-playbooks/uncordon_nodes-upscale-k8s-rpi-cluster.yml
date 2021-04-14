@@ -34,13 +34,15 @@
         name: rook-ceph
       - deployment: rook-ceph-mon-e
         name: rook-ceph
-      - deployment: rook-ceph-mon-f
-        name: rook-ceph
       - deployment: rook-ceph-mon-g
+        name: rook-ceph
+      - deployment: rook-ceph-mon-h
         name: rook-ceph
       - deployment: rook-ceph-mds-myfs-a
         name: rook-ceph
       - deployment: rook-ceph-mds-myfs-b
+        name: rook-ceph
+      - deployment: rook-ceph-rgw-my-store-a
         name: rook-ceph
       - deployment: rook-ceph-tools
         name: rook-ceph
