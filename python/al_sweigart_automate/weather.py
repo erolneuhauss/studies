@@ -35,13 +35,14 @@ data = res.json()
 
 zip = data['name']
 temp = data['main']['temp']
-wind_speed = round(data['wind']['speed'] * 1000 / 60, 1)
+wind_speed = round(data['wind']['speed'] * 100 / 60, 1)
 description = data['weather'][0]['description']
 rain = '☔'
 sun_cloud = '⛅'
 sun = '🌞'
 
 print(' ⛅ '.center(30, "-"))
+print(f"Ort: {zip}")
 print(f"Temp: {temp}°C")
 print(f"Wind: {wind_speed} km/h")
 print(f"Lage: {description}")
