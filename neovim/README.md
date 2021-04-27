@@ -2,7 +2,7 @@
 
 I switched to neovim really just for fun and have not regreted it so far.
 
-## Config as of April 27th 2021
+## NEOVIM config as of April 27th 2021
 ### Directory tree
 ```
 exa --tree --level=2 .config/nvim
@@ -58,3 +58,6 @@ jiangmiao/auto-pairs
 liuchengxu/vista.vim
 liuchengxu/vim-which-key
 ```
+
+## VIM
+Use `install_vim_plugins.sh`, if you want to use vim like in the old days.
