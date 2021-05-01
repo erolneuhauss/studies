@@ -1,4 +1,4 @@
-ansible==2.9.16
+ansible==2.9.20
 appdirs==1.4.3
 apypie==0.3.2
 argcomplete==1.12.2
