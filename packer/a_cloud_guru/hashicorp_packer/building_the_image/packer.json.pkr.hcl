@@ -15,7 +15,6 @@ data "amazon-ami" "ubuntu" {
   }
   most_recent = true
   owners      = ["099720109477"]
-  region      = "us-east-1"
 }
 
 locals { timestamp = regex_replace(timestamp(), "[- TZ:]", "") }
@@ -23,7 +22,6 @@ locals { timestamp = regex_replace(timestamp(), "[- TZ:]", "") }
 source "amazon-ebs" "ubuntu" {
   ami_name      = "packer-base-ami-${local.timestamp}"
   instance_type = "t2.micro"
-  region        = "us-east-1"
   source_ami    = "${data.amazon-ami.ubuntu.id}"
   ssh_username  = "ubuntu"
 }
