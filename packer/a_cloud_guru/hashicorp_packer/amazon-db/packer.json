@@ -1,0 +1,21 @@
+{
+    "builders": [
+        {
+            "type": "amazon-ebs",
+            "instance_type": "t2.micro",
+            "ssh_username": "ec2-user",
+            "ami_name": "amazon-ami-test-{{timestamp}}",
+            "source_ami_filter": {
+                "filters": {
+                    "virtualization-type": "hvm",
+                    "name": "amzn2-ami-hvm-2.0.*-gp2",
+                    "root-device-type": "ebs"
+                },
+                "owners": [
+                    "amazon"
+                ],
+                "most_recent": true
+            }
+        }
+    ]
+}
