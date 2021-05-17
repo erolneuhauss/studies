@@ -1,0 +1,20 @@
+{
+    "builders": [
+        {
+            "type": "vagrant",
+            "source_path": "generic/alpine38",
+            "provider": "libvirt",
+            "communicator": "ssh"
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "inline": [
+                "sudo apk update",
+                "sudo mkdir -p /opt/provisioning",
+                "sudo chown vagrant: /opt/provisioning"
+            ]
+        }
+    ]
+}
