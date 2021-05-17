@@ -28,5 +28,11 @@ source "amazon-ebs" "ubuntu" {
 
 build {
   sources = ["source.amazon-ebs.ubuntu"]
-
+    provisioner "shell" {
+        inline = ["sudo apt update -y && sudo apt upgrade -y"]
+    }
+    provisioner "shell" {
+        script = "app-init.sh"
+    }
 }
+
