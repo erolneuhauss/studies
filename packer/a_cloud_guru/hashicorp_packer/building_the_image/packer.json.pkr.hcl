@@ -31,8 +31,15 @@ build {
     provisioner "shell" {
         inline = ["sudo apt update -y && sudo apt upgrade -y"]
     }
+    provisioner "file" {
+        source = "files/"
+        destination = "/tmp"
+    }
     provisioner "shell" {
-        script = "app-init.sh"
+        scripts = [
+            "app-init.sh",
+            "scripts/metrics.sh"
+        ]
     }
 }
 
