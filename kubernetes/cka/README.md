@@ -1,10 +1,4 @@
 # Kubernetes
-## terraform
-```
-cd <to the dir where your .tf's are>
-terraform init
-terraform plan
-terraform apply
 # a kubeconfig is produced
 export KUBECONFIG=kubeconfig_<your_name>
 ```
