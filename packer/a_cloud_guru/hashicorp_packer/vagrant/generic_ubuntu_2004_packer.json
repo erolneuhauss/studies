@@ -1,0 +1,32 @@
+{
+    "builders": [
+        {
+            "type": "vagrant",
+            "source_path": "generic/ubuntu2004",
+            "provider": "libvirt",
+            "communicator": "ssh"
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "inline": [
+                "sudo apt-get update -y && sudo apt-get upgrade -y",
+                "sudo mkdir /opt/provisioning",
+                "sudo chown vagrant: /opt/provisioning"
+            ]
+        },
+        {
+            "type": "shell",
+            "scripts": [
+                "scripts/init.sh",
+                "scripts/webdeploy.sh"
+            ],
+            "environment_vars": [
+                "HOSTNAME=bookapp"
+            ],
+            "remote_folder": "/opt/provisioning",
+            "skip_clean": true
+        }
+    ]
+}
