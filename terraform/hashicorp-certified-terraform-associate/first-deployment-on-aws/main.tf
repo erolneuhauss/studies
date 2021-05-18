@@ -23,7 +23,7 @@ resource "aws_security_group" "ubuntu" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["2.244.58.194/32"]
+    cidr_blocks = ["78.49.4.101/32"]
   }
 
   tags = {
@@ -59,3 +59,7 @@ resource "aws_eip" "ubuntu" {
   instance = aws_instance.ubuntu.id
 }
 
+output "instance_ip" {
+  description = "VM's public_ip"
+  value = aws_instance.ubuntu.public_ip
+}
