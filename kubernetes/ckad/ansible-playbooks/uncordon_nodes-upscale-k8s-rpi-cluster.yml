@@ -36,7 +36,7 @@
         name: rook-ceph
       - deployment: rook-ceph-mon-i
         name: rook-ceph
-      - deployment: rook-ceph-mon-k
+      - deployment: rook-ceph-mon-l
         name: rook-ceph
       - deployment: rook-ceph-mds-myfs-a
         name: rook-ceph
