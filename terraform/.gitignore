@@ -1,3 +1,5 @@
+key
+key.pub
 .terraform.lock.hcl
 .terraform/
 terraform.tfstate
