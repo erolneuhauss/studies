@@ -23,7 +23,15 @@ resource "aws_security_group" "ubuntu" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["78.49.4.101/32"]
+    cidr_blocks = ["93.132.123.214/32"]
+  }
+
+  ingress {
+    description = "allow traffic from TCP/80"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags = {
@@ -47,6 +55,14 @@ resource "aws_instance" "ubuntu" {
     user        = "ubuntu"
     private_key = file("key")
     host        = self.public_ip
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo apt update && sudo apt upgrade -y",
+      "sudo apt install -y apache2 && sudo systemctl enable --now apache2",
+      "echo '<h1><center>My Test Website With Help From Terraform Provisioner</center></h1>' | sudo tee /var/www/html/index.html"
+    ]
   }
 
   tags = {
