@@ -46,15 +46,15 @@
         name: rook-ceph
       - deployment: rook-ceph-mgr-a
         name: rook-ceph
-      - deployment: rook-ceph-mon-b
-        name: rook-ceph
       - deployment: rook-ceph-mon-c
         name: rook-ceph
       - deployment: rook-ceph-mon-e
         name: rook-ceph
       - deployment: rook-ceph-mon-i
         name: rook-ceph
-      - deployment: rook-ceph-mon-k
+      - deployment: rook-ceph-mon-m
+        name: rook-ceph
+      - deployment: rook-ceph-mon-n
         name: rook-ceph
       - deployment: rook-ceph-mds-myfs-a
         name: rook-ceph
