@@ -1,5 +1,6 @@
 # Kubernetes
 # a kubeconfig is produced
+```
 export KUBECONFIG=kubeconfig_<your_name>
 ```
 
