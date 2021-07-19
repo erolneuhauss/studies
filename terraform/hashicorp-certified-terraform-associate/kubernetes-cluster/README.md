@@ -1,6 +1,8 @@
 # Lets run a simple nginx pod via terraform
 ```
 terraform init
+terraform validate
+terraform fmt
 terraform plan
 terraform apply -auto-approve
 ```

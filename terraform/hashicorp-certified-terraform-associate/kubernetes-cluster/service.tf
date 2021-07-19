@@ -8,8 +8,8 @@ resource "kubernetes_service" "tf-k8s-service" {
 
   spec {
     selector = {
-        name = "tf-k8s-deployment"
-      }
+      name = "tf-k8s-deployment"
+    }
 
     port {
       node_port   = 30801
