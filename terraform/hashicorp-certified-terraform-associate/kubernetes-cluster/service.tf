@@ -12,10 +12,11 @@ resource "kubernetes_service" "tf-k8s-service" {
       }
 
     port {
+      node_port   = 30801
       port        = 80
       target_port = 80
     }
-    type = "ClusterIP"
+    type = "NodePort"
   }
 }
 

@@ -23,6 +23,12 @@ tf-k8s-service (10.108.189.180:80) open
 pod "busybox" deleted
 ```
 
+## Observe the state
+```
+terraform state list
+terraform state show kubernetes_deployment.tf-k8s-deployment
+```
+
 ## Delete everything
 ```
 terraform destroy
