@@ -1,3 +1,8 @@
+variable "wide_open" {
+  type    = list(any)
+  default = ["0.0.0.0/0"]
+}
+
 provider "aws" {
   region = "eu-central-1"
 }
@@ -15,7 +20,7 @@ resource "aws_security_group" "ubuntu" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.wide_open
   }
 
   ingress {
@@ -23,7 +28,7 @@ resource "aws_security_group" "ubuntu" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["93.135.49.53/32"]
+    cidr_blocks = var.my_pub_ip
   }
 
   ingress {
@@ -31,7 +36,7 @@ resource "aws_security_group" "ubuntu" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.wide_open
   }
 
   tags = {
@@ -40,7 +45,7 @@ resource "aws_security_group" "ubuntu" {
 }
 
 resource "aws_instance" "ubuntu" {
-  key_name      = aws_key_pair.ubuntu.key_name
+  key_name = aws_key_pair.ubuntu.key_name
 
   # ubuntu-minimal/images/hvm-ssd/ubuntu-focal-20.04-amd64-minimal-20210511
   ami = "ami-012e962955fb5a689"
@@ -77,5 +82,5 @@ resource "aws_eip" "ubuntu" {
 
 output "instance_ip" {
   description = "VM's public_ip"
-  value = aws_instance.ubuntu.public_ip
+  value       = aws_instance.ubuntu.public_ip
 }
