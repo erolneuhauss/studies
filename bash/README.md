@@ -166,6 +166,11 @@ while true
 done
 ```
 
+## Process Substitutions
+```
+diff <(kubectl get clusterrole a) <(kubectl get clusterrole b)
+bash <(curl -o - https://toolkit.fluxcd.io/install.sh)
+```
 
 
 ## Mac OS X
