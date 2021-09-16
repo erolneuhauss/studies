@@ -40,7 +40,8 @@ tail () {
 # Function is still a function even without "function ..."
 cleanup () {
   rm -rf $BACKUP_TRG
-  echo "RECEIVED CTRL-C" >> $MYLOGFILE
+  rm -f $MYLOGFILE
+  echo "RECEIVED CTRL+C" >> $MYLOGFILE
   exit
 }
 
