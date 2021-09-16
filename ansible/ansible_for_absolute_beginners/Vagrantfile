@@ -26,8 +26,8 @@ Vagrant.configure("2") do |config|
     end # config.vm
   end # boxes.each.loop
 
-  config.vm.provision "ansible" do |ansible|
-    ansible.verbose = "v"
-    ansible.playbook = "playbook.yml"
-  end # config.vm.provision
+  # config.vm.provision "ansible" do |ansible|
+  #   ansible.verbose = "v"
+  #   ansible.playbook = "playbook.yml"
+  # end # config.vm.provision
 end # Vagrant
