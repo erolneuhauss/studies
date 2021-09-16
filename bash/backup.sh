@@ -67,4 +67,4 @@ done
 cd $HOME
 grep -i sudo $MYLOGFILE | tail 2
 
-exit 127
+exit 0
