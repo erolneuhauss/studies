@@ -20,12 +20,13 @@ BACKUP_TRG="/home/$USER/backup"
 
 # Function to create backup target directory
 function init {
-  if [[ -d ${BACKUP_TRG} ]]; then
+  if [[ -d $BACKUP_TRG ]]; then
     echo "Directory already exists"
     echo "$(date +"%c")" >> $MYLOGFILE
     return 1
   else
     echo "Creating backup directory"
+    echo "$(date +"%c")" >> $MYLOGFILE
     mkdir $BACKUP_TRG 2> /dev/null
     return 0
   fi
@@ -43,14 +44,20 @@ cleanup () {
   exit
 }
 
-init
+# Testing the return value of the init function
+if (init); then
+  echo "Directory did not exist"
+else
+  echo "Directory did exists"
+fi
+
 trap cleanup SIGINT
 
 echo "Copying files"
 cd $BACKUP_SRC
 for i in $( ls su* ); do
-  # testing trap
-  sleep 1
+  # provide a little time to test trap
+  sleep 0.5
   cp -v "${i}" $BACKUP_TRG/"${i}"-backup >> $MYLOGFILE 2>&1
 done
 
