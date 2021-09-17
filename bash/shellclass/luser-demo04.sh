@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+set -eu
 # This script creates an account on the local system
 # You will be prompted for the account name and password
 # In order to practice if-conditions, I added the sudo requirement
@@ -10,11 +11,16 @@
 SUDO_INSTALLED=$(rpm -qa | grep -q sudo)
 if [[ "${SUDO_INSTALLED}" -ne "0" ]]; then
   echo "This script requires sudo package to be installed."
+  exit 1
 fi
 
 # Has the user sudo rights and does he has to provide a password
-USER_HAS_SUDO=$(sudo -l -U | grep -q -P "NOPASSWD:\s+?ALL")
-if [[ "${USER}" -ne "vagrant" || "${USER_HAS_SUDO}" -ne "0" ]]; then
+SUDO_RUN=$(sudo -v &> /dev/null)
+SUDO_PASSWD=$(sudo -l -U "${USER}"| grep -q -P "NOPASSWD:\s+?ALL")
+if [[ "${SUDO_RUN}" -ne "0" ]]; then
+  echo "USER '${USER}' may not run sudo"
+  exit 1
+elif [[ "${USER}" -ne "vagrant" || "${SUDO_PASSWD}" -ne "0" ]]; then
   echo "NOPASSWD sudo powers required to run this script"
   exit 1
 fi
