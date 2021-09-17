@@ -1,0 +1,33 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+boxes = [
+    # {
+    #     :name => "controller",
+    #     :ip   => "172.28.128.6",
+    # },
+   {
+       :name => "target1",
+       :ip   => "172.28.128.7",
+   },
+   {
+       :name => "target2",
+       :ip   => "172.28.128.10",
+   },
+]
+
+Vagrant.configure("2") do |config|
+
+  boxes.each do |box|
+    config.vm.define box[:name] do |config|
+      config.vm.box = "generic/centos8"
+      config.vm.box_check_update = false
+      config.vm.hostname = box[:name]
+      config.vm.synced_folder "./", "/vagrant"
+      # this is a virtualbox configuration not libvirt
+      # config.vm.network "private_network", ip: box[:ip]
+    end # config.vm
+  end # boxes.each.loop
+
+  config.vm.provision "shell", path: "luser-demo01.sh"
+end # Vagrant
