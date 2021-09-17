@@ -14,7 +14,7 @@ if [[ "${SUDO_INSTALLED}" -ne "0" ]]; then
   exit 1
 fi
 
-SUDO_RUN=$(sudo -v 2> /dev/null)
+sudo -v 2> /dev/null
 if [[ "${?}" -ne "0" ]]; then
   echo "USER '${USER}' may not run sudo. Exiting immediatly"
   exit 1
@@ -55,6 +55,10 @@ read -s -p "Type in your password: " USER_PASSWORD
 
 # Set the password for the user
 echo ${USER_PASSWORD} | sudo passwd ${USER_NAME} --stdin
+if [[ "${?}" -ne "0" ]]; then
+  echo "Something went wrong with setting the password. Exiting immediatly"
+  exit 1
+fi
 
 # Force password change on first login
 sudo passwd --expire ${USER_NAME}
