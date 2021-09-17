@@ -5,18 +5,35 @@
 
 echo "We will be creating a user. Please supply your information."
 
-# Ask for the user name
-read -p "Type a username: " USER_NAME
+# Check whether username exists
+while true; do
+  # Ask for the user name
+  read -p "Type a username: " USER_NAME
+  grep -w ${USER_NAME} /etc/passwd
+  if [[ "${?}" != 1 ]]; then
+    false
+  else
+    true
+  fi
+done
 
 # Ask for the real name
 read -p "Type the real name: " REAL_NAME
 
 # Ask for the password
-read -s -p "Type in your password" USER_PASSWORD
+read -s -p "Type in your password: " USER_PASSWORD
 
 # Create the user
-useradd -c "${REAL_NAME}" 
+while true; do
+  sudo useradd -c "${REAL_NAME}" ${USER_NAME}
+  useraddExitCode="$?"
+  if [[ "${useraddExitCode}" = 9 ]]; then
+    echo "Deleting existing ${USER_NAME}"
+    sudo userdel --force ${USER_NAME}
+  fi
 
-# Set the password for the user
-passwd ${USER_NAME}
-# Force password change on first login
+  # Set the password for the user
+  echo ${USER_PASSWORD} | sudo passwd ${USER_NAME} --stdin
+  # Force password change on first login
+  false
+done
