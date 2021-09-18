@@ -24,4 +24,20 @@ echo "${PASSWORD}"
 SPECIAL_CHAR=$(echo '!@#$%^&**(_)-=+?><,./;[]{}' | fold -w1 | shuf | head -c1)
 echo "${PASSWORD}${SPECIAL_CHAR}"
 
+# Display what the user typed on the command line
+echo "You executed this command: ${0}"
+
+# Display the path and filename of the script
+echo "You used $(dirname ${0}) as the path to the $(basename ${0}) script"
+
+NUMBER_OF_PARAMETERS="${#}"
+
+echo "You supplied ${NUMBER_OF_PARAMETERS} argument(s) on the command line"
+
+# Make sure they at least supply one argument
+if [[ "${NUMBER_OF_PARAMETERS}" -lt 1 ]]; then
+  echo "Usage: ${0} USER_NAME [USER_NAME]..."
+  exit 1
+fi
+
 exit 0
