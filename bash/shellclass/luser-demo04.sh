@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# set -eu
+set -eu
 # This script creates an account on the local system
 # You will be prompted for the account name and password
 # In order to practice if-conditions, I added the sudo requirement
@@ -20,8 +20,7 @@ if ! (sudo -v 2> /dev/null); then
 fi
 
 # Has the user sudo rights and does he has to provide a password
-SUDO_PASSWD=$(sudo -l -U "${USER}" | grep -q -P "NOPASSWD:\s+?ALL")
-if [[ "${USER}" -ne "vagrant" || "${SUDO_PASSWD}" -ne "0" ]]; then
+if ! (sudo -l -U "${USER}" | grep -q -P "NOPASSWD:\s+?ALL"); then
   echo "NOPASSWD sudo powers required to run this script. Exiting immediatly"
   exit 1
 fi
