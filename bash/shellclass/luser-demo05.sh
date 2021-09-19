@@ -40,4 +40,9 @@ if [[ "${NUMBER_OF_PARAMETERS}" -lt 1 ]]; then
   exit 1
 fi
 
+for USER_NAME in "${@}"; do
+  PASSWORD=$(date +%s%N${RANDOM} | sha256sum | head -c32)
+  echo "Username: ${USER_NAME} password: ${PASSWORD}"
+done
+
 exit 0
