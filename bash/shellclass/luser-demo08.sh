@@ -5,57 +5,40 @@ set -eu
 
 # Redirect STDOUT to a file
 FILE="/tmp/data"
-head -n1 /etc/passwd > ${FILE}
+head -n3 /etc/passwd > ${FILE}
 
-# Package sudo needs to be installed in order this to work
-# if ! (rpm -qa | grep -q sudo); then
-#   echo "This script requires sudo package to be installed. Exiting immediatly."
-#   exit 1
-# fi
+# read reads until \n. it does not iterate through the $FILE
+# therefore it reads only the first line
+read LINE < ${FILE}
+echo "Line contains: ${LINE}"
 
-# # Check if user is allowed to run sudo at all
-# if ! (sudo -v 2> /dev/null); then
-#   echo "USER '${USER}' may not run sudo. Exiting immediatly"
-#   exit 1
-# fi
+# entire file can be showed
+echo
+echo "entire file:"
+cat ${FILE}
 
-# # Has the user sudo rights and does he has to provide a password
-# if ! (sudo -l -U "${USER}" | grep -q -P "NOPASSWD:\s+?ALL"); then
-#   echo "NOPASSWD sudo powers required to run this script. Exiting immediatly"
-#   exit 1
-# fi
+# File descriptor (FD 0): STDIN
+# File descriptor (FD 1): STOUT
+# File descriptor (FD 2): STERR
 
-# echo "We will be creating a user. Please supply your information."
+# implicit use of FD0
+read X < /etc/hostname
+# same as explicit use of FD0
+read X 0< /etc/hostname
 
-# USER_EXISTS=true
-# while [[ "${USER_EXISTS}" = "true" ]]; do
-#   # Ask for the user name
-#   read -p "Type a username: " USER_NAME
+# implicit use of FD1
+echo ${RANDOM} > random.out
+# same as explicit use of FD1
+echo ${RANDOM} 1> random.out
+cat random.out
 
-#   # Check whether username exists
-#   if (grep -w ${USER_NAME} /etc/passwd > /dev/null 2>&1); then
-#     USER_EXISTS=true
-#     echo "Username already exits. You need to use another username"
-#   else
-#     USER_EXISTS=false
-#     # Ask for the real name
-#     read -p "Type the real name: " REAL_NAME
+# random.out content would be directed to head.out, but the
+# error message "head: cannot open 'non-existant-file' for reading:
+# No such file or directory" would be printed out
+head random.out non-existant-file > head.out
 
-#     # Create the user
-#     sudo useradd -c "${REAL_NAME}" -m ${USER_NAME}
-#   fi
-# done
+# now, the error message is being redirected
+head random.out non-existant-file 2> head.err
 
-# # Ask for the password
-# read -s -p "Type in your password: " USER_PASSWORD
-
-# # Set the password for the user
-# if ! (echo ${USER_PASSWORD} | sudo passwd ${USER_NAME} --stdin) ; then
-#   echo "Something went wrong with setting the password. Exiting immediatly"
-#   exit 1
-# fi
-
-# # Force password change on first login
-# sudo passwd --expire ${USER_NAME}
-
-# exit 0
+# both outputs are being redirected
+head random.out non-existant-file > head.out 2> head.err
