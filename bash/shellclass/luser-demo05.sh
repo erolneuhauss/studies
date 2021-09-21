@@ -25,6 +25,7 @@ SPECIAL_CHAR=$(echo '!@#$%^&**(_)-=+?><,./;[]{}' | fold -w1 | shuf | head -c1)
 echo "${PASSWORD}${SPECIAL_CHAR}"
 
 # Display what the user typed on the command line
+# e.g. script name
 echo "You executed this command: ${0}"
 
 # Display the path and filename of the script
