@@ -4,7 +4,7 @@ set -u
 # This scipt demonstrates I/O redirection
 
 # Redirect STDOUT to a file
-FILE="/tmp/data"
+FILE="/tmp/data.out"
 head -n3 /etc/passwd > ${FILE}
 
 # read reads until \n. it does not iterate through the $FILE
@@ -52,5 +52,30 @@ head random.out non-existant-file > head.both 2>&1
 
 # &> same as 2>&1 in bash
 head random.out non-existant-file &> head.both
+
+# STDERR is not piped to cat
+head random.out non-existant-file | cat -n
+
+# STDERR is now piped to cat
+head random.out non-existant-file 1>&2 | cat -n
+
+# STDERR is now piped to cat (same as above)
+head random.out non-existant-file >&2 | cat -n
+
+# STDERR is now piped to cat (new syntax)
+head random.out non-existant-file |& cat -n
+
+ERR_FILE="/tmp/data.err"
+head -n3 /etc/passwd /non-existant-file 2> ${ERR_FILE}
+head -n3 /etc/passwd /non-existant-file &> ${FILE}
+
+# redirect STDOUT to /dev/null / discard STDOUT
+head -n3 /etc/passwd /non-existant-file > /dev/null
+
+# redirect STDERR to /dev/null / discard STDERR
+head -n3 /etc/passwd /non-existant-file 2> /dev/null
+
+# redirect STDOUT AND STDERR to /dev/null / discard STDOUT AND STDERR
+head -n3 /etc/passwd /non-existant-file &> /dev/null
 
 exit 0
