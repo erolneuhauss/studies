@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -eu
+set -u
 # This scipt demonstrates I/O redirection
 
 # Redirect STDOUT to a file
@@ -19,7 +19,7 @@ cat ${FILE}
 
 # File descriptor (FD 0): STDIN
 # File descriptor (FD 1): STOUT
-# File descriptor (FD 2): STERR
+# File descriptor (FD 2): STDERR
 
 # implicit use of FD0
 read X < /etc/hostname
@@ -35,10 +35,22 @@ cat random.out
 # random.out content would be directed to head.out, but the
 # error message "head: cannot open 'non-existant-file' for reading:
 # No such file or directory" would be printed out
-head random.out non-existant-file > head.out
+# head random.out non-existant-file > head.out
 
 # now, the error message is being redirected
 head random.out non-existant-file 2> head.err
 
 # both outputs are being redirected
 head random.out non-existant-file > head.out 2> head.err
+
+# use append instead of overwrite
+head random.out non-existant-file > head.out 2>> head.err
+
+# redirect both STDOUT and STDERR to a file
+# 2>&1 actually it means redirect FD2 (STDERR) to FD1 (STDOUT)
+head random.out non-existant-file > head.both 2>&1
+
+# &> same as 2>&1 in bash
+head random.out non-existant-file &> head.both
+
+exit 0
