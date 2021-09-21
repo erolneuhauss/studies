@@ -35,7 +35,7 @@ fi
 PASSWORD=$(date +%s%N${RANDOM} | sha256sum | head -c32)
 
 # set password for user
-if ! (echo ${PASSWORD} | sudo passwd ${USER_NAME} --stdin); then
+if ! (sudo passwd ${USER_NAME} --stdin < ${PASSWORD}); then
   echo "Something went wrong with setting the password. Exiting immediatly"
   exit 1
 fi
