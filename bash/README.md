@@ -172,6 +172,22 @@ diff <(kubectl get clusterrole a) <(kubectl get clusterrole b)
 bash <(curl -o - https://toolkit.fluxcd.io/install.sh)
 ```
 
+## Misc
+### help builtin (bash)
+Get information about builtins like ```for```, ```if``` with
+```
+help case
+case: case WORD in [PATTERN [| PATTERN]...) COMMANDS ;;]... esac
+[...]
+```
+
+Make it available for zsh in ```~/.zshrc```
+```
+# zsh doesn't have a builtin help command
+function help(){
+    bash -c "help $@"
+}
+```
 
 ## Mac OS X
 #### Configure Powerline for bash
