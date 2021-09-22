@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# https://www.udemy.com/course/linux-shell-scripting-projects
+# Linux Shell Scripting: A Project-Based Approach to Learning
 
 # This script generates a list a random passwords
 # but not so secure ones for practice
