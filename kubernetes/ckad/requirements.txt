@@ -97,7 +97,7 @@ statsd==3.3.0
 terminaltables==3.1.0
 thefuck==3.30
 toml==0.10.2
-urllib3==1.26.4
+urllib3==1.26.5
 wcwidth==0.2.5
 webencodings==0.5.1
 websocket-client==0.58.0
