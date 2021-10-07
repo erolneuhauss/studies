@@ -70,3 +70,15 @@ improved_log() {
 VERBOSITY='true'
 improved_log "${VERBOSITY}" 'The first line should be printed!'
 improved_log "${VERBOSITY}" 'The second line should be printed!'
+
+my_logger() {
+  local MESSAGE="${@}"
+  if [[ "${VERBOSE}" = 'true' ]]; then
+    echo "${MESSAGE}"
+  fi
+  logger -t functions.sh "${MESSAGE}"
+}
+
+readonly VERBOSE='true'
+my_logger 'Hello!'
+my_logger 'This is fun!'
