@@ -28,6 +28,15 @@ variable_check_z() {
   fi
 }
 
+# probably a more appropiate approach would be to use
+# -v varname
+#       True if the shell variable varname is set (has been assigned a value).
+# because -z and -n checks for the length of the string
+# -z string
+#       True if the length of string is zero.
+# -n string
+#       True if the length of string is non-zero.
+
 log() {
   local MESSAGE="${@}"
   if [[ -n "${VERBOSE:-}" ]]; then
