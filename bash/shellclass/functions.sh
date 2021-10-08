@@ -72,13 +72,15 @@ improved_log "${VERBOSITY}" 'The first line should be printed!'
 improved_log "${VERBOSITY}" 'The second line should be printed!'
 
 my_logger() {
+  # This function sends a message to syslog and to stdout if VERBOSE is true
   local MESSAGE="${@}"
   if [[ "${VERBOSE}" = 'true' ]]; then
     echo "${MESSAGE}"
   fi
+  # Log independ of VERBOSE
   logger -t functions.sh "${MESSAGE}"
 }
 
-readonly VERBOSE='true'
+readonly VERBOSE='false'
 my_logger 'Hello!'
 my_logger 'This is fun!'
