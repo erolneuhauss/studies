@@ -6,4 +6,13 @@
 set -o pipefail
 
 # Fail on error and undefined variables
-set -eu 
+set -eu
+
+# I was going to recreate https://github.com/ro14nd-talks/shell-ninja.git
+# by listening to the talk
+# It turned to be somewhat wasteful, because speakter does not use getops,
+# which would make life a lot easier.
+# It is also very fast and a little hard to comprehend
+
+# The main reason why I listened to this talk was get to know bats
+# Bash Automated Testing System
