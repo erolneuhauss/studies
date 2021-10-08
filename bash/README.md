@@ -53,6 +53,11 @@ grep -o -P '"certname":".+?"' whichrolesarebeingused.json
 grep -o -P '(?<=roleOccupant: uid=)[^,]+' ldap.out
 ```
 
+### grep for a string with a dash
+```
+grep -- -eu *
+```
+
 ## find
 ### mv files selected with find
 ```
