@@ -24,7 +24,7 @@ display() {
   if [[ "${VERBOSE:-}" = 'true' ]]; then
     echo "${MESSAGE}"
   fi
-} 
+}
 
 
 # Set a default password length
@@ -47,6 +47,33 @@ while getopts vl:s OPTION; do
       ;;
   esac
 done
+
+echo "Number of args: ${#}"
+echo "All args: ${@}"
+echo "First arg: ${1:-}"
+echo "Second arg: ${2:-}"
+echo "Third arg: ${3:-}"
+
+# Inspect OPTIND
+echo "OPTIND: ${OPTIND}"
+
+# Remove the options that have been parsed by getopts from the parameter list
+# while leaving the remaining arguments
+# and so after that point, $1 will refer to the first non-option argument passed
+# to the script
+shift "$(( OPTIND - 1 ))"
+
+echo 'After the shift:'
+echo "Number of args: ${#}"
+echo "All args: ${@}"
+echo "First arg: ${1:-}"
+echo "Second arg: ${2:-}"
+echo "Third arg: ${3:-}"
+
+# if there is to any argumenst after the options, then display usage
+if [[ "${#}" -gt 0 ]]; then
+  usage
+fi
 
 display 'Generating a password.'
 
