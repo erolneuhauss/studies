@@ -103,4 +103,18 @@ backup_file() {
   fi
 }
 
-backup_file /etc/passwd
+# should succeed
+if (backup_file /etc/passwd); then
+  my_logger 'File backup succeeded!'
+else
+  my_logger 'File backup failed!'
+  exit 1
+fi
+
+# should fail
+if (backup_file /etc/shadow); then
+  my_logger 'File backup succeeded!'
+else
+  my_logger 'File backup failed!'
+  exit 1
+fi
