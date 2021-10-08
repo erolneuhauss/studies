@@ -6,8 +6,12 @@
 set -eu
 
 # https://tldp.org/LDP/Bash-Beginners-Guide/html/sect_10_03.html
+# bash feature for parameter expansion
 # without :- in "${VERBOSE:-}" set -u would complain
+# ${FOO:-} means, if FOO is not set, expand it to an empty string
+# useful for optional parameters
 # Substitution ${VAR:-WORD}
+#
 # alternative +x in "${VERBOSE+x}". "x" not mandatory, could be "foo" instead
 # "${VERBOSE+foo}"
 variable_check_n() {
