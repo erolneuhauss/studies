@@ -84,3 +84,23 @@ my_logger() {
 readonly VERBOSE='false'
 my_logger 'Hello!'
 my_logger 'This is fun!'
+
+backup_file() {
+  # This function creates a backup of a file. Returns non-zero status on error
+
+  local FILE="${1}"
+
+  # Make sure the file exists.
+  if [[ -f "${FILE}" ]]; then
+    local BACKUP_FILE="/var/tmp/$(basename ${FILE}).$(date +%F-%N)"
+    my_logger "Backing up ${FILE} to ${BACKUP_FILE}."
+
+    # The exit status of the function will be the exit status of the cp command
+    cp -p ${FILE} ${BACKUP_FILE}
+  else
+    # The file does not exists, so return a non-zero exit status
+    return 1
+  fi
+}
+
+backup_file /etc/passwd
