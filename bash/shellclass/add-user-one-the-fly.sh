@@ -25,10 +25,10 @@ USER_NAME="${1}"
 shift
 
 # capture the rest of arguments
-COMMENT="${@}"
+COMMENT="${*}"
 
 # create user
-if ! (useradd -c "${COMMENT}" -m ${USER_NAME}); then
+if ! (useradd -c "${COMMENT}" -m "${USER_NAME}"); then
   echo "Something went wrong with user creation. Exiting immediatly"
   exit 1
 fi
@@ -37,13 +37,13 @@ fi
 PASSWORD=$(date +%s%N${RANDOM} | sha256sum | head -c32)
 
 # set password for user
-if ! (sudo passwd ${USER_NAME} --stdin < ${PASSWORD}); then
+if ! ( echo "${USER_NAME}:${PASSWORD}" | sudo chpasswd); then
   echo "Something went wrong with setting the password. Exiting immediatly"
   exit 1
 fi
 
 # force password change on first login
-passwd -e ${USER_NAME}
+passwd -e "${USER_NAME}"
 
 # display data
 HOST_NAME="$(hostname)"
