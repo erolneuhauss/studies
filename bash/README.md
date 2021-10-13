@@ -178,6 +178,20 @@ bash <(curl -o - https://toolkit.fluxcd.io/install.sh)
 ```
 
 ## Misc
+### Umlaute and ß on a Magic Keyboard us layout on Ubuntu
+Install `gnome-tweaks` and follow instructions here:
+https://askubuntu.com/questions/304277/how-do-i-insert-an-umlaut-on-the-u-in-ubuntu/1106296#1106296
+
+Designate your compose key: Right-Alt. And then simply type
+
+```
+compose key + " + A = Ä
+compose key + " + O = Ö
+compose key + " + U = Ü
+compose key + " + ss = ß
+compose key + ss = ß
+```
+
 ### help builtin (bash)
 Get information about builtins like ```for```, ```if``` with
 ```
