@@ -1,10 +1,17 @@
 # Learning Mac OS X
 ## Install important things first
-### Homebrew
+### Homebrew -- https://brew.sh
 ```
-/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
+## Install via brew
+```
+brew install \
+  iproute2mac
+```
+
+## Historic -- pre 2021
 ### Install software with brew/brew cask
 ```
 brew cask install \
