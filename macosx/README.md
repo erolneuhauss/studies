@@ -5,10 +5,77 @@
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-## Install via brew
+### Install via brew
 ```
 brew install \
-  iproute2mac
+  bat \
+  bats-core \
+  chezmoi \
+  curl \
+  direnv \
+  exa \
+  fd \
+  font-hack-nerd-font \
+  fzf \
+  git-delta \
+  helm \
+  htop \
+  iproute2mac \
+  kubectl \
+  ncdu \
+  neovim \
+  node \
+  npm \
+  pstree \
+  psutils \
+  pv \
+  pwgen \
+  ranger \
+  rg \
+  romkatv/powerlevel10k/powerlevel10k \
+  shellcheck \
+  svn \
+  telnet \
+  terraform \
+  thefuck \
+  tldr \
+  tree \
+  watch \
+  wget \
+  yq
+```
+
+### Install via pip3
+```
+/Library/Developer/CommandLineTools/usr/bin/python3 -m pip install --upgrade pip
+pip3 install \
+    ansible==2.9.26 \
+    awscli \
+    boto \
+    jmespath
+    molecule==2.22 \
+    pynvim \
+    python-vagrant \
+    yamllint \
+```
+
+
+### Install via npm
+```
+npm install -g \
+    pyright \
+    yarn \
+    bash-language-server \
+    neovim \
+```
+
+### Install via yarn
+```
+yarn global add \
+    ansible-language-server \
+    diagnostic-languageserver
+
+yarn global bin
 ```
 
 ## Historic -- pre 2021
