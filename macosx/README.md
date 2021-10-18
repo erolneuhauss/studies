@@ -1,12 +1,16 @@
-# Learning Mac OS X
+# Learning MacOS
+
 ## Install important things first
-### Homebrew -- https://brew.sh
-```
+
+### Homebrew -- <https://brew.sh>
+
+```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
 ### Install via brew
-```
+
+```bash
 brew install \
   bat \
   bats-core \
@@ -46,7 +50,8 @@ brew install \
 ```
 
 ### Install via pip3
-```
+
+```bash
 /Library/Developer/CommandLineTools/usr/bin/python3 -m pip install --upgrade pip
 pip3 install \
     ansible==2.9.26 \
@@ -59,9 +64,9 @@ pip3 install \
     yamllint \
 ```
 
-
 ### Install via npm
-```
+
+```bash
 npm install -g \
     pyright \
     yarn \
@@ -70,7 +75,8 @@ npm install -g \
 ```
 
 ### Install via yarn
-```
+
+```bash
 yarn global add \
     ansible-language-server \
     diagnostic-languageserver
@@ -79,8 +85,10 @@ yarn global bin
 ```
 
 ## Historic -- pre 2021
+
 ### Install software with brew/brew cask
-```
+
+```bash
 brew cask install \
   alinof-timer \
   anki \
@@ -168,7 +176,8 @@ brew install \
 ```
 
 ## .dotfiles
-```
+
+```bash
 ln -s ~/.dotfiles/zlogout ~/.zlogout
 ln -s ~/.dotfiles/zlogin ~/.zlogin
 ln -s ~/.dotfiles/zshrc ~/.zshrc
@@ -183,12 +192,15 @@ ln -s ~/.dotfiles/bin ~/bin
 ```
 
 ## some things are somewhat different from Linux
+
 ### netstat
-```
+
+```bash
 netstat -anp tcp | grep -i "listen"
 ```
 
 ## lsof
-```
+
+```bash
 sudo lsof -Pn -iTCP -sTCP:LISTEN
 ```
