@@ -7,6 +7,13 @@
 # -u checks for unset variables
 set -eu
 
+# always initiate variables, especially when working with options
+# otherwise major area of bugs
+ACTION=false
+NAME=false
+TYPE=false
+THIS_SCRIPT="$(basename "${BASH_SOURCE[0]}")"
+
 usage() {
   echo "Usage: ${0} " >&2
   echo ''
@@ -16,19 +23,15 @@ usage() {
   return 1
 }
 
-create_kind_cluster_recreate_if_exists() {
+create_resources() {
   echo "Creating '${TYPE}' named '${NAME}'."
 }
 
-deploy_application_redeploy_if_exists() {
-  echo "Deploying application named '${DEPLOY}'."
-}
-
-remove_kind_cluster() {
+remove_resources() {
   echo "Remove '${TYPE}' named '${NAME}'."
 }
 
-while getopts crt:n: OPTIONS; do
+while getopts :crt:n: OPTIONS; do
   case ${OPTIONS} in
     c)
       ACTION=CREATE
@@ -38,47 +41,68 @@ while getopts crt:n: OPTIONS; do
       ;;
     t)
       TYPE="${OPTARG}"
-      if [[ -z "${TYPE}" ]]; then
-        echo "I definitly need the TYPE of the resource you want to create/deploy or remove"
-        echo "Choose between 'app', 'ns' (namespace) and 'cluster'"
-        exit 1
-      elif [[ ! "${TYPE}" =~ app|ns|cluster ]]; then
-        echo "Incorrect TYPE provided. Choose between 'app', ns' and 'cluster'"
-        exit 1
-      fi
       ;;
     n)
       NAME="${OPTARG}"
-      if [[ -z "${NAME}" ]]; then
-        echo "I definitly need the name of the app, namespace or cluster
-        you want me to create/deploy or remove"
-      fi
       ;;
-    ?)
+    :)
+      echo "Option -${OPTARG} requires an argument"
       usage
       ;;
+    ?)
+      echo "You have provided an invalid option or argument"
+      usage
   esac
 done
 
 # Inspect OPTIND
 echo "OPTIND: ${OPTIND}"
+echo "Number of args: ${#}"
+set +u
+echo "All args: ${*}"
+set -u
+echo "1st arg: ${1:-}"
+echo "2nd arg: ${2:-}"
+echo "3rd arg: ${3:-}"
+echo "4th arg: ${4:-}"
+echo "5th arg: ${5:-}"
+echo "6th arg: ${6:-}"
 
-# Remove the options that have been parsed by getopts from the parameter list
-# while leaving the remaining arguments
-# and so after that point, $1 will refer to the first non-option argument passed
-# to the script
-# shift "$(( OPTIND - 1 ))"
+echo "ACTION: ${ACTION}"
+echo "NAME: ${NAME}"
+echo "TYPE: ${TYPE}"
 
-# if there is to any argumenst after the options, then display usage
+
+# if there is nothing, no flag no argument. Show usage
 if [[ "${#}" -lt 1 ]]; then
+  echo "${THIS_SCRIPT} expects OPTIONS and ARGUMENTS."
+  usage
+# also superfluous arguments should be noted.
+elif [[ "${#}" -gt 5 ]]; then
+  echo "You provided at some point an extra argument.
+  You provided: ${THIS_SCRIPT} ${*}
+  Expected: $THIS_SCRIPT -c|-r -t [app|ns|cluster] -n NAME"
   usage
 fi
 
-case "${ACTION}" in
-  CREATE)
-    create_kind_cluster_recreate_if_exists "${TYPE}" "${NAME}" 
-    ;;
-  REMOVE)
-    remove_kind_cluster "${TYPE}" "${NAME}"
-    ;;
-esac
+# check for valid user input
+if [[ "${ACTION}" == 'false' ]]; then
+  echo "Provide a valid OPTION. Expecting: '-c' or '-r'.
+  Otherwise I don't know what to do"
+  usage
+elif [[ "${TYPE}" == 'false' ]] || [[ ! "${TYPE}" =~ app|ns|cluster ]]; then
+  echo "Provide a valid TYPE. Expecting: '-t [app|ns|cluster]'"
+  usage
+elif [[ "${NAME}" == 'false' ]] || [[ "${NAME}" =~ ^- ]]; then
+  echo "Provide a valid NAME. Expecting: '-n [NAME]'"
+  usage
+else
+  case "${ACTION}" in
+    CREATE)
+      create_resources "${TYPE}" "${NAME}"
+      ;;
+    REMOVE)
+      remove_resources "${TYPE}" "${NAME}"
+      ;;
+  esac
+fi
