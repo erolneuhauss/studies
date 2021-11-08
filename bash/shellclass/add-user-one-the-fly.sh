@@ -10,6 +10,10 @@ if [[ "${UID}" -ne 0 ]]; then
   exit 1
 fi
 
+if [ $COMMENT == true]; then
+    echo i
+done
+
 # how to use this script. At least one argument is required
 if [[ "${#}" -eq 0 ]]; then
   echo "USAGE: $0 USER_NAME [COMMENT]"
@@ -17,6 +21,14 @@ if [[ "${#}" -eq 0 ]]; then
   echo "and a comment field of COMMENT"
   exit 1
 fi
+
+
+
+for VAR in $LIST
+do
+  echo "$VAR"
+done
+
 
 # capture first argument
 USER_NAME="${1}"
@@ -49,4 +61,11 @@ passwd -e "${USER_NAME}"
 HOST_NAME="$(hostname)"
 echo "user: '${USER_NAME}', password: '${PASSWORD}', hostname: '${HOST_NAME}'"
 
+if [[ $COMMENT == '' ]]; then
+  printf('Hi')
+fi
+
+for i in $(ls *); do
+    echo i
+done
 exit 0
