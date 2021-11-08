@@ -17,15 +17,15 @@ usage() {
 }
 
 create_kind_cluster_recreate_if_exists() {
-  echo "Creating kind cluster named \"'${CREATE}'\"." 
+  echo "Creating kind cluster named \"'${CREATE}'\"."
 }
 
 deploy_application_redeploy_if_exists() {
-  echo "Deploying application named \"'${DEPLOY}'\"." 
+  echo "Deploying application named \"'${DEPLOY}'\"."
 }
 
 remove_kind_cluster() {
-  echo "Remove application named \"'${REMOVE}'\"." 
+  echo "Remove application named \"'${REMOVE}'\"."
 }
 
 while getopts c:d:r: OPTIONS; do
