@@ -17,39 +17,48 @@ usage() {
 }
 
 create_kind_cluster_recreate_if_exists() {
-  echo "Creating kind cluster named \"'${CREATE}'\"."
+  echo "Creating '${TYPE}' named '${NAME}'."
 }
 
 deploy_application_redeploy_if_exists() {
-  echo "Deploying application named \"'${DEPLOY}'\"."
+  echo "Deploying application named '${DEPLOY}'."
 }
 
 remove_kind_cluster() {
-  echo "Remove application named \"'${REMOVE}'\"."
+  echo "Remove '${TYPE}' named '${NAME}'."
 }
 
-while getopts c:d:r: OPTIONS; do
+while getopts crt:n: OPTIONS; do
   case ${OPTIONS} in
     c)
-      CREATE="${OPTARG}"
-      ;;
-    d)
-      DEPLOY="${OPTARG}"
+      ACTION=CREATE
       ;;
     r)
-      REMOVE="${OPTARG}"
+      ACTION=REMOVE
+      ;;
+    t)
+      TYPE="${OPTARG}"
+      if [[ -z "${TYPE}" ]]; then
+        echo "I definitly need the TYPE of the resource you want to create/deploy or remove"
+        echo "Choose between 'app', 'ns' (namespace) and 'cluster'"
+        exit 1
+      elif [[ ! "${TYPE}" =~ app|ns|cluster ]]; then
+        echo "Incorrect TYPE provided. Choose between 'app', ns' and 'cluster'"
+        exit 1
+      fi
+      ;;
+    n)
+      NAME="${OPTARG}"
+      if [[ -z "${NAME}" ]]; then
+        echo "I definitly need the name of the app, namespace or cluster
+        you want me to create/deploy or remove"
+      fi
       ;;
     ?)
       usage
       ;;
   esac
 done
-
-echo "Number of before shift (OPTIND -1) args: ${#}"
-echo "All args: ${@}"
-echo "First arg: ${1:-}"
-echo "Second arg: ${2:-}"
-echo "Third arg: ${3:-}"
 
 # Inspect OPTIND
 echo "OPTIND: ${OPTIND}"
@@ -58,16 +67,18 @@ echo "OPTIND: ${OPTIND}"
 # while leaving the remaining arguments
 # and so after that point, $1 will refer to the first non-option argument passed
 # to the script
-shift "$(( OPTIND - 1 ))"
-
-echo 'After the shift:'
-echo "Number of args: ${#}"
-echo "All args: ${@}"
-echo "First arg: ${1:-}"
-echo "Second arg: ${2:-}"
-echo "Third arg: ${3:-}"
+# shift "$(( OPTIND - 1 ))"
 
 # if there is to any argumenst after the options, then display usage
-if [[ "${#}" -gt 0 ]]; then
+if [[ "${#}" -lt 1 ]]; then
   usage
 fi
+
+case "${ACTION}" in
+  CREATE)
+    create_kind_cluster_recreate_if_exists "${TYPE}" "${NAME}" 
+    ;;
+  REMOVE)
+    remove_kind_cluster "${TYPE}" "${NAME}"
+    ;;
+esac
