@@ -10,31 +10,53 @@ set -eu
 usage() {
   echo "Usage: ${0} ACTION TYPE CLUSTER_NAME [NAMESPACE1] [NAMESPACE2]..." >&2
   echo ''
-  echo 'Creates or removes defined resources'
+  echo 'Creates or deletes defined resources'
   echo 'ARGS must be passed in exact order: ACTION TYPE CLUSTER_NAME'
   echo ''
-  echo '  ACTION can be one of: create|remove'
+  echo '  ACTION can be one of: create|delete'
   echo '  TYPE can be one of:   cluster|ns'
   echo '  Any CLUSTER_NAME or NAMESPACES should begin with a alpabetic character [a-zA-Z]'
   return 1
 }
 
-create_resources() {
-  echo "ACTION: ${*}"
-  if [[ "${#}" -gt 3 ]]; then
-    shift 3
-    i=1
-    echo "NAMESPACES: "
-    for args in "${@}"; do
-      echo "${i}. Namespace to create: ${args}"
-      (( i+=1 ))
-    done
+manage_resources() {
+  ACTION="${1}"
+  TYPE="${2}"
+  CLUSTER_NAME="${3}"
+  if [[ "${TYPE}" == 'ns' ]]; then
+    manage_namespaces "${@}"
+  else
+    manage_kind_cluster "${ACTION}" "cluster" "${CLUSTER_NAME}"
+    if [[ "${#}" -gt 3 && "${ACTION}" == 'create' ]]; then
+      manage_namespaces "${@}"
+    fi
   fi
 }
 
-remove_resources() {
-  echo "Remove '${TYPE}' named '${NAME}'."
+manage_namespaces() {
+  ACTION="${1}"
+  CLUSTER_NAME="${3}"
+  shift 3
+  i=1
+  for ns in "${@}"; do
+    echo kubectl --config "${CLUSTER_NAME}" "${ACTION}" namespace "${ns}"
+  done
 }
+
+loop_through_namespaces() {
+  shift 3
+  i=1
+  echo "NAMESPACES: "
+  for args in "${@}"; do
+    echo "${i}. Namespace to create: ${args}"
+    (( i+=1 ))
+  done
+}
+
+manage_kind_cluster() {
+  echo "ACTION: ${ACTION} ${TYPE} ${CLUSTER_NAME}"
+}
+
 
 # Show info about arguments
 set +u
@@ -60,8 +82,8 @@ if [[ "${#}" -lt 1 ]]; then
 elif [[ "${1:-}" == 'help' ]]; then
   ACTION='help'
 ## EXAMINE EXISTENCE AND VALIDITY OF MANDATORY ARGUMENTS
-elif [[ ! "${1:-}" =~ help|create|remove ]]; then
-  echo "Provide a valid ACTION. Expecting: 'help|create|remove'"
+elif [[ ! "${1:-}" =~ help|create|delete ]]; then
+  echo "Provide a valid ACTION. Expecting: 'help|create|delete'"
   exit 1
 elif [[ ! "${2:-}" =~ ns|cluster ]]; then
   echo "Provide a valid TYPE. Expecting: 'ns|cluster'"
@@ -83,13 +105,10 @@ fi
 
 case "${ACTION}" in
   default)
-    create_resources "create" "cluster" "stage"
+    manage_resources "create" "cluster" "stage"
     ;;
-  create)
-    create_resources "${@}"
-    ;;
-  remove)
-    remove_resources "${TYPE}" "${CLUSTER_NAME}"
+  create|delete)
+    manage_resources "${@}"
     ;;
   help)
     echo "ACTION: ${ACTION}"
