@@ -3,7 +3,7 @@ appdirs==1.4.3
 apypie==0.3.2
 argcomplete==1.12.2
 bernhard==0.2.6
-bottle==0.12.19
+bottle==0.12.20
 bpytop==1.0.64
 CacheControl==0.12.6
 cachetools==4.2.2
