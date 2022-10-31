@@ -1,4 +1,5 @@
 .DS_Store
 .vagrant
+.envrc
 docker/awesome-compose
 rhce/ansible/rhce8-2021-prep/roles/geerlingguy.haproxy
