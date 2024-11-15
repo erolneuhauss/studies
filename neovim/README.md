@@ -14,7 +14,7 @@
     - [VIM](#vim)
 <!--toc:end-->
 
-## Common problems
+## Common Tasks and Problems
 
 ### Can't find file ... in path
 
