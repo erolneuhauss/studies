@@ -1,24 +1,24 @@
 version: '3'
 services:
-  latex2024basic:
-    build:
-      context: ./
-      dockerfile: Dockerfile2024-basic
-    container_name: latex_minion_basic
-    image: eneuhauss/latex_minion:2024-basic
-    volumes:
-      - ./texcode:/texcode
-    entrypoint:
-      - pdflatex
-      - some-tex-file
-  # latex2024full:
+  # latex2024basic:
   #   build:
   #     context: ./
-  #     dockerfile: Dockerfile2024-full
-  #   container_name: latex_minion_full
-  #   image: eneuhauss/latex_minion:2024-full
+  #     dockerfile: Dockerfile2024-basic
+  #   container_name: latex_minion_basic
+  #   image: eneuhauss/latex_minion:2024-basic
   #   volumes:
   #     - ./texcode:/texcode
   #   entrypoint:
   #     - pdflatex
   #     - some-tex-file
+  latex2024full:
+    build:
+      context: ./
+      dockerfile: Dockerfile2024-full
+    container_name: latex_minion_full
+    image: eneuhauss/latex_minion:2024-full
+    volumes:
+      - ./texcode:/texcode
+    entrypoint:
+      - pdflatex
+      - some-tex-file
