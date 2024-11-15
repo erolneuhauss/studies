@@ -23,7 +23,7 @@ module "web" {
 output "PublicIP" {
   value = module.web.pub_ip
 }
- 
+
 output "PrivateIP" {
   value = module.db.PrivateIP
 }
