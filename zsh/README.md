@@ -20,8 +20,10 @@ kill -9 # then press <TAB> or type ** and then <TAB>
 Press <option-c> to start the fzf-cd-widget or
 
 ```shell
-z   <tab>   # or
-zz  <tab>
+cd ~/.local**<TAB>
+
+z   <TAB>   # or
+zz  <TAB>
 
 d           # list directory history
 ```
