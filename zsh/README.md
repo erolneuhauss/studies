@@ -13,6 +13,11 @@ vim # then press <c-t> to start the fzf-file-widget
 ```
 
 ```shell
+vim **  # then press <TAB> to start the fzf-file-widget
+# then select with <TAB> files to edit
+```
+
+```shell
 kill -9 # then press <TAB> or type ** and then <TAB>
 ```
 ### Change Directories
