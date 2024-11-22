@@ -20,7 +20,7 @@ vim **  # then press <TAB> to start the fzf-file-widget
 ```shell
 kill -9 # then press <TAB> or type ** and then <TAB>
 ```
-### Change Directories
+### Change Directories with fzf
 
 Press <option-c> to start the fzf-cd-widget or
 
@@ -39,7 +39,7 @@ d           # list directory history
 mkdcd path/subpath
 ```
 
-### Edit file
+### Edit file with fasd
 
 ```shell
 v lua
@@ -47,6 +47,16 @@ v deploy sh
 ```
 
 Opens files last opened with default editor
+
+```shell
+vim ,rc,lo<Tab>
+vim /etc/rc.local
+
+mv index.html d,www<Tab>
+mv index.html /var/www/
+```
+
+More examples: https://github.com/clvv/fasd?tab=readme-ov-file#examples
 
 ### Open a new terminal tab in same directory
 
