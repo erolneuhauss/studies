@@ -22,7 +22,7 @@ kill -9 # then press <TAB> or type ** and then <TAB>
 ```
 ### Change Directories with fzf
 
-Press <option-c> to start the fzf-cd-widget or
+Press `<option-c>` to start the fzf-cd-widget or
 
 ```shell
 cd ~/.local**<TAB>
