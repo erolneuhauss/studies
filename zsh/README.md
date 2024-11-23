@@ -1,26 +1,52 @@
 # ZSH
 
-## Things That Makes Life SOOOO Much Easier!
+## [junegunn/fzf -- Fuzzy completion for bash and zsh](https://github.com/junegunn/fzf?tab=readme-ov-file#fuzzy-completion-for-bash-and-zsh)
 
-### Subsearch History
+```shell
+# Files under the current directory
+# - You can select multiple items with TAB key
+vim **<TAB>
+
+# Files under parent directory
+vim ../**<TAB>
+
+# Files under parent directory that match `fzf`
+vim ../fzf**<TAB>
+
+# Files under your home directory
+vim ~/**<TAB>
+
+
+# Directories under current directory (single-selection)
+cd **<TAB>
+
+# Directories under ~/github that match `fzf`
+cd ~/github/fzf**<TAB>
+
+```
+### FZF keybindings
+
+#### `<CTRL-R>` -- fzf-history-widget
 
 ```shell
 vim # then press <c-r> to start the fzf-history-widget
 ```
+
+#### `<CTRL-T>` -- fzf-file-widget
 
 ```shell
 vim # then press <c-t> to start the fzf-file-widget
 ```
 
 ```shell
-vim **  # then press <TAB> to start the fzf-file-widget
-# then select with <TAB> files to edit
+vim ~/.zprezto/**<TAB> to start the fzf-file-widget
+# then select with <TAB> (multiple) files to edit
 ```
 
 ```shell
 kill -9 # then press <TAB> or type ** and then <TAB>
 ```
-### Change Directories with fzf
+#### `<ALT-C>` -- fzf-cd-widget
 
 Press `<option-c>` to start the fzf-cd-widget or
 
@@ -33,11 +59,13 @@ zz  <TAB>
 d           # list directory history
 ```
 
-### Create (nested) directory and change into it
+## Create (nested) directory and change into it
 
 ```shell
 mkdcd path/subpath
 ```
+
+## [clvv/fasd](https://github.com/clvv/fasd)
 
 ### Edit file with fasd
 
@@ -58,13 +86,13 @@ mv index.html /var/www/
 
 More examples: https://github.com/clvv/fasd?tab=readme-ov-file#examples
 
-### Open a new terminal tab in same directory
+## Open a new terminal tab in same directory
 
 ```shell
 tab         # works with iterm2 (zplugin utility)
 ```
 
-### Moar -- a less alternative
+## Moar -- a less alternative
 
 ```shell
 p vaules.yaml
@@ -72,7 +100,7 @@ p vaules.yaml
 
 Opens file with pager (set to moar)
 
-### bat -- a cat alternative
+## bat -- a cat alternative
 
 Has syntax and git support
 
@@ -84,7 +112,7 @@ bat vaules.yaml
 lll # alias for exa -l | moar
 ```
 
-### Search for aliases
+## Search for aliases
 
 ```shell
 sa git
