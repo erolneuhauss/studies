@@ -92,7 +92,7 @@ More examples: https://github.com/clvv/fasd?tab=readme-ov-file#examples
 tab         # works with iterm2 (zplugin utility)
 ```
 
-## Moar -- a less alternative
+## `p` defaults to `$PAGER`
 
 ```shell
 p vaules.yaml
@@ -109,7 +109,7 @@ bat vaules.yaml
 ```
 
 ```shell
-lll # alias for exa -l | moar
+lm # alias for eza --all --long | moar
 ```
 
 ## Search for aliases
