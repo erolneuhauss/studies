@@ -1,5 +1,22 @@
 # ZSH
 
+<!-- mtoc-start -->
+
+* [junegunn/fzf -- Fuzzy completion for bash and zsh](#junegunnfzf----fuzzy-completion-for-bash-and-zsh)
+  * [FZF keybindings](#fzf-keybindings)
+    * [`<CTRL-R>` -- fzf-history-widget](#ctrl-r----fzf-history-widget)
+    * [`<CTRL-T>` -- fzf-file-widget](#ctrl-t----fzf-file-widget)
+    * [`<ALT-C>` -- fzf-cd-widget](#alt-c----fzf-cd-widget)
+* [Create (nested) directory and change into it](#create-nested-directory-and-change-into-it)
+* [clvv/fasd](#clvvfasd)
+  * [Edit file with fasd](#edit-file-with-fasd)
+* [Open a new terminal tab in same directory](#open-a-new-terminal-tab-in-same-directory)
+* [`p` defaults to `$PAGER`](#p-defaults-to-pager)
+* [bat -- a cat alternative](#bat----a-cat-alternative)
+* [Search for aliases](#search-for-aliases)
+
+<!-- mtoc-end -->
+
 ## [junegunn/fzf -- Fuzzy completion for bash and zsh](https://github.com/junegunn/fzf?tab=readme-ov-file#fuzzy-completion-for-bash-and-zsh)
 
 ```shell
