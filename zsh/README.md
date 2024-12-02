@@ -30,6 +30,10 @@ cd ~/github/fzf**<TAB>
 
 ```shell
 vim # then press <c-r> to start the fzf-history-widget
+
+z d,<TAB> # to start the fzf-history-widget
+
+vim f,<TAB> # same
 ```
 
 #### `<CTRL-T>` -- fzf-file-widget
