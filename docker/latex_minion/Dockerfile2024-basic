@@ -1,7 +1,10 @@
 FROM public.ecr.aws/docker/library/centos:centos8
 MAINTAINER eneuhauss@gmx.de
 
-ENV PATH /usr/local/texlive/2024/bin/x86_64-linux:$PATH
+ENV PATH /home/eroln/.local/texlive/2024/bin/x86_64-linux:$PATH
+
+RUN groupadd -g 1000 eroln && \
+    useradd -m -u 1000 -g eroln eroln
 
 # Install required packages first
 RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && \
@@ -18,17 +21,22 @@ RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && \
     yum install -y --setopt=tsflags=nodocs perl-Tk perl-Digest-MD5 && \
     yum -y clean all
 # Install TeXLive basic with MinionPro Support
-RUN mkdir -p /usr/local/src &&  \
-    wget -q -P /usr/local/src   \
+
+USER eroln
+WORKDIR /home/eroln
+
+RUN mkdir -p /home/eroln/.local/src /home/eroln/.local/bin
+RUN wget -P /home/eroln/.local/src   \
         http://ftp.gwdg.de/pub/ctan/systems/texlive/tlnet/install-tl-unx.tar.gz \
         https://raw.githubusercontent.com/erolneuhauss/studies/master/docker/latex_minion/job_appl_sample.tex \
         https://raw.githubusercontent.com/erolneuhauss/studies/master/docker/latex_minion/minionpro.tgz \
         https://raw.githubusercontent.com/erolneuhauss/studies/master/docker/latex_minion/myriadpro.tgz \
         https://raw.githubusercontent.com/erolneuhauss/studies/master/docker/latex_minion/octocat.png \
-        https://raw.githubusercontent.com/erolneuhauss/studies/master/docker/latex_minion/texlive2024-basic.profile && \
-    tar xzf /usr/local/src/install-tl-unx.tar.gz -C /usr/local/bin &&   \
-    perl /usr/local/bin/install-tl-*/install-tl \
-        -profile /usr/local/src/texlive2024-basic.profile
+        https://raw.githubusercontent.com/erolneuhauss/studies/master/docker/latex_minion/texlive2024-basic.profile
+
+RUN    tar xzf /home/eroln/.local/src/install-tl-unx.tar.gz -C /home/eroln/.local/bin
+RUN    perl /home/eroln/.local/bin/install-tl-*/install-tl \
+        -profile /home/eroln/.local/src/texlive2024-basic.profile
 RUN tlmgr option docfiles 0 && \
     tlmgr option srcfiles 0 && \
     tlmgr install \
@@ -59,20 +67,23 @@ RUN tlmgr option docfiles 0 && \
         ucs \
         xcolor \
         xkeyval
-RUN tar xzf /usr/local/src/minionpro.tgz -C /usr/local/texlive/texmf-local && \
-    tar xzf /usr/local/src/myriadpro.tgz -C /usr/local/texlive/texmf-local && \
-    mktexlsr /usr/local/texlive/texmf-local && \
+RUN tar xzf /home/eroln/.local/src/minionpro.tgz -C /home/eroln/.local/texlive/texmf-local && \
+    tar xzf /home/eroln/.local/src/myriadpro.tgz -C /home/eroln/.local/texlive/texmf-local && \
+    mktexlsr /home/eroln/.local/texlive/texmf-local && \
     updmap-sys --enable Map=MinionPro.map && \
     updmap-sys --enable Map=MyriadPro.map && \
     tex -version && \
     latex -version && \
-    cd /usr/local/src && \
-    latex $(find /usr/local -name sample2e.tex) && \
-    pdflatex $(find /usr/local -name sample2e.tex) && \
-    pdflatex /usr/local/src/job_appl_sample.tex && \
-    pdflatex /usr/local/src/job_appl_sample.tex && \
-    rm -f /usr/local/src/* && \
-    yum remove -y \
+    cd /home/eroln/.local/src && \
+    latex $(find /home/eroln/.local -name sample2e.tex) && \
+    pdflatex $(find /home/eroln/.local -name sample2e.tex) && \
+    pdflatex /home/eroln/.local/src/job_appl_sample.tex && \
+    pdflatex /home/eroln/.local/src/job_appl_sample.tex && \
+    rm -f /home/eroln/.local/src/*
+
+USER root
+
+RUN yum remove -y \
         git \
         perl-Digest-MD5 \
         perl-Tk && \

@@ -2,12 +2,12 @@
 # It will NOT be updated and reflects only the
 # installation profile at installation time.
 selected_scheme scheme-basic
-TEXDIR /usr/local/texlive/2024
+TEXDIR /home/eroln/.local/texlive/2024
 TEXMFCONFIG ~/.texlive2024/texmf-config
 TEXMFHOME ~/texmf
-TEXMFLOCAL /usr/local/texlive/texmf-local
-TEXMFSYSCONFIG /usr/local/texlive/2024/texmf-config
-TEXMFSYSVAR /usr/local/texlive/2024/texmf-var
+TEXMFLOCAL /home/eroln/.local/texlive/texmf-local
+TEXMFSYSCONFIG /home/eroln/.local/texlive/2024/texmf-config
+TEXMFSYSVAR /home/eroln/.local/texlive/2024/texmf-var
 TEXMFVAR ~/.texlive2024/texmf-var
 binary_x86_64-linux 1
 collection-basic 1
@@ -27,8 +27,8 @@ tlpdbopt_generate_updmap 0
 tlpdbopt_install_docfiles 0
 tlpdbopt_install_srcfiles 0
 tlpdbopt_post_code 1
-tlpdbopt_sys_bin /usr/local/bin
-tlpdbopt_sys_info /usr/local/share/info
-tlpdbopt_sys_man /usr/local/share/man
+tlpdbopt_sys_bin /home/eroln/.local/bin
+tlpdbopt_sys_info /home/eroln/.local/share/info
+tlpdbopt_sys_man /home/eroln/.local/share/man
 tlpdbopt_w32_multi_user 1
 
