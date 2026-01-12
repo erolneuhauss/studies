@@ -16,7 +16,7 @@ colorama==0.4.4
 colorclass==2.2.0
 contextlib2==0.6.0
 CouchDB==1.2
-cryptography==3.4.7
+cryptography==39.0.1
 decorator==5.0.7
 distlib==0.3.0
 distro==1.4.0
