@@ -95,7 +95,7 @@ scandir==1.10.0
 six==1.15.0
 statsd==3.3.0
 terminaltables==3.1.0
-thefuck==3.30
+thefuck==3.31
 toml==0.10.2
 urllib3==1.26.4
 wcwidth==0.2.5
